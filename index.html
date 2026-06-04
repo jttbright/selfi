@@ -1,999 +1,387 @@
 <!DOCTYPE html>
 <html lang="bn">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
-<meta name="theme-color" content="#0a0e1a">
-<meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<title>উপস্থিতি সিস্টেম</title>
-<link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
-<style>
-/* ════════════════════════════
-   DESIGN TOKENS
-════════════════════════════ */
-:root {
-  --bg:       #07090f;
-  --bg2:      #0d1117;
-  --surface:  #111827;
-  --card:     #161d2e;
-  --card2:    #1c2540;
-  --border:   #1e2d4a;
-  --border2:  #2a3a5c;
-  --accent:   #4f8ef7;
-  --accent2:  #00d4ff;
-  --green:    #00c896;
-  --green2:   #00a87e;
-  --yellow:   #ffb020;
-  --red:      #ff4757;
-  --purple:   #a78bfa;
-  --purple2:  #7c3aed;
-  --text:     #e8edf5;
-  --text2:    #98a6bc;
-  --text3:    #5a6a82;
-  --r:        18px;
-  --rs:       12px;
-  --rx:       24px;
-  --safe-b:   env(safe-area-inset-bottom, 0px);
-}
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>সেলফি উপস্থিতি সিস্টেম</title>
+  <style>
+    :root {
+      --primary: #4f46e5;
+      --bg: #f3f4f6;
+      --card: #ffffff;
+      --text: #1f2937;
+      --text-light: #6b7280;
+      --success: #10b981;
+      --warning: #f59e0b;
+      --danger: #ef4444;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+    body { background: var(--bg); color: var(--text); padding-bottom: 70px; }
+    
+    /* Header & Navigation */
+    header { background: var(--primary); color: white; padding: 15px; text-align: center; font-weight: bold; font-size: 1.2rem; sticky: top; }
+    nav { position: fixed; bottom: 0; left: 0; right: 0; background: white; display: flex; justify-content: space-around; padding: 10px 0; box-shadow: 0 -2px 10px rgba(0,0,0,0.1); z-index: 100; }
+    nav button { background: none; border: none; color: var(--text-light); font-size: 0.8rem; display: flex; flex-direction: column; align-items: center; cursor: pointer; width: 25%; }
+    nav button.active { color: var(--primary); font-weight: bold; }
+    nav button svg { width: 24px; height: 24px; margin-bottom: 2px; }
 
-/* ════════════════════════════
-   RESET & BASE
-════════════════════════════ */
-*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
-html { height: 100%; overflow-x: hidden; }
-body {
-  min-height: 100%; background: var(--bg); color: var(--text);
-  font-family: 'Hind Siliguri', sans-serif; font-size: 16px;
-  -webkit-font-smoothing: antialiased; overflow-x: hidden;
-  padding-bottom: calc(72px + var(--safe-b));
-}
+    /* Pages & Cards */
+    .page { display: none; padding: 20px; max-width: 500px; margin: 0 auto; }
+    .page.active { display: block; }
+    .card { background: var(--card); padding: 20px; border-radius: 12px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); margin-bottom: 15px; }
+    h2 { font-size: 1.1rem; margin-bottom: 15px; color: var(--text); display: flex; align-items: center; gap: 8px; }
+    
+    /* Inputs & Buttons */
+    input, select, textarea { width: 100%; padding: 12px; margin-bottom: 15px; border: 1px solid #e5e7eb; border-radius: 8px; outline: none; font-size: 1rem; }
+    input:focus { border-color: var(--primary); }
+    button.btn { width: 100%; background: var(--primary); color: white; border: none; padding: 12px; border-radius: 8px; font-weight: bold; cursor: pointer; font-size: 1rem; transition: 0.2s; }
+    button.btn:disabled { background: #9ca3af; }
+    
+    /* Camera & Selfie Canvas Area */
+    #camera-container { position: relative; width: 100%; max-width: 320px; margin: 0 auto 15px; border-radius: 12px; overflow: hidden; background: #000; display: none; aspect-ratio: 4/3; }
+    video, canvas { width: 100%; height: 100%; object-fit: cover; }
+    #captured-image { width: 100%; max-width: 320px; display: none; margin: 0 auto 15px; border-radius: 12px; border: 2px solid var(--success); }
 
-/* ════════════════════════════
-   ANIMATED BACKGROUND
-════════════════════════════ */
-.bg-wrap { position: fixed; inset: 0; z-index: 0; overflow: hidden; pointer-events: none; }
-.bg-grad {
-  position: absolute; border-radius: 50%; filter: blur(70px); opacity: .13;
-  animation: drift 12s ease-in-out infinite;
-}
-.bg-grad.g1 { width: 380px; height: 380px; top: -120px; left: -80px; background: radial-gradient(circle, var(--accent), transparent); animation-delay: 0s; }
-.bg-grad.g2 { width: 280px; height: 280px; top: 30%; right: -60px; background: radial-gradient(circle, var(--accent2), transparent); animation-delay: -4s; }
-.bg-grad.g3 { width: 220px; height: 220px; bottom: 20%; left: 20%; background: radial-gradient(circle, var(--purple), transparent); animation-delay: -8s; }
-@keyframes drift {
-  0%,100% { transform: translateY(0) scale(1); }
-  50%      { transform: translateY(-30px) scale(1.08); }
-}
-.bg-grid {
-  position: absolute; inset: 0;
-  background-image: linear-gradient(rgba(79,142,247,.04) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(79,142,247,.04) 1px, transparent 1px);
-  background-size: 36px 36px;
-}
+    /* Lists & Items */
+    .item-list { margin-top: 15px; }
+    .list-item { background: white; padding: 12px; border-radius: 8px; margin-bottom: 8px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 2px 4px rgba(0,0,0,0.02); }
+    .badge { padding: 4px 8px; border-radius: 20px; font-size: 0.75rem; font-weight: bold; color: white; }
+    .badge.Present { background: var(--success); }
+    .badge.Late { background: var(--warning); }
+    .badge.Absent { background: var(--danger); }
+    
+    /* Suggestions */
+    .suggestions { background: white; border: 1px solid #e5e7eb; border-radius: 8px; max-height: 120px; overflow-y: auto; margin-top: -10px; margin-bottom: 15px; }
+    .suggestion-item { padding: 10px; cursor: pointer; border-bottom: 1px solid #f3f4f6; }
+    .suggestion-item:hover { background: #f3f4f6; }
 
-/* ════════════════════════════
-   LAYOUT
-════════════════════════════ */
-.app { position: relative; z-index: 1; max-width: 480px; margin: 0 auto; }
-
-/* ════════════════════════════
-   HEADER
-════════════════════════════ */
-.header {
-  display: flex; align-items: center; justify-content: space-between;
-  padding: 16px 20px 0;
-}
-.logo { display: flex; align-items: center; gap: 12px; }
-.logo-ico {
-  width: 44px; height: 44px; border-radius: 14px;
-  background: linear-gradient(135deg, var(--accent), var(--accent2));
-  display: flex; align-items: center; justify-content: center; font-size: 22px;
-  box-shadow: 0 4px 16px rgba(79,142,247,.35);
-}
-.logo-name { font-size: 1.15rem; font-weight: 700; letter-spacing: .3px; }
-.logo-sub  { font-size: .62rem; color: var(--text3); font-family: 'JetBrains Mono', monospace; margin-top: 1px; }
-.live-clock {
-  background: var(--card2); border: 1px solid var(--border2); border-radius: 20px;
-  padding: 7px 14px; font-family: 'JetBrains Mono', monospace; font-size: .8rem;
-  color: var(--accent2); letter-spacing: 1px;
-  box-shadow: 0 0 12px rgba(0,212,255,.1);
-}
-
-/* ════════════════════════════
-   BOTTOM NAV
-════════════════════════════ */
-.bottom-nav {
-  position: fixed; bottom: 0; left: 50%; transform: translateX(-50%);
-  width: 100%; max-width: 480px; z-index: 50;
-  background: rgba(13,17,23,.92); backdrop-filter: blur(20px) saturate(160%);
-  border-top: 1px solid var(--border); border-radius: 24px 24px 0 0;
-  padding: 8px 12px calc(8px + var(--safe-b));
-  display: flex; gap: 4px;
-  box-shadow: 0 -4px 30px rgba(0,0,0,.5);
-}
-.nb {
-  flex: 1; display: flex; flex-direction: column; align-items: center; gap: 4px;
-  padding: 8px 4px; border: none; background: transparent; cursor: pointer;
-  border-radius: 14px; position: relative; transition: all .2s;
-  color: var(--text3); font-family: 'Hind Siliguri', sans-serif; font-size: .68rem;
-  font-weight: 500;
-}
-.nb .ni { font-size: 1.3rem; transition: transform .2s; }
-.nb.active { color: #fff; }
-.nb.active .ni { transform: scale(1.15); }
-.nb.active::before {
-  content: ''; position: absolute; inset: 0; border-radius: 14px;
-  background: linear-gradient(135deg, rgba(79,142,247,.25), rgba(0,212,255,.15));
-  border: 1px solid rgba(79,142,247,.3);
-}
-.badge {
-  position: absolute; top: 4px; right: 10px; background: var(--red);
-  color: #fff; font-size: .58rem; font-weight: 700; min-width: 17px; height: 17px;
-  border-radius: 9px; display: none; align-items: center; justify-content: center;
-  padding: 0 4px; border: 2px solid var(--bg);
-}
-.badge.show { display: flex; }
-
-/* ════════════════════════════
-   PAGES
-════════════════════════════ */
-.page { display: none; padding: 16px 16px 8px; animation: pgIn .22s ease; }
-.page.active { display: block; }
-@keyframes pgIn { from { opacity:0; transform: translateY(10px); } to { opacity:1; transform: translateY(0); } }
-
-/* ════════════════════════════
-   SECTION TITLE
-════════════════════════════ */
-.sec-title {
-  font-size: .65rem; font-family: 'JetBrains Mono', monospace; color: var(--text3);
-  text-transform: uppercase; letter-spacing: 1.5px; margin-bottom: 10px;
-  display: flex; align-items: center; gap: 8px;
-}
-.sec-title::before {
-  content: ''; width: 6px; height: 6px; border-radius: 50%;
-  background: var(--green); box-shadow: 0 0 8px var(--green);
-  animation: blink 1.5s infinite;
-}
-@keyframes blink { 0%,100%{opacity:1} 50%{opacity:.3} }
-
-/* ════════════════════════════
-   STATUS CARD
-════════════════════════════ */
-.status-wrap {
-  background: var(--card); border: 1px solid var(--border2); border-radius: var(--r);
-  padding: 14px 16px; margin-bottom: 14px;
-  box-shadow: 0 2px 16px rgba(0,0,0,.25);
-}
-.status-row {
-  display: flex; align-items: center; gap: 12px;
-  padding: 10px 14px; border-radius: var(--rs); font-size: .9rem; font-weight: 600;
-}
-.status-row.present { background: rgba(0,200,150,.1); border: 1px solid rgba(0,200,150,.25); color: var(--green); }
-.status-row.late    { background: rgba(255,176,32,.1);  border: 1px solid rgba(255,176,32,.25);  color: var(--yellow); }
-.status-row.closed  { background: rgba(255,71,87,.1);   border: 1px solid rgba(255,71,87,.25);   color: var(--red); }
-.sdot { width: 9px; height: 9px; border-radius: 50%; flex-shrink: 0; }
-.present .sdot { background: var(--green); box-shadow: 0 0 8px var(--green); }
-.late .sdot    { background: var(--yellow); box-shadow: 0 0 8px var(--yellow); }
-.closed .sdot  { background: var(--red);   box-shadow: 0 0 8px var(--red); }
-.svr-date { font-size: .7rem; color: var(--text3); text-align: center; margin-top: 8px; }
-
-/* ════════════════════════════
-   FORM ELEMENTS
-════════════════════════════ */
-.fg { margin-bottom: 14px; }
-.fl { display: block; font-size: .78rem; color: var(--text2); margin-bottom: 7px; font-weight: 600; }
-.fi {
-  width: 100%; background: var(--surface); border: 1.5px solid var(--border2);
-  border-radius: var(--rs); padding: 13px 16px; color: var(--text);
-  font-family: 'Hind Siliguri', sans-serif; font-size: .95rem; outline: none;
-  transition: border-color .2s, box-shadow .2s;
-}
-.fi:focus { border-color: var(--accent); box-shadow: 0 0 0 3px rgba(79,142,247,.15); }
-.fi::placeholder { color: var(--text3); }
-.fi-pin { letter-spacing: 6px; font-family: 'JetBrains Mono', monospace; font-size: 1.2rem; }
-textarea.fi { resize: vertical; min-height: 100px; line-height: 1.7; }
-
-/* ════════════════════════════
-   USER CARD
-════════════════════════════ */
-.u-card {
-  background: linear-gradient(135deg, rgba(79,142,247,.1), rgba(0,212,255,.06));
-  border: 1.5px solid rgba(79,142,247,.25); border-radius: var(--r);
-  padding: 16px; display: flex; align-items: center; gap: 14px;
-  margin-bottom: 16px; animation: slideD .28s ease;
-}
-@keyframes slideD { from{opacity:0;transform:translateY(-8px)} to{opacity:1;transform:translateY(0)} }
-.u-avatar {
-  width: 54px; height: 54px; border-radius: 50%; flex-shrink: 0;
-  background: linear-gradient(135deg, var(--accent), var(--accent2));
-  display: flex; align-items: center; justify-content: center; font-size: 1.5rem;
-  box-shadow: 0 4px 16px rgba(79,142,247,.3);
-}
-.u-name { font-size: 1.05rem; font-weight: 700; }
-.u-id   { font-size: .72rem; font-family: 'JetBrains Mono', monospace; color: var(--text3); margin-top: 3px; }
-
-/* ════════════════════════════
-   CAMERA
-════════════════════════════ */
-.cam-wrap {
-  position: relative; border-radius: var(--r); overflow: hidden;
-  background: #000; aspect-ratio: 4/3; margin-bottom: 14px;
-  border: 2px solid var(--border2); box-shadow: 0 4px 24px rgba(0,0,0,.5);
-}
-#video { width: 100%; height: 100%; object-fit: cover; transform: scaleX(-1); display: block; }
-#canvas { display: none; }
-.face-ring {
-  position: absolute; top: 50%; left: 50%; transform: translate(-50%,-60%);
-  width: 140px; height: 175px; border-radius: 50% 50% 50% 50% / 60% 60% 40% 40%;
-  border: 2.5px dashed rgba(79,142,247,.65);
-  box-shadow: 0 0 20px rgba(79,142,247,.2) inset;
-}
-.cam-hint {
-  position: absolute; bottom: 12px; left: 50%; transform: translateX(-50%);
-  background: rgba(0,0,0,.6); color: rgba(255,255,255,.8); font-size: .7rem;
-  padding: 4px 14px; border-radius: 20px; white-space: nowrap;
-  backdrop-filter: blur(6px);
-}
-.prev-wrap {
-  border-radius: var(--r); overflow: hidden; margin-bottom: 12px;
-  border: 2px solid var(--green); box-shadow: 0 0 20px rgba(0,200,150,.2);
-  aspect-ratio: 4/3;
-}
-.prev-wrap img { width: 100%; height: 100%; object-fit: cover; display: block; }
-.prev-meta {
-  background: rgba(0,200,150,.08); border: 1px solid rgba(0,200,150,.2);
-  padding: 9px 14px; border-radius: var(--rs); font-size: .72rem; color: var(--green);
-  margin-bottom: 14px; font-family: 'JetBrains Mono', monospace; text-align: center; line-height: 1.6;
-}
-
-/* ════════════════════════════
-   BUTTONS
-════════════════════════════ */
-.btn {
-  width: 100%; padding: 14px; border: none; cursor: pointer; border-radius: var(--rs);
-  font-family: 'Hind Siliguri', sans-serif; font-size: .95rem; font-weight: 700;
-  display: flex; align-items: center; justify-content: center; gap: 8px;
-  transition: all .18s; letter-spacing: .3px;
-}
-.btn:active { transform: scale(.96); }
-.btn:disabled { opacity: .45; cursor: not-allowed; transform: none !important; }
-.bp  { background: linear-gradient(135deg, var(--accent), #38bdf8); color: #fff; box-shadow: 0 4px 20px rgba(79,142,247,.35); }
-.bg  { background: linear-gradient(135deg, var(--green), var(--green2)); color: #fff; box-shadow: 0 4px 20px rgba(0,200,150,.3); }
-.bpu { background: linear-gradient(135deg, var(--purple), var(--purple2)); color: #fff; box-shadow: 0 4px 20px rgba(167,139,250,.3); }
-.bd  { background: var(--surface); border: 1.5px solid var(--border2); color: var(--text); }
-.br  { background: rgba(255,71,87,.1); border: 1.5px solid rgba(255,71,87,.3); color: var(--red); }
-.btn-sm { width: auto; padding: 9px 20px; font-size: .82rem; }
-.brow   { display: flex; gap: 10px; margin-bottom: 12px; }
-.brow .btn { flex: 1; }
-
-/* ════════════════════════════
-   SUCCESS SCREEN
-════════════════════════════ */
-.succ-sc { display: none; text-align: center; padding: 32px 20px; animation: slideD .4s ease; }
-.succ-sc.show { display: block; }
-.succ-ico {
-  width: 90px; height: 90px; border-radius: 50%; margin: 0 auto 20px;
-  display: flex; align-items: center; justify-content: center; font-size: 2.4rem;
-  animation: pop .4s cubic-bezier(.34,1.56,.64,1);
-}
-.succ-ico.ok   { background: linear-gradient(135deg,var(--green),var(--green2)); box-shadow: 0 8px 36px rgba(0,200,150,.4); }
-.succ-ico.late { background: linear-gradient(135deg,var(--yellow),#e09000); box-shadow: 0 8px 36px rgba(255,176,32,.4); }
-@keyframes pop { 0%{transform:scale(0)} 80%{transform:scale(1.12)} 100%{transform:scale(1)} }
-.succ-title { font-size: 1.5rem; font-weight: 700; margin-bottom: 8px; }
-.succ-sub   { font-size: .88rem; color: var(--text2); margin-bottom: 28px; line-height: 1.6; }
-
-/* ════════════════════════════
-   ADMIN BADGE
-════════════════════════════ */
-.admin-tag {
-  display: inline-flex; align-items: center; gap: 6px; padding: 5px 14px;
-  background: linear-gradient(135deg, rgba(255,176,32,.15), rgba(255,71,87,.1));
-  border: 1px solid rgba(255,176,32,.35); border-radius: 20px;
-  font-size: .72rem; color: var(--yellow); font-weight: 700;
-}
-
-/* ════════════════════════════
-   MODALS
-════════════════════════════ */
-.overlay {
-  position: fixed; inset: 0; background: rgba(0,0,0,.8); z-index: 200;
-  display: flex; align-items: flex-end; justify-content: center;
-  backdrop-filter: blur(6px); padding-bottom: var(--safe-b);
-}
-.modal {
-  background: var(--card); border: 1px solid var(--border2);
-  border-radius: 24px 24px 0 0; padding: 8px 24px 32px;
-  width: 100%; max-width: 480px; animation: sheetUp .28s ease;
-  max-height: 90vh; overflow-y: auto;
-}
-@keyframes sheetUp { from{transform:translateY(100%)} to{transform:translateY(0)} }
-.modal-handle {
-  width: 40px; height: 4px; border-radius: 2px; background: var(--border2);
-  margin: 0 auto 20px;
-}
-.modal h2 { font-size: 1.2rem; font-weight: 700; margin-bottom: 6px; }
-.modal .sub { font-size: .82rem; color: var(--text2); margin-bottom: 22px; }
-
-/* ════════════════════════════
-   TABLE
-════════════════════════════ */
-.t-wrap { overflow-x: auto; border-radius: var(--r); border: 1px solid var(--border); }
-table { width: 100%; border-collapse: collapse; font-size: .8rem; min-width: 330px; }
-thead tr { background: linear-gradient(90deg, #0d1117, #161d2e); }
-thead th { padding: 12px 10px; text-align: left; font-size: .68rem; color: var(--text3); text-transform: uppercase; letter-spacing: .6px; font-weight: 600; }
-tbody tr { border-top: 1px solid var(--border); transition: background .15s; }
-tbody tr:hover { background: rgba(79,142,247,.04); }
-tbody td { padding: 10px; vertical-align: middle; }
-.idb { font-family: 'JetBrains Mono', monospace; font-size: .68rem; background: var(--surface); border: 1px solid var(--border2); padding: 3px 9px; border-radius: 7px; }
-.chip { display: inline-block; padding: 3px 11px; border-radius: 20px; font-size: .68rem; font-weight: 700; }
-.cg { background: rgba(0,200,150,.12); color: var(--green); }
-.cy { background: rgba(255,176,32,.12); color: var(--yellow); }
-.cr { background: rgba(255,71,87,.12); color: var(--red); }
-
-/* ════════════════════════════
-   STAT GRID
-════════════════════════════ */
-.sg { display: grid; grid-template-columns: repeat(3,1fr); gap: 10px; margin-bottom: 16px; }
-.sb {
-  background: var(--card); border: 1.5px solid var(--border); border-radius: var(--rs);
-  padding: 14px 8px; text-align: center;
-}
-.sv { font-size: 1.9rem; font-weight: 700; line-height: 1; margin-bottom: 4px; }
-.sl { font-size: .68rem; color: var(--text3); }
-.sb.g { border-color: rgba(0,200,150,.3); }   .sb.g .sv { color: var(--green); }
-.sb.y { border-color: rgba(255,176,32,.3); }  .sb.y .sv { color: var(--yellow); }
-.sb.r { border-color: rgba(255,71,87,.3); }   .sb.r .sv { color: var(--red); }
-
-/* ════════════════════════════
-   RECORD LIST
-════════════════════════════ */
-.rl { display: flex; flex-direction: column; gap: 8px; }
-.ri {
-  display: flex; align-items: center; gap: 12px;
-  background: var(--card); border: 1px solid var(--border); border-radius: var(--rs);
-  padding: 12px 14px;
-}
-.ri-date { flex: 1; font-size: .82rem; font-weight: 600; }
-.ri-day  { font-size: .68rem; color: var(--text3); margin-top: 2px; }
-.ri-time { font-family: 'JetBrains Mono', monospace; font-size: .68rem; color: var(--text3); }
-
-/* ════════════════════════════
-   NOTICE CARDS
-════════════════════════════ */
-.nc {
-  background: var(--card); border: 1px solid var(--border);
-  border-radius: var(--r); padding: 16px; margin-bottom: 12px;
-  position: relative; overflow: hidden;
-}
-.nc::before {
-  content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: 3px;
-  background: linear-gradient(180deg, var(--purple), var(--accent));
-}
-.nc.new-n::before { background: linear-gradient(180deg, var(--red), var(--yellow)); }
-.nc-head { display: flex; align-items: flex-start; justify-content: space-between; gap: 10px; margin-bottom: 8px; padding-left: 12px; }
-.nc-title { font-size: .92rem; font-weight: 700; line-height: 1.4; }
-.nc-date  { font-size: .68rem; font-family: 'JetBrains Mono', monospace; color: var(--text3); margin-top: 3px; }
-.nc-body  { font-size: .82rem; color: var(--text2); line-height: 1.75; padding-left: 12px; }
-.new-tag  {
-  display: inline-block; background: var(--red); color: #fff;
-  font-size: .58rem; font-weight: 700; padding: 2px 7px; border-radius: 8px;
-  margin-left: 7px; vertical-align: middle; animation: pulse2 1s infinite;
-}
-@keyframes pulse2 { 0%,100%{opacity:1} 50%{opacity:.65} }
-
-/* ════════════════════════════
-   MISC FILTERS / SEARCH
-════════════════════════════ */
-.mpick { display: flex; align-items: center; gap: 8px; margin-bottom: 14px; }
-.mpick label { font-size: .78rem; color: var(--text2); white-space: nowrap; font-weight: 600; }
-.mpick input {
-  flex: 1; background: var(--surface); border: 1.5px solid var(--border2);
-  border-radius: var(--rs); padding: 10px 13px; color: var(--text);
-  font-family: 'Hind Siliguri', sans-serif; font-size: .88rem; outline: none;
-}
-.mpick input:focus { border-color: var(--accent); }
-.srch { position: relative; margin-bottom: 13px; }
-.srch input {
-  width: 100%; background: var(--surface); border: 1.5px solid var(--border2);
-  border-radius: var(--rs); padding: 11px 14px 11px 40px; color: var(--text);
-  font-family: 'Hind Siliguri', sans-serif; font-size: .9rem; outline: none;
-}
-.srch input:focus { border-color: var(--accent); }
-.srch-ic { position: absolute; left: 13px; top: 50%; transform: translateY(-50%); font-size: 1rem; pointer-events: none; }
-
-/* ════════════════════════════
-   EMPTY STATE
-════════════════════════════ */
-.empty { text-align: center; padding: 40px 20px; color: var(--text3); }
-.empty .ei { font-size: 2.8rem; margin-bottom: 12px; }
-.empty p   { font-size: .85rem; line-height: 1.6; }
-
-/* ════════════════════════════
-   ERROR BOX
-════════════════════════════ */
-.err-box {
-  background: rgba(255,71,87,.08); border: 1px solid rgba(255,71,87,.3);
-  border-radius: var(--rs); padding: 11px 14px; font-size: .78rem;
-  color: var(--red); margin-top: 10px; line-height: 1.6; display: none;
-}
-
-/* ════════════════════════════
-   TOAST
-════════════════════════════ */
-#toast {
-  position: fixed; bottom: calc(84px + var(--safe-b)); left: 50%;
-  transform: translateX(-50%) translateY(60px);
-  background: var(--card2); border: 1px solid var(--border2);
-  border-radius: 22px; padding: 12px 22px; font-size: .85rem;
-  max-width: 320px; width: 90%; text-align: center; z-index: 999;
-  transition: transform .3s cubic-bezier(.34,1.56,.64,1);
-  box-shadow: 0 8px 32px rgba(0,0,0,.5); pointer-events: none;
-}
-#toast.show { transform: translateX(-50%) translateY(0); }
-#toast.success { border-color: var(--green);  color: var(--green); }
-#toast.error   { border-color: var(--red);    color: var(--red); }
-#toast.info    { border-color: var(--accent); color: var(--accent); }
-
-/* ════════════════════════════
-   LOADER
-════════════════════════════ */
-.ld {
-  display: inline-block; width: 18px; height: 18px;
-  border: 2.5px solid rgba(255,255,255,.25); border-top-color: #fff;
-  border-radius: 50%; animation: spin .7s linear infinite;
-}
-@keyframes spin { to { transform: rotate(360deg); } }
-
-/* ════════════════════════════
-   DIVIDER
-════════════════════════════ */
-.div { height: 1px; background: var(--border); margin: 14px 0; }
-
-/* ════════════════════════════
-   SCROLLBAR
-════════════════════════════ */
-::-webkit-scrollbar { width: 4px; height: 4px; }
-::-webkit-scrollbar-thumb { background: var(--border2); border-radius: 4px; }
-</style>
+    /* Toast Notification */
+    #toast { position: fixed; top: 20px; left: 50%; transform: translateX(-50%); background: #374151; color: white; padding: 12px 24px; border-radius: 30px; font-size: 0.9rem; z-index: 1000; display: none; box-shadow: 0 4px 10px rgba(0,0,0,0.2); text-align: center; }
+  </style>
 </head>
 <body>
 
-<!-- Animated BG -->
-<div class="bg-wrap">
-  <div class="bg-grid"></div>
-  <div class="bg-grad g1"></div>
-  <div class="bg-grad g2"></div>
-  <div class="bg-grad g3"></div>
-</div>
+  <header id="page-title">উপস্থিতি সাবমিট</header>
+  <div id="toast">বার্তা</div>
 
-<!-- ══ MODAL: Admin Login ══ -->
-<div class="overlay" id="mAdmin" style="display:none" onclick="if(event.target===this)closeModal('mAdmin')">
-  <div class="modal">
-    <div class="modal-handle"></div>
-    <h2>🔐 অ্যাডমিন লগইন</h2>
-    <p class="sub">আইডি ও পিন দিয়ে প্রবেশ করুন</p>
-    <div class="fg">
-      <label class="fl">অ্যাডমিন আইডি</label>
-      <input type="text" id="aId" class="fi" placeholder="Admin ID"
-        autocapitalize="characters" oninput="this.value=this.value.toUpperCase()">
+  <div id="page-attendance" class="page active">
+    <div class="card">
+      <h2>👤 কর্মীর তথ্য যাচাই</h2>
+      <input type="text" id="user-id" placeholder="আপনার আইডি লিখুন (যেমন: 1001)" autocomplete="off" oninput="showSuggestions(this.value)">
+      <div id="suggestion-box" class="suggestions" style="display: none;"></div>
+      <p id="user-name-display" style="font-weight: bold; color: var(--success); margin-bottom: 15px; display: none;"></p>
+      <button class="btn" id="btn-verify" onclick="verifyUser()">আইডি যাচাই করুন</button>
     </div>
-    <div class="fg">
-      <label class="fl">পিন</label>
-      <input type="password" id="aPin" class="fi fi-pin" placeholder="••••" maxlength="8"
-        onkeydown="if(event.key==='Enter')doAdminLogin()">
-    </div>
-    <div class="brow">
-      <button class="btn bp" id="aBtnLogin" onclick="doAdminLogin()">প্রবেশ করুন</button>
-      <button class="btn bd" onclick="closeModal('mAdmin')">বাতিল</button>
-    </div>
-    <div id="aErr" class="err-box"></div>
-  </div>
-</div>
 
-<!-- ══ MODAL: নতুন নোটিশ ══ -->
-<div class="overlay" id="mNotice" style="display:none" onclick="if(event.target===this)closeModal('mNotice')">
-  <div class="modal">
-    <div class="modal-handle"></div>
-    <h2>📢 নতুন নোটিশ</h2>
-    <p class="sub">সকলের জন্য নোটিশ তৈরি করুন</p>
-    <div class="fg">
-      <label class="fl">শিরোনাম *</label>
-      <input type="text" id="nT" class="fi" placeholder="নোটিশের শিরোনাম লিখুন">
-    </div>
-    <div class="fg">
-      <label class="fl">তারিখ *</label>
-      <input type="date" id="nD" class="fi">
-    </div>
-    <div class="fg">
-      <label class="fl">বিস্তারিত *</label>
-      <textarea id="nB" class="fi" placeholder="নোটিশের বিস্তারিত বিবরণ লিখুন..."></textarea>
-    </div>
-    <div class="brow">
-      <button class="btn bpu" id="nBtn" onclick="submitNotice()">📢 নোটিশ দিন</button>
-      <button class="btn bd" onclick="closeModal('mNotice')">বাতিল</button>
-    </div>
-    <div id="nErr" class="err-box"></div>
-  </div>
-</div>
-
-<!-- ══ APP ══ -->
-<div class="app">
-  <!-- Header -->
-  <div class="header">
-    <div class="logo">
-      <div class="logo-ico">📋</div>
-      <div>
-        <div class="logo-name">উপস্থিতি</div>
-        <div class="logo-sub">ATTENDANCE v2</div>
+    <div class="card" id="selfie-card" style="display: none;">
+      <h2>📷 সেলফি ভেরিফিকেশন</h2>
+      <div id="camera-container">
+        <video id="video" autoplay playsinline></video>
       </div>
-    </div>
-    <div class="live-clock" id="clock">--:--:--</div>
-  </div>
-
-  <!-- ══════ PAGE: উপস্থিতি ══════ -->
-  <div class="page active" id="p-att">
-    <!-- Status -->
-    <div class="status-wrap" style="margin-top:16px">
-      <div class="sec-title">আজকের অবস্থা</div>
-      <div class="status-row closed" id="statusRow">
-        <div class="sdot"></div>
-        <span id="statusTxt">লোড হচ্ছে...</span>
-      </div>
-      <div class="svr-date" id="svrDate"></div>
-    </div>
-
-    <!-- Step 1 -->
-    <div id="s1">
-      <div class="fg">
-        <label class="fl">আপনার কর্মী আইডি</label>
-        <input type="text" id="empId" class="fi" placeholder="যেমন: EMP001"
-          autocomplete="off" autocapitalize="characters"
-          oninput="this.value=this.value.toUpperCase()"
-          onkeydown="if(event.key==='Enter')checkId()"
-          list="idList">
-        <datalist id="idList"></datalist>
-      </div>
-      <button class="btn bp" id="btnCheck" onclick="checkId()">আইডি যাচাই করুন →</button>
-    </div>
-
-    <!-- Step 2 -->
-    <div id="s2" style="display:none">
-      <div class="u-card">
-        <div class="u-avatar">👤</div>
-        <div>
-          <div class="u-name" id="uName"></div>
-          <div class="u-id"   id="uId"></div>
-        </div>
-      </div>
-
-      <!-- Camera -->
-      <div id="camSec">
-        <div class="cam-wrap">
-          <video id="video" autoplay playsinline muted></video>
-          <div class="face-ring"></div>
-          <div class="cam-hint">মুখ গাইডের মধ্যে রাখুন</div>
-        </div>
-        <canvas id="canvas"></canvas>
-        <div class="brow">
-          <button class="btn bp" onclick="capture()">📸 সেলফি তুলুন</button>
-          <button class="btn bd" onclick="goBack()">← ফিরুন</button>
-        </div>
-      </div>
-
-      <!-- Preview -->
-      <div id="prevSec" style="display:none">
-        <div class="prev-wrap"><img id="prevImg" src="" alt="preview"></div>
-        <div class="prev-meta" id="prevMeta"></div>
-        <div class="brow">
-          <button class="btn bg" id="btnSubmit" onclick="submitAtt()">✅ জমা দিন</button>
-          <button class="btn bd" onclick="retake()">🔄 আবার</button>
-        </div>
-        <button class="btn bd" style="margin-top:0" onclick="goBack()">← পিছে যান</button>
-      </div>
-    </div>
-
-    <!-- Success -->
-    <div class="succ-sc" id="succSc">
-      <div class="succ-ico ok" id="succIco">✓</div>
-      <div class="succ-title" id="succTitle"></div>
-      <div class="succ-sub"   id="succSub"></div>
-      <button class="btn bd btn-sm" style="width:auto;margin:0 auto" onclick="resetAtt()">
-        🔄 নতুন উপস্থিতি
-      </button>
+      <img id="captured-image" alt="Captured Selfie">
+      <button class="btn" id="btn-capture" onclick="takeSnapshot()" style="background: var(--warning); margin-bottom: 10px;">ছবি তুলুন</button>
+      <button class="btn" id="btn-submit" onclick="submitAttendance()" disabled style="background: var(--success);">উপস্থিতি নিশ্চিত করুন</button>
     </div>
   </div>
 
-  <!-- ══════ PAGE: নোটিশ ══════ -->
-  <div class="page" id="p-not">
-    <div style="display:flex;align-items:center;justify-content:space-between;margin:14px 0 14px">
-      <div id="notAdminBar" style="display:none">
-        <span class="admin-tag">👑 অ্যাডমিন</span>
-      </div>
-      <div id="notLoginBtn">
-        <button class="btn bd btn-sm" style="width:auto;font-size:.78rem" onclick="openAdminModal('notice')">
-          🔐 অ্যাডমিন লগইন
-        </button>
-      </div>
-      <div id="notAddBtn" style="display:none">
-        <button class="btn bpu btn-sm" style="width:auto" onclick="openModal('mNotice')">
-          + নতুন নোটিশ
-        </button>
-      </div>
+  <div id="page-monthly" class="page">
+    <div class="card">
+      <h2>📅 মাসিক রিপোর্ট ফিল্টার</h2>
+      <input type="month" id="report-month" onchange="loadMonthlyReport()">
+      <input type="text" id="search-report" placeholder="নাম বা আইডি দিয়ে খুঁজুন..." oninput="filterMonthlyReport()">
     </div>
-    <div id="notList">
-      <div class="empty">
-        <div class="ld" style="border-top-color:var(--accent);margin:0 auto 14px"></div>
-        <p>নোটিশ লোড হচ্ছে...</p>
-      </div>
-    </div>
+    <div id="monthly-list" class="item-list"></div>
   </div>
 
-  <!-- ══════ PAGE: মাসিক ══════ -->
-  <div class="page" id="p-sum">
-    <div id="sumGate" style="margin-top:14px">
-      <div class="empty"><div class="ei">🔐</div><p>মাসিক রিপোর্ট দেখতে<br>অ্যাডমিন লগইন করুন</p></div>
-      <button class="btn bp" style="margin-top:8px" onclick="openAdminModal('summary')">অ্যাডমিন লগইন করুন</button>
+  <div id="page-myinfo" class="page">
+    <div class="card">
+      <h2>🔍 নিজের রেকর্ড দেখুন</h2>
+      <input type="text" id="my-id" placeholder="আপনার আইডি দিন">
+      <input type="month" id="my-month">
+      <button class="btn" onclick="loadMyRecords()">রেকর্ড খুঁজুন</button>
     </div>
-    <div id="sumPanel" style="display:none">
-      <div style="display:flex;align-items:center;justify-content:space-between;margin:14px 0 14px">
-        <span class="admin-tag">👑 অ্যাডমিন মোড</span>
-        <button class="btn br btn-sm" style="width:auto" onclick="adminLogout()">লগআউট</button>
-      </div>
-      <div class="mpick">
-        <label>মাস:</label>
-        <input type="month" id="sumMo">
-        <button class="btn bp btn-sm" onclick="loadSummary()">দেখুন</button>
-      </div>
-      <div class="srch">
-        <span class="srch-ic">🔍</span>
-        <input type="text" id="sumQ" placeholder="নাম বা আইডি..." oninput="filterTable()">
-      </div>
-      <div class="t-wrap" id="sumWrap">
-        <div class="empty"><div class="ei">📊</div><p>মাস বেছে "দেখুন" চাপুন</p></div>
-      </div>
+    <div id="my-summary" class="card" style="display: none; display: flex; justify-content: space-around; text-align: center;">
+      <div><h3 style="color:var(--success)" id="count-present">0</h3><small>উপস্থিত</small></div>
+      <div><h3 style="color:var(--warning)" id="count-late">0</h3><small>লেট</small></div>
+      <div><h3 style="color:var(--danger)" id="count-absent">0</h3><small>অনুপস্থিত</small></div>
     </div>
+    <div id="my-history-list" class="item-list"></div>
   </div>
 
-  <!-- ══════ PAGE: আমার ══════ -->
-  <div class="page" id="p-me">
-    <div style="margin-top:14px">
-      <div class="fg">
-        <label class="fl">আপনার আইডি</label>
-        <input type="text" id="meId" class="fi" placeholder="যেমন: EMP001"
-          autocomplete="off" autocapitalize="characters"
-          oninput="this.value=this.value.toUpperCase()"
-          onkeydown="if(event.key==='Enter')loadPersonal()"
-          list="idList2">
-        <datalist id="idList2"></datalist>
-      </div>
-      <div class="mpick">
-        <label>মাস:</label>
-        <input type="month" id="meMo">
-        <button class="btn bp btn-sm" onclick="loadPersonal()">দেখুন</button>
-      </div>
-      <div id="meResult">
-        <div class="empty"><div class="ei">👤</div><p>আইডি ও মাস দিয়ে<br>আপনার রেকর্ড দেখুন</p></div>
-      </div>
+  <div id="page-notice" class="page">
+    <div class="card">
+      <h2>📢 নতুন নোটিশ যোগ করুন</h2>
+      <textarea id="notice-text" placeholder="নোটিশের বিবরণ লিখুন..." rows="3"></textarea>
+      <button class="btn" onclick="submitNotice()">নোটিশ দিন</button>
     </div>
+    <h2>📋 নোটিশ বোর্ড</h2>
+    <div id="notice-list" class="item-list"></div>
   </div>
 
-  <!-- Bottom Nav -->
-  <nav class="bottom-nav">
-    <button class="nb active" id="nb-att" onclick="showPage('att')">
-      <span class="ni">📸</span><span>উপস্থিতি</span>
+  <nav>
+    <button onclick="switchPage('attendance', 'উপস্থিতি সাবমিট')" class="active">
+      <svg fill="currentColor" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/></svg>
+      উপস্থিতি
     </button>
-    <button class="nb" id="nb-not" onclick="showPage('not')">
-      <span class="ni">📢</span><span>নোটিশ</span>
-      <span class="badge" id="nBadge">0</span>
+    <button onclick="switchPage('monthly', 'মাসিক তালিকা')">
+      <svg fill="currentColor" viewBox="0 0 24 24"><path d="M19 3h-1V1h-2v2H8V1H6v2H5c-1.11 0-1.99.9-1.99 2L3 19c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 16H5V8h14v11z"/></svg>
+      মাসিক পেজ
     </button>
-    <button class="nb" id="nb-sum" onclick="showPage('sum')">
-      <span class="ni">📊</span><span>মাসিক</span>
+    <button onclick="switchPage('myinfo', 'আমার তথ্য')">
+      <svg fill="currentColor" viewBox="0 0 24 24"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg>
+      আমার তথ্য
     </button>
-    <button class="nb" id="nb-me" onclick="showPage('me')">
-      <span class="ni">👤</span><span>আমার</span>
+    <button onclick="switchPage('notice', 'নোটিশ বোর্ড')">
+      <svg fill="currentColor" viewBox="0 0 24 24"><path d="M20 2H4c-1.1 0-1.99.9-1.99 2L2 22l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm-7 9h-2V5h2v6zm0 4h-2v-2h2v2z"/></svg>
+      নোটিশ
     </button>
   </nav>
-</div><!-- /.app -->
 
-<div id="toast"></div>
+  <script>
+    // ⚠️ আপনার Google Apps Script Web App URL এখানে বসান
+    const API_URL = 'https://script.google.com/macros/s/AKfycbyylVkJ8AEPhy3dmIlucPOH2NQvLfh1-5UlFycMIdqxLuaRsUvJ2ub6JzB4mbCr0qJ0qg/exec'; 
 
-<script>
-// ════════════════════════════════════════════
-//  ▼▼▼  GAS URL এখানে বসান  ▼▼▼
-// ════════════════════════════════════════════
-var GAS = 'https://script.google.com/macros/s/AKfycby-4QZmWM3QcCNpb7MDo73BFI7cNQ-1OToAr7lTq1JproMroHOQmh_ljcOanLPHVKxXvw/exec';
-// ════════════════════════════════════════════
+    let streamGlobal = null;
+    let base64Image = null;
+    let monthlyReportData = [];
 
-/* ── STATE ── */
-var CU=null, photo=null, stream=null;
-var summaryData=[], allNotices=[], seenIds=[];
-var adminOK=false, adminCred={id:'',pin:''}, adminTarget='summary';
+    // পেজ পরিবর্তন লজিক
+    function switchPage(pageId, title) {
+      document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+      document.querySelectorAll('nav button').forEach(b => b.classList.remove('active'));
+      document.getElementById('page-' + pageId).classList.add('active');
+      document.getElementById('page-title').innerText = title;
+      event.currentTarget.classList.add('active');
+      
+      stopCamera();
+      if(pageId === 'notice') loadNotices();
+      if(pageId === 'monthly') {
+        const now = new Date();
+        document.getElementById('report-month').value = now.getFullYear() + '-' + String(now.getMonth() + 1).padStart(2, '0');
+        loadMonthlyReport();
+      }
+    }
 
-/* ══════════════════════════════════════════
-   API: fetch → JSONP fallback
-══════════════════════════════════════════ */
-function api(action, params) {
-  params = params||{};
-  return _fetch(action, params).catch(function(){ return _jsonp(action, params); });
-}
-function _fetch(action, params) {
-  return fetch(GAS, {
-    method: 'POST',
-    headers: {'Content-Type':'text/plain;charset=utf-8'},
-    body: JSON.stringify(Object.assign({action:action}, params))
-  }).then(function(r){ if(!r.ok) throw new Error('HTTP '+r.status); return r.json(); });
-}
-function _jsonp(action, params) {
-  return new Promise(function(res,rej){
-    var cb='_cb'+Date.now()+'_'+(Math.random()*9999|0), done=false;
-    var s=document.createElement('script');
-    var t=setTimeout(function(){ ok()||rej(new Error('Timeout — GAS URL সঠিক কিনা দেখুন')); },18000);
-    function ok(){ if(done)return true; done=true; clearTimeout(t); delete window[cb]; s.parentNode&&s.parentNode.removeChild(s); return false; }
-    window[cb]=function(d){ ok(); res(d); };
-    s.onerror=function(){ ok()||rej(new Error('GAS সংযোগ ব্যর্থ')); };
-    s.src=GAS+'?callback='+encodeURIComponent(cb)+'&action='+encodeURIComponent(action)
-         +'&data='+encodeURIComponent(JSON.stringify(params))+'&_='+Date.now();
-    document.body.appendChild(s);
-  });
-}
+    function showToast(msg) {
+      const toast = document.getElementById('toast');
+      toast.innerText = msg;
+      toast.style.display = 'block';
+      setTimeout(() => { toast.style.display = 'none'; }, 3000);
+    }
 
-/* ══════════════════════════════════════════
-   INIT
-══════════════════════════════════════════ */
-document.addEventListener('DOMContentLoaded', function(){
-  setMonths(); loadSavedIds(); startClock(); loadSeen();
-  Promise.all([api('getServerTime'), api('getNotices')])
-  .then(function(rs){
-    var t=rs[0],n=rs[1];
-    if(t&&t.display) document.getElementById('svrDate').textContent='📅 '+t.display;
-    if(t&&t.hour!=null) setStatus(t.hour,t.minute);
-    if(n&&n.success){ allNotices=n.notices||[]; renderNotices(); updateBadge(); }
-  }).catch(function(e){
-    document.getElementById('svrDate').textContent='⚠️ '+e.message;
-    api('getNotices').then(function(n){
-      if(n&&n.success){ allNotices=n.notices||[]; renderNotices(); updateBadge(); }
-    }).catch(function(){});
-  });
-});
+    // আইডি অটো সাজেস্ট ও মনে রাখার লজিক
+    function saveIdToLocal(id) {
+      let savedIds = JSON.parse(localStorage.getItem('savedIds')) || [];
+      if (!savedIds.includes(id)) {
+        savedIds.push(id);
+        localStorage.setItem('savedIds', JSON.stringify(savedIds));
+      }
+    }
 
-function setMonths(){
-  var n=new Date(), v=n.getFullYear()+'-'+String(n.getMonth()+1).padStart(2,'0');
-  ['sumMo','meMo'].forEach(function(id){ var el=document.getElementById(id); if(el)el.value=v; });
-}
-function startClock(){
-  function t(){ var n=new Date(); document.getElementById('clock').textContent=p(n.getHours())+':'+p(n.getMinutes())+':'+p(n.getSeconds()); setStatus(n.getHours(),n.getMinutes()); }
-  t(); setInterval(t,1000);
-}
-function p(x){ return String(x).padStart(2,'0'); }
+    function showSuggestions(val) {
+      const box = document.getElementById('suggestion-box');
+      let savedIds = JSON.parse(localStorage.getItem('savedIds')) || [];
+      let filtered = savedIds.filter(id => id.startsWith(val));
+      
+      if(filtered.length > 0 && val !== '') {
+        box.innerHTML = filtered.map(id => `<div class="suggestion-item" onclick="selectId('${id}')">${id}</div>`).join('');
+        box.style.display = 'block';
+      } else {
+        box.style.display = 'none';
+      }
+    }
 
-function setStatus(h,m){
-  var el=document.getElementById('statusRow'), tx=document.getElementById('statusTxt');
-  var t=h*60+m; el.className='status-row';
-  if(t>=9*60+30&&t<=10*60+30){ el.classList.add('present'); tx.textContent='✅ সময়মতো উপস্থিতি দেওয়া যাবে (৯:৩০ – ১০:৩০)'; }
-  else if(t>10*60+30){          el.classList.add('late');    tx.textContent='⚠️ এখন দিলে লেট হিসাবে গণনা হবে'; }
-  else{                          el.classList.add('closed');  tx.textContent='⏳ সময় শুরু হয়নি (৯:৩০ থেকে)'; }
-}
+    function selectId(id) {
+      document.getElementById('user-id').value = id;
+      document.getElementById('suggestion-box').style.display = 'none';
+    }
 
-function showPage(id){
-  document.querySelectorAll('.page').forEach(function(p){ p.classList.remove('active'); });
-  document.querySelectorAll('.nb').forEach(function(b){ b.classList.remove('active'); });
-  document.getElementById('p-'+id).classList.add('active');
-  document.getElementById('nb-'+id).classList.add('active');
-  if(id!=='att') stopCam();
-  if(id==='not') markSeen();
-}
+    // ব্যবহারকারী যাচাই ও ক্যামেরা চালু
+    async function verifyUser() {
+      const id = document.getElementById('user-id').value;
+      if(!id) return showToast('দয়া করে আইডি দিন');
+      
+      document.getElementById('btn-verify').disabled = true;
+      showToast('যাচাই করা হচ্ছে...');
+      
+      try {
+        const res = await fetch(API_URL, { method: 'POST', body: JSON.stringify({ action: 'checkUser', id: id }) });
+        const data = await res.json();
+        
+        if(data.success) {
+          document.getElementById('user-name-display').innerText = "👤 নাম: " + data.name;
+          document.getElementById('user-name-display').style.display = 'block';
+          document.getElementById('selfie-card').style.style.display = 'block';
+          document.getElementById('camera-container').style.display = 'block';
+          saveIdToLocal(id);
+          startCamera();
+        } else {
+          showToast(data.message);
+        }
+      } catch(e) { showToast('সার্ভার ত্রুটি!'); }
+      document.getElementById('btn-verify').disabled = false;
+    }
 
-/* Saved IDs */
-function loadSavedIds(){
-  var ids=_ids();
-  ['idList','idList2'].forEach(function(dl){
-    var el=document.getElementById(dl);
-    if(el) el.innerHTML=ids.map(function(x){return '<option value="'+x+'">';}).join('');
-  });
-}
-function _ids(){ try{return JSON.parse(localStorage.getItem('att_ids')||'[]');}catch(e){return[];} }
-function saveId(id){ var a=_ids(),i=a.indexOf(id); if(i>-1)a.splice(i,1); a.unshift(id); if(a.length>10)a.pop(); localStorage.setItem('att_ids',JSON.stringify(a)); loadSavedIds(); }
+    async function startCamera() {
+      try {
+        streamGlobal = await navigator.mediaDevices.getUserMedia({ video: { facingMode: "user" } });
+        document.getElementById('video').srcObject = streamGlobal;
+      } catch (err) { showToast("ক্যামেরা চালু করা যায়নি!"); }
+    }
 
-/* ══ STEP 1: আইডি চেক ══ */
-function checkId(){
-  var id=document.getElementById('empId').value.trim().toUpperCase();
-  if(!id){ toast('আইডি লিখুন','error'); return; }
-  var btn=document.getElementById('btnCheck');
-  btn.disabled=true; btn.innerHTML='<div class="ld"></div> যাচাই...';
-  api('validateUser',{userId:id})
-  .then(function(r){
-    btn.disabled=false; btn.innerHTML='আইডি যাচাই করুন →';
-    if(r&&r.success){ CU=r; saveId(r.id); document.getElementById('uName').textContent=r.name; document.getElementById('uId').textContent='🪪 '+r.id; document.getElementById('s1').style.display='none'; document.getElementById('s2').style.display='block'; startCam(); }
-    else toast((r&&r.message)||'আইডি পাওয়া যায়নি','error');
-  }).catch(function(e){ btn.disabled=false; btn.innerHTML='আইডি যাচাই করুন →'; toast(e.message,'error'); });
-}
+    function stopCamera() {
+      if(streamGlobal) {
+        streamGlobal.getTracks().forEach(track => track.stop());
+      }
+    }
 
-/* ══ CAMERA ══ */
-function startCam(){
-  navigator.mediaDevices.getUserMedia({video:{facingMode:'user',width:{ideal:640},height:{ideal:480}},audio:false})
-  .then(function(s){ stream=s; document.getElementById('video').srcObject=s; document.getElementById('camSec').style.display='block'; document.getElementById('prevSec').style.display='none'; })
-  .catch(function(e){ toast('ক্যামেরা চালু হয়নি: '+e.message,'error'); });
-}
-function stopCam(){ if(stream){ stream.getTracks().forEach(function(t){t.stop();}); stream=null; } }
+    // ছবি তোলা এবং টেক্সট জলছাপ (Timestamp Overlay) অটো বসানো
+    function takeSnapshot() {
+      const video = document.getElementById('video');
+      const canvas = document.createElement('canvas');
+      canvas.width = 640;
+      canvas.height = 480;
+      const ctx = canvas.getContext('2d');
+      
+      ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+      
+      // ছবিতে স্বয়ংক্রিয় তারিখ ও সময় বসানো
+      const now = new Date();
+      const timeStr = now.toLocaleDateString('bn-BD') + " | " + now.toLocaleTimeString('bn-BD');
+      ctx.fillStyle = "rgba(0, 0, 0, 0.6)";
+      ctx.fillRect(0, canvas.height - 40, canvas.width, 40);
+      ctx.fillStyle = "white";
+      ctx.font = "20px Arial";
+      ctx.fillText(timeStr, 20, canvas.height - 12);
+      
+      base64Image = canvas.toDataURL('image/jpeg');
+      
+      document.getElementById('camera-container').style.display = 'none';
+      const img = document.getElementById('captured-image');
+      img.src = base64Image;
+      img.style.display = 'block';
+      document.getElementById('btn-submit').disabled = false;
+      stopCamera();
+    }
 
-function capture(){
-  var v=document.getElementById('video'), c=document.getElementById('canvas');
-  c.width=v.videoWidth||640; c.height=v.videoHeight||480;
-  var ctx=c.getContext('2d');
-  ctx.save(); ctx.scale(-1,1); ctx.drawImage(v,-c.width,0,c.width,c.height); ctx.restore();
-  var now=new Date(), ts=p(now.getDate())+'/'+p(now.getMonth()+1)+'/'+now.getFullYear()+'  '+p(now.getHours())+':'+p(now.getMinutes())+':'+p(now.getSeconds());
-  ctx.fillStyle='rgba(0,0,0,.7)'; ctx.fillRect(0,c.height-40,c.width,40);
-  ctx.fillStyle='#fff'; ctx.font='bold 13px monospace'; ctx.textAlign='right';
-  ctx.fillText(ts+'  '+(CU?CU.id:''), c.width-12, c.height-13);
-  photo=c.toDataURL('image/jpeg',.82);
-  document.getElementById('prevImg').src=photo;
-  document.getElementById('prevMeta').textContent='📸 '+ts+'  •  '+(CU?CU.name:'');
-  document.getElementById('camSec').style.display='none'; document.getElementById('prevSec').style.display='block';
-  stopCam();
-}
-function retake(){ photo=null; document.getElementById('prevSec').style.display='none'; startCam(); }
+    // উপস্থিতি চূড়ান্ত সাবমিট
+    async function submitAttendance() {
+      const id = document.getElementById('user-id').value;
+      document.getElementById('btn-submit').disabled = true;
+      showToast('আপলোড ও সাবমিট হচ্ছে...');
+      
+      try {
+        const res = await fetch(API_URL, {
+          method: 'POST',
+          body: JSON.stringify({ action: 'submitAttendance', id: id, image: base64Image })
+        });
+        const data = await res.json();
+        showToast(data.message);
+        if(data.success) {
+          setTimeout(() => location.reload(), 2000);
+        }
+      } catch(e) { showToast('সাবমিট ব্যর্থ হয়েছে!'); }
+      document.getElementById('btn-submit').disabled = false;
+    }
 
-/* ══ জমা দেওয়া ══ */
-function submitAtt(){
-  if(!photo||!CU){ toast('আগে সেলফি তুলুন','error'); return; }
-  var btn=document.getElementById('btnSubmit');
-  btn.disabled=true; btn.innerHTML='<div class="ld"></div> জমা হচ্ছে...';
-  api('submitAttendance',{userId:CU.id,name:CU.name,photoBase64:photo})
-  .then(function(r){
-    btn.disabled=false; btn.innerHTML='✅ জমা দিন';
-    if(r&&r.success){
-      document.getElementById('s2').style.display='none';
-      var sc=document.getElementById('succSc'), ico=document.getElementById('succIco');
-      sc.classList.add('show');
-      if(r.status==='Present'){ ico.className='succ-ico ok'; ico.textContent='✓'; document.getElementById('succTitle').textContent='সময়মতো উপস্থিতি!'; }
-      else { ico.className='succ-ico late'; ico.textContent='⚠'; document.getElementById('succTitle').textContent='লেট উপস্থিতি নথিভুক্ত'; }
-      document.getElementById('succSub').textContent=(CU?CU.name:'')+'\n'+r.date+' • '+r.time;
-      toast(r.status==='Present'?'উপস্থিতি সফল ✅':'লেট উপস্থিতি জমা ⚠️', r.status==='Present'?'success':'info');
-    } else toast((r&&r.message)||'জমা হয়নি','error');
-  }).catch(function(e){ btn.disabled=false; btn.innerHTML='✅ জমা দিন'; toast(e.message,'error'); });
-}
-function resetAtt(){
-  CU=null; photo=null; stopCam();
-  ['s1','camSec'].forEach(function(id){ document.getElementById(id).style.display='block'; });
-  document.getElementById('s2').style.display='none';
-  document.getElementById('prevSec').style.display='none';
-  document.getElementById('succSc').classList.remove('show');
-  document.getElementById('empId').value='';
-}
-function goBack(){ stopCam(); CU=null; photo=null; document.getElementById('s1').style.display='block'; document.getElementById('s2').style.display='none'; }
+    // মাসিক রিপোর্টের তথ্য লোড
+    async function loadMonthlyReport() {
+      const month = document.getElementById('report-month').value;
+      const listDiv = document.getElementById('monthly-list');
+      listDiv.innerHTML = 'লোড হচ্ছে...';
+      
+      try {
+        const res = await fetch(API_URL, { method: 'POST', body: JSON.stringify({ action: 'getMonthlyReport', month: month }) });
+        const data = await res.json();
+        if(data.success) {
+          monthlyReportData = data.report;
+          renderMonthlyReport(monthlyReportData);
+        }
+      } catch(e) { listDiv.innerHTML = 'ডাটা লোড করতে সমস্যা হয়েছে।'; }
+    }
 
-/* ══ ADMIN ══ */
-function openAdminModal(target){
-  adminTarget=target||'summary';
-  document.getElementById('aId').value=''; document.getElementById('aPin').value='';
-  document.getElementById('aErr').style.display='none';
-  openModal('mAdmin');
-  setTimeout(function(){ document.getElementById('aId').focus(); },300);
-}
-function doAdminLogin(){
-  var id=document.getElementById('aId').value.trim().toUpperCase();
-  var pin=document.getElementById('aPin').value.trim();
-  if(!id||!pin){ showErr('aErr','আইডি ও পিন দিন'); return; }
-  var btn=document.getElementById('aBtnLogin');
-  btn.disabled=true; btn.innerHTML='<div class="ld"></div>';
-  api('adminLogin',{id:id,pin:pin})
-  .then(function(r){
-    btn.disabled=false; btn.innerHTML='প্রবেশ করুন';
-    if(r&&r.success){
-      adminOK=true; adminCred={id:id,pin:pin};
-      closeModal('mAdmin');
-      toast('অ্যাডমিন লগইন সফল 👑','success');
-      if(adminTarget==='summary'){ document.getElementById('sumGate').style.display='none'; document.getElementById('sumPanel').style.display='block'; }
-      if(adminTarget==='notice'){ document.getElementById('notLoginBtn').style.display='none'; document.getElementById('notAdminBar').style.display='block'; document.getElementById('notAddBtn').style.display='block'; }
-    } else showErr('aErr',(r&&r.message)||'ভুল আইডি বা পিন');
-  }).catch(function(e){ btn.disabled=false; btn.innerHTML='প্রবেশ করুন'; showErr('aErr',e.message); });
-}
-function adminLogout(){
-  adminOK=false; adminCred={id:'',pin:''};
-  document.getElementById('sumPanel').style.display='none'; document.getElementById('sumGate').style.display='block';
-  document.getElementById('notAdminBar').style.display='none'; document.getElementById('notAddBtn').style.display='none'; document.getElementById('notLoginBtn').style.display='block';
-  document.getElementById('sumWrap').innerHTML='<div class="empty"><div class="ei">📊</div><p>মাস বেছে "দেখুন" চাপুন</p></div>';
-  toast('লগআউট হয়েছে','info');
-}
+    function renderMonthlyReport(data) {
+      const listDiv = document.getElementById('monthly-list');
+      if(data.length === 0) { listDiv.innerHTML = 'কোনো রেকর্ড নেই'; return; }
+      listDiv.innerHTML = data.map(r => `
+        <div class="list-item">
+          <div><strong>${r.name}</strong> <small>(${r.id})</small></div>
+          <div style="display:flex; gap: 5px;">
+            <span class="badge Present">উপস্থিত: ${r.present}</span>
+            <span class="badge Late">লেট: ${r.late}</span>
+            <span class="badge Absent">অনুপস্থিত: ${r.absent}</span>
+          </div>
+        </div>
+      `).join('');
+    }
 
-/* ══ NOTICES ══ */
-function loadSeen(){ try{ seenIds=JSON.parse(localStorage.getItem('seen_n')||'[]'); }catch(e){ seenIds=[]; } }
-function saveSeen(){ localStorage.setItem('seen_n',JSON.stringify(seenIds)); }
-function updateBadge(){
-  var cnt=allNotices.filter(function(n){ return seenIds.indexOf(n.id)<0; }).length;
-  var b=document.getElementById('nBadge');
-  if(cnt>0){ b.textContent=cnt>9?'9+':String(cnt); b.classList.add('show'); } else b.classList.remove('show');
-}
-function markSeen(){
-  allNotices.forEach(function(n){ if(seenIds.indexOf(n.id)<0) seenIds.push(n.id); });
-  saveSeen(); document.getElementById('nBadge').classList.remove('show');
-}
-function renderNotices(){
-  var el=document.getElementById('notList');
-  if(!allNotices.length){ el.innerHTML='<div class="empty"><div class="ei">📭</div><p>এখনো কোনো নোটিশ নেই</p></div>'; return; }
-  el.innerHTML=allNotices.map(function(n){
-    var isNew=seenIds.indexOf(n.id)<0;
-    var del=adminOK?'<button class="btn br btn-sm" style="padding:6px 10px;font-size:.7rem;flex-shrink:0" onclick="delNotice(\''+esc(n.id)+'\')">🗑</button>':'';
-    return '<div class="nc'+(isNew?' new-n':'')+'"><div class="nc-head"><div><div class="nc-title">'+esc(n.title)+(isNew?'<span class="new-tag">NEW</span>':'')+'</div><div class="nc-date">📅 '+esc(n.date)+'</div></div>'+del+'</div><div class="nc-body">'+esc(n.details).replace(/\n/g,'<br>')+'</div></div>';
-  }).join('');
-}
-function submitNotice(){
-  var t=document.getElementById('nT').value.trim(), d=document.getElementById('nD').value, b=document.getElementById('nB').value.trim();
-  if(!t||!d||!b){ showErr('nErr','সব তথ্য পূরণ করুন'); return; }
-  var btn=document.getElementById('nBtn');
-  btn.disabled=true; btn.innerHTML='<div class="ld"></div> দিচ্ছি...';
-  api('addNotice',{title:t,date:d,details:b,adminId:adminCred.id,adminPin:adminCred.pin})
-  .then(function(r){
-    btn.disabled=false; btn.innerHTML='📢 নোটিশ দিন';
-    if(r&&r.success){ closeModal('mNotice'); toast('নোটিশ সফলভাবে দেওয়া হয়েছে ✅','success'); api('getNotices').then(function(n){ if(n&&n.success){ allNotices=n.notices||[]; renderNotices(); updateBadge(); } }).catch(function(){}); }
-    else showErr('nErr',(r&&r.message)||'সমস্যা হয়েছে');
-  }).catch(function(e){ btn.disabled=false; btn.innerHTML='📢 নোটিশ দিন'; showErr('nErr',e.message); });
-}
-function delNotice(id){
-  if(!confirm('নোটিশটি মুছবেন?')) return;
-  api('deleteNotice',{noticeId:id,adminId:adminCred.id,adminPin:adminCred.pin})
-  .then(function(r){
-    if(r&&r.success){ toast('মুছা হয়েছে','info'); allNotices=allNotices.filter(function(n){return n.id!==id;}); renderNotices(); updateBadge(); }
-    else toast((r&&r.message)||'মুছা যায়নি','error');
-  }).catch(function(e){ toast(e.message,'error'); });
-}
+    function filterMonthlyReport() {
+      const query = document.getElementById('search-report').value.toLowerCase();
+      const filtered = monthlyReportData.filter(r => r.name.toLowerCase().includes(query) || r.id.includes(query));
+      renderMonthlyReport(filtered);
+    }
 
-/* ══ মাসিক ══ */
-function loadSummary(){
-  var mo=document.getElementById('sumMo').value;
-  if(!mo){ toast('মাস বেছে নিন','error'); return; }
-  var w=document.getElementById('sumWrap');
-  w.innerHTML='<div class="empty"><div class="ld" style="border-top-color:var(--accent);margin:0 auto 14px"></div><p>লোড হচ্ছে...</p></div>';
-  api('getMonthlySummary',{monthStr:mo,adminId:adminCred.id,adminPin:adminCred.pin})
-  .then(function(r){
-    if(!r||!r.success){ toast((r&&r.message)||'লোড ব্যর্থ','error'); return; }
-    summaryData=r.data||[]; renderTable(summaryData);
-  }).catch(function(e){ toast(e.message,'error'); });
-}
-function renderTable(data){
-  var w=document.getElementById('sumWrap');
-  if(!data||!data.length){ w.innerHTML='<div class="empty"><div class="ei">📭</div><p>এই মাসে কোনো রেকর্ড নেই</p></div>'; return; }
-  w.innerHTML='<table><thead><tr><th>আইডি</th><th>নাম</th><th>উপস্থিত</th><th>লেট</th><th>অনুপস্থিত</th></tr></thead><tbody>'
-    +data.map(function(r){return '<tr><td><span class="idb">'+esc(r.id)+'</span></td><td>'+esc(r.name)+'</td><td><span class="chip cg">'+r.present+'</span></td><td><span class="chip cy">'+r.late+'</span></td><td><span class="chip cr">'+r.absent+'</span></td></tr>';}).join('')
-    +'</tbody></table>';
-}
-function filterTable(){ var q=document.getElementById('sumQ').value.toLowerCase(); renderTable(summaryData.filter(function(r){return r.id.toLowerCase().includes(q)||r.name.toLowerCase().includes(q);})); }
+    // আমার তথ্য পেজ লোড
+    async function loadMyRecords() {
+      const id = document.getElementById('my-id').value;
+      const month = document.getElementById('my-month').value;
+      if(!id || !month) return showToast('আইডি এবং মাস উভয়ই সিলেক্ট করুন');
+      
+      const listDiv = document.getElementById('my-history-list');
+      listDiv.innerHTML = 'খোঁজা হচ্ছে...';
+      
+      try {
+        const res = await fetch(API_URL, { method: 'POST', body: JSON.stringify({ action: 'getPersonalRecord', userId: id, monthStr: month }) });
+        const data = await res.json();
+        
+        if(data.success) {
+          document.getElementById('my-summary').style.display = 'flex';
+          document.getElementById('count-present').innerText = data.present;
+          document.getElementById('count-late').innerText = data.late;
+          document.getElementById('count-absent').innerText = data.absent;
+          
+          listDiv.innerHTML = data.records.map(r => `
+            <div class="list-item">
+              <div><strong>${r.date}</strong> <small>(${r.day})</small> <br> <small>সময়: ${r.time}</small></div>
+              <span class="badge ${r.status}">${r.status === 'Present' ? 'উপস্থিত' : 'লেট'}</span>
+            </div>
+          `).join('');
+        } else {
+          listDiv.innerHTML = data.message;
+        }
+      } catch(e) { listDiv.innerHTML = 'ত্রুটি ঘটেছে!'; }
+    }
 
-/* ══ আমার রেকর্ড ══ */
-function loadPersonal(){
-  var id=document.getElementById('meId').value.trim().toUpperCase();
-  var mo=document.getElementById('meMo').value;
-  if(!id){ toast('আইডি লিখুন','error'); return; }
-  if(!mo){ toast('মাস বেছে নিন','error'); return; }
-  var w=document.getElementById('meResult');
-  w.innerHTML='<div class="empty"><div class="ld" style="border-top-color:var(--accent);margin:0 auto 14px"></div><p>লোড হচ্ছে...</p></div>';
-  api('getPersonalRecord',{userId:id,monthStr:mo})
-  .then(function(r){
-    if(!r||!r.success){ toast((r&&r.message)||'লোড ব্যর্থ','error'); return; }
-    if(!r.records||!r.records.length){ w.innerHTML='<div class="empty"><div class="ei">📭</div><p>এই মাসে কোনো রেকর্ড নেই</p></div>'; return; }
-    saveId(id);
-    w.innerHTML='<div style="font-weight:700;font-size:.9rem;color:var(--text2);margin-bottom:12px">👤 '+esc(r.name)+' — '+mo+'</div>'
-      +'<div class="sg"><div class="sb g"><div class="sv">'+r.present+'</div><div class="sl">উপস্থিত</div></div><div class="sb y"><div class="sv">'+r.late+'</div><div class="sl">লেট</div></div><div class="sb r"><div class="sv">'+r.absent+'</div><div class="sl">অনুপস্থিত</div></div></div>'
-      +'<div class="rl">'+r.records.map(function(rc){
-        var cls=rc.status==='Present'?'cg':rc.status==='Late'?'cy':'cr';
-        var lbl=rc.status==='Present'?'উপস্থিত':rc.status==='Late'?'লেট':'অনুপস্থিত';
-        return '<div class="ri"><div style="flex:1"><div class="ri-date">'+esc(rc.date)+'</div><div class="ri-day">'+esc(rc.day||'')+'</div></div><span class="chip '+cls+'">'+lbl+'</span><div class="ri-time">'+esc(rc.time||'')+'</div></div>';
-      }).join('')+'</div>';
-  }).catch(function(e){ toast(e.message,'error'); });
-}
+    // নোটিশ বোর্ড হ্যান্ডলিং
+    async function loadNotices() {
+      const list = document.getElementById('notice-list');
+      list.innerHTML = 'লোড হচ্ছে...';
+      try {
+        const res = await fetch(API_URL + '?action=getNotices');
+        const data = await res.json();
+        list.innerHTML = data.map(n => `
+          <div class="card" style="margin-bottom:10px;">
+            <small style="color:var(--text-light)">📅 ${n.date}</small>
+            <p style="margin-top:5px;">${n.text}</p>
+          </div>
+        `).join('');
+      } catch(e) { list.innerHTML = 'নোটিশ লোড করা যায়নি।'; }
+    }
 
-/* ══ HELPERS ══ */
-function openModal(id){ document.getElementById(id).style.display='flex'; }
-function closeModal(id){ document.getElementById(id).style.display='none'; }
-function showErr(id,msg){ var el=document.getElementById(id); el.textContent='❌ '+msg; el.style.display='block'; }
-function esc(s){ return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
-var _tt;
-function toast(msg,type){
-  type=type||'info';
-  var el=document.getElementById('toast');
-  el.textContent=msg; el.className='show '+type;
-  clearTimeout(_tt); _tt=setTimeout(function(){ el.classList.remove('show'); },3500);
-}
-</script>
+    async function submitNotice() {
+      const text = document.getElementById('notice-text').value;
+      if(!text) return showToast('নোটিশের বিবরণ লিখুন');
+      
+      try {
+        const res = await fetch(API_URL, { method: 'POST', body: JSON.stringify({ action: 'addNotice', notice: text }) });
+        const data = await res.json();
+        if(data.success) {
+          showToast('নোটিশ সফলভাবে দেওয়া হয়েছে');
+          document.getElementById('notice-text').value = '';
+          loadNotices();
+        }
+      } catch(e) { showToast('ব্যর্থ হয়েছে'); }
+    }
+  </script>
 </body>
 </html>
