@@ -136,252 +136,305 @@
       নোটিশ
     </button>
   </nav>
+<script>
+  // ⚠️ আপনার Google Apps Script Web App URL এখানে বসান
+  const API_URL = 'YOUR_APPS_SCRIPT_WEB_APP_URL'; 
 
-  <script>
-    // ⚠️ আপনার Google Apps Script Web App URL এখানে বসান
-    const API_URL = 'https://script.google.com/macros/s/AKfycbyylVkJ8AEPhy3dmIlucPOH2NQvLfh1-5UlFycMIdqxLuaRsUvJ2ub6JzB4mbCr0qJ0qg/exec'; 
+  let streamGlobal = null;
+  let base64Image = null;
+  let monthlyReportData = [];
 
-    let streamGlobal = null;
-    let base64Image = null;
-    let monthlyReportData = [];
-
-    // পেজ পরিবর্তন লজিক
-    function switchPage(pageId, title) {
-      document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-      document.querySelectorAll('nav button').forEach(b => b.classList.remove('active'));
-      document.getElementById('page-' + pageId).classList.add('active');
-      document.getElementById('page-title').innerText = title;
-      event.currentTarget.classList.add('active');
-      
-      stopCamera();
-      if(pageId === 'notice') loadNotices();
-      if(pageId === 'monthly') {
-        const now = new Date();
-        document.getElementById('report-month').value = now.getFullYear() + '-' + String(now.getMonth() + 1).padStart(2, '0');
-        loadMonthlyReport();
-      }
-    }
-
-    function showToast(msg) {
-      const toast = document.getElementById('toast');
-      toast.innerText = msg;
-      toast.style.display = 'block';
-      setTimeout(() => { toast.style.display = 'none'; }, 3000);
-    }
-
-    // আইডি অটো সাজেস্ট ও মনে রাখার লজিক
-    function saveIdToLocal(id) {
-      let savedIds = JSON.parse(localStorage.getItem('savedIds')) || [];
-      if (!savedIds.includes(id)) {
-        savedIds.push(id);
-        localStorage.setItem('savedIds', JSON.stringify(savedIds));
-      }
-    }
-
-    function showSuggestions(val) {
-      const box = document.getElementById('suggestion-box');
-      let savedIds = JSON.parse(localStorage.getItem('savedIds')) || [];
-      let filtered = savedIds.filter(id => id.startsWith(val));
-      
-      if(filtered.length > 0 && val !== '') {
-        box.innerHTML = filtered.map(id => `<div class="suggestion-item" onclick="selectId('${id}')">${id}</div>`).join('');
-        box.style.display = 'block';
-      } else {
-        box.style.display = 'none';
-      }
-    }
-
-    function selectId(id) {
-      document.getElementById('user-id').value = id;
-      document.getElementById('suggestion-box').style.display = 'none';
-    }
-
-    // ব্যবহারকারী যাচাই ও ক্যামেরা চালু
-    async function verifyUser() {
-      const id = document.getElementById('user-id').value;
-      if(!id) return showToast('দয়া করে আইডি দিন');
-      
-      document.getElementById('btn-verify').disabled = true;
-      showToast('যাচাই করা হচ্ছে...');
-      
-      try {
-        const res = await fetch(API_URL, { method: 'POST', body: JSON.stringify({ action: 'checkUser', id: id }) });
-        const data = await res.json();
-        
-        if(data.success) {
-          document.getElementById('user-name-display').innerText = "👤 নাম: " + data.name;
-          document.getElementById('user-name-display').style.display = 'block';
-          document.getElementById('selfie-card').style.style.display = 'block';
-          document.getElementById('camera-container').style.display = 'block';
-          saveIdToLocal(id);
-          startCamera();
-        } else {
-          showToast(data.message);
-        }
-      } catch(e) { showToast('সার্ভার ত্রুটি!'); }
-      document.getElementById('btn-verify').disabled = false;
-    }
-
-    async function startCamera() {
-      try {
-        streamGlobal = await navigator.mediaDevices.getUserMedia({ video: { facingMode: "user" } });
-        document.getElementById('video').srcObject = streamGlobal;
-      } catch (err) { showToast("ক্যামেরা চালু করা যায়নি!"); }
-    }
-
-    function stopCamera() {
-      if(streamGlobal) {
-        streamGlobal.getTracks().forEach(track => track.stop());
-      }
-    }
-
-    // ছবি তোলা এবং টেক্সট জলছাপ (Timestamp Overlay) অটো বসানো
-    function takeSnapshot() {
-      const video = document.getElementById('video');
-      const canvas = document.createElement('canvas');
-      canvas.width = 640;
-      canvas.height = 480;
-      const ctx = canvas.getContext('2d');
-      
-      ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
-      
-      // ছবিতে স্বয়ংক্রিয় তারিখ ও সময় বসানো
+  // পেজ পরিবর্তন লজিক
+  function switchPage(pageId, title) {
+    document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+    document.querySelectorAll('nav button').forEach(b => b.classList.remove('active'));
+    document.getElementById('page-' + pageId).classList.add('active');
+    document.getElementById('page-title').innerText = title;
+    if(event && event.currentTarget) event.currentTarget.classList.add('active');
+    
+    stopCamera();
+    if(pageId === 'notice') loadNotices();
+    if(pageId === 'monthly') {
       const now = new Date();
-      const timeStr = now.toLocaleDateString('bn-BD') + " | " + now.toLocaleTimeString('bn-BD');
-      ctx.fillStyle = "rgba(0, 0, 0, 0.6)";
-      ctx.fillRect(0, canvas.height - 40, canvas.width, 40);
-      ctx.fillStyle = "white";
-      ctx.font = "20px Arial";
-      ctx.fillText(timeStr, 20, canvas.height - 12);
-      
-      base64Image = canvas.toDataURL('image/jpeg');
-      
-      document.getElementById('camera-container').style.display = 'none';
-      const img = document.getElementById('captured-image');
-      img.src = base64Image;
-      img.style.display = 'block';
-      document.getElementById('btn-submit').disabled = false;
-      stopCamera();
+      document.getElementById('report-month').value = now.getFullYear() + '-' + String(now.getMonth() + 1).padStart(2, '0');
+      loadMonthlyReport();
     }
+  }
 
-    // উপস্থিতি চূড়ান্ত সাবমিট
-    async function submitAttendance() {
-      const id = document.getElementById('user-id').value;
-      document.getElementById('btn-submit').disabled = true;
-      showToast('আপলোড ও সাবমিট হচ্ছে...');
-      
-      try {
-        const res = await fetch(API_URL, {
-          method: 'POST',
-          body: JSON.stringify({ action: 'submitAttendance', id: id, image: base64Image })
-        });
-        const data = await res.json();
-        showToast(data.message);
-        if(data.success) {
-          setTimeout(() => location.reload(), 2000);
-        }
-      } catch(e) { showToast('সাবমিট ব্যর্থ হয়েছে!'); }
-      document.getElementById('btn-submit').disabled = false;
+  function showToast(msg) {
+    const toast = document.getElementById('toast');
+    toast.innerText = msg;
+    toast.style.display = 'block';
+    setTimeout(() => { toast.style.display = 'none'; }, 3000);
+  }
+
+  // আইডি অটো সাজেস্ট ও মনে রাখার লজিক
+  function saveIdToLocal(id) {
+    let savedIds = JSON.parse(localStorage.getItem('savedIds')) || [];
+    if (!savedIds.includes(id)) {
+      savedIds.push(id);
+      localStorage.setItem('savedIds', JSON.stringify(savedIds));
     }
+  }
 
-    // মাসিক রিপোর্টের তথ্য লোড
-    async function loadMonthlyReport() {
-      const month = document.getElementById('report-month').value;
-      const listDiv = document.getElementById('monthly-list');
-      listDiv.innerHTML = 'লোড হচ্ছে...';
-      
-      try {
-        const res = await fetch(API_URL, { method: 'POST', body: JSON.stringify({ action: 'getMonthlyReport', month: month }) });
-        const data = await res.json();
-        if(data.success) {
-          monthlyReportData = data.report;
-          renderMonthlyReport(monthlyReportData);
-        }
-      } catch(e) { listDiv.innerHTML = 'ডাটা লোড করতে সমস্যা হয়েছে।'; }
+  function showSuggestions(val) {
+    const box = document.getElementById('suggestion-box');
+    let savedIds = JSON.parse(localStorage.getItem('savedIds')) || [];
+    let filtered = savedIds.filter(id => id.startsWith(val));
+    
+    if(filtered.length > 0 && val !== '') {
+      box.innerHTML = filtered.map(id => `<div class="suggestion-item" onclick="selectId('${id}')">${id}</div>`).join('');
+      box.style.display = 'block';
+    } else {
+      box.style.display = 'none';
     }
+  }
 
-    function renderMonthlyReport(data) {
-      const listDiv = document.getElementById('monthly-list');
-      if(data.length === 0) { listDiv.innerHTML = 'কোনো রেকর্ড নেই'; return; }
-      listDiv.innerHTML = data.map(r => `
-        <div class="list-item">
-          <div><strong>${r.name}</strong> <small>(${r.id})</small></div>
-          <div style="display:flex; gap: 5px;">
-            <span class="badge Present">উপস্থিত: ${r.present}</span>
-            <span class="badge Late">লেট: ${r.late}</span>
-            <span class="badge Absent">অনুপস্থিত: ${r.absent}</span>
-          </div>
-        </div>
-      `).join('');
-    }
+  function selectId(id) {
+    document.getElementById('user-id').value = id;
+    document.getElementById('suggestion-box').style.display = 'none';
+    verifyUser(); // আইডি সিলেক্ট করলে অটো ভেরিফাই হবে
+  }
 
-    function filterMonthlyReport() {
-      const query = document.getElementById('search-report').value.toLowerCase();
-      const filtered = monthlyReportData.filter(r => r.name.toLowerCase().includes(query) || r.id.includes(query));
-      renderMonthlyReport(filtered);
-    }
-
-    // আমার তথ্য পেজ লোড
-    async function loadMyRecords() {
-      const id = document.getElementById('my-id').value;
-      const month = document.getElementById('my-month').value;
-      if(!id || !month) return showToast('আইডি এবং মাস উভয়ই সিলেক্ট করুন');
+  // ব্যবহারকারী যাচাই ও ক্যামেরা চালু (Fix প্রয়োগ করা হয়েছে)
+  async function verifyUser() {
+    const id = document.getElementById('user-id').value;
+    if(!id) return showToast('দয়া করে আইডি দিন');
+    
+    document.getElementById('btn-verify').disabled = true;
+    showToast('যাচাই করা হচ্ছে...');
+    
+    try {
+      const res = await fetch(API_URL, { method: 'POST', body: JSON.stringify({ action: 'checkUser', id: id }) });
+      const data = await res.json();
       
-      const listDiv = document.getElementById('my-history-list');
-      listDiv.innerHTML = 'খোঁজা হচ্ছে...';
-      
-      try {
-        const res = await fetch(API_URL, { method: 'POST', body: JSON.stringify({ action: 'getPersonalRecord', userId: id, monthStr: month }) });
-        const data = await res.json();
+      if(data.success) {
+        document.getElementById('user-name-display').innerText = "👤 নাম: " + data.name;
+        document.getElementById('user-name-display').style.display = 'block';
         
-        if(data.success) {
-          document.getElementById('my-summary').style.display = 'flex';
-          document.getElementById('count-present').innerText = data.present;
-          document.getElementById('count-late').innerText = data.late;
-          document.getElementById('count-absent').innerText = data.absent;
-          
-          listDiv.innerHTML = data.records.map(r => `
-            <div class="list-item">
-              <div><strong>${r.date}</strong> <small>(${r.day})</small> <br> <small>সময়: ${r.time}</small></div>
-              <span class="badge ${r.status}">${r.status === 'Present' ? 'উপস্থিত' : 'লেট'}</span>
-            </div>
-          `).join('');
-        } else {
-          listDiv.innerHTML = data.message;
-        }
-      } catch(e) { listDiv.innerHTML = 'ত্রুটি ঘটেছে!'; }
+        // 🛠️ ফিক্সড: ক্যামেরা কার্ড ও কন্টেইনার দৃশ্যমান করা
+        document.getElementById('selfie-card').style.display = 'block';
+        document.getElementById('camera-container').style.display = 'block';
+        document.getElementById('captured-image').style.display = 'none';
+        document.getElementById('btn-submit').disabled = true;
+        
+        saveIdToLocal(id);
+        
+        // ক্যামেরা স্টার্ট ফাংশন কল
+        await startCamera();
+      } else {
+        showToast(data.message);
+        document.getElementById('selfie-card').style.display = 'none';
+      }
+    } catch(e) { 
+      showToast('সার্ভার কানেকশনে সমস্যা হয়েছে!'); 
+      console.error(e);
     }
+    document.getElementById('btn-verify').disabled = false;
+  }
 
-    // নোটিশ বোর্ড হ্যান্ডলিং
-    async function loadNotices() {
-      const list = document.getElementById('notice-list');
-      list.innerHTML = 'লোড হচ্ছে...';
-      try {
-        const res = await fetch(API_URL + '?action=getNotices');
-        const data = await res.json();
-        list.innerHTML = data.map(n => `
-          <div class="card" style="margin-bottom:10px;">
-            <small style="color:var(--text-light)">📅 ${n.date}</small>
-            <p style="margin-top:5px;">${n.text}</p>
+  // ক্যামেরা চালু করার ফাংশন
+  async function startCamera() {
+    stopCamera(); // আগে থেকে কোনো ক্যামেরা সেশন চালু থাকলে তা বন্ধ করা
+    try {
+      // মোবাইল ফ্রন্ট ক্যামেরা এবং ল্যাপটপ ক্যামেরা উভয় ক্ষেত্রেই পারফেক্ট কাজ করবে
+      const constraints = { 
+        video: { 
+          facingMode: "user",
+          width: { ideal: 640 },
+          height: { ideal: 480 }
+        } 
+      };
+      
+      streamGlobal = await navigator.mediaDevices.getUserMedia(constraints);
+      const video = document.getElementById('video');
+      video.srcObject = streamGlobal;
+      
+      // কিছু ব্রাউজারের অটো-প্লে পলিসির জন্য এক্সট্রা সেফটি প্লে
+      video.onloadedmetadata = () => {
+        video.play().catch(e => console.log("অটো প্লে ব্লকড, ইউজার ইন্টারঅ্যাকশন লাগবে"));
+      };
+      
+      showToast('ক্যামেরা চালু হয়েছে, ছবি তুলুন');
+    } catch (err) { 
+      console.error(err);
+      showToast("ক্যামেরা চালু করা যায়নি! ব্রাউজারের ক্যামেরা পারমিশন চেক করুন।"); 
+    }
+  }
+
+  function stopCamera() {
+    if(streamGlobal) {
+      streamGlobal.getTracks().forEach(track => track.stop());
+      streamGlobal = null;
+    }
+  }
+
+  // ছবি তোলা এবং টেক্সট জলছাপ (Timestamp Overlay)
+  function takeSnapshot() {
+    const video = document.getElementById('video');
+    if (!video.srcObject) {
+      showToast("ক্যামেরা সেশন সচল নেই! আবার আইডি যাচায় করুন।");
+      return;
+    }
+    
+    const canvas = document.createElement('canvas');
+    canvas.width = 640;
+    canvas.height = 480;
+    const ctx = canvas.getContext('2d');
+    
+    // ক্যানভাসে ভিডিওর ফ্রেম ড্র করা
+    ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+    
+    // ছবিতে স্বয়ংক্রিয় তারিখ ও সময় বসানো (জলছাপ)
+    const now = new Date();
+    const timeStr = now.toLocaleDateString('bn-BD') + " | " + now.toLocaleTimeString('bn-BD');
+    ctx.fillStyle = "rgba(0, 0, 0, 0.6)";
+    ctx.fillRect(0, canvas.height - 40, canvas.width, 40);
+    ctx.fillStyle = "#ffffff";
+    ctx.font = "bold 20px Arial, SolaimanLipi, sans-serif";
+    ctx.fillText(timeStr, 20, canvas.height - 13);
+    
+    base64Image = canvas.toDataURL('image/jpeg');
+    
+    // প্রিভিউ সেট করা
+    document.getElementById('camera-container').style.display = 'none';
+    const img = document.getElementById('captured-image');
+    img.src = base64Image;
+    img.style.display = 'block';
+    
+    document.getElementById('btn-submit').disabled = false;
+    stopCamera(); // ছবি তোলা শেষ হলে ক্যামেরা বন্ধ করে রিসোর্স ফ্রি করা
+  }
+
+  // উপস্থিতি চূড়ান্ত সাবমিট
+  async function submitAttendance() {
+    const id = document.getElementById('user-id').value;
+    if(!base64Image) return showToast('আগে আপনার সেলফি তুলুন!');
+    
+    document.getElementById('btn-submit').disabled = true;
+    showToast('গুগল ড্রাইভে ছবি ও ডাটা আপলোড হচ্ছে...');
+    
+    try {
+      const res = await fetch(API_URL, {
+        method: 'POST',
+        body: JSON.stringify({ action: 'submitAttendance', id: id, image: base64Image })
+      });
+      const data = await res.json();
+      showToast(data.message);
+      if(data.success) {
+        // সাবমিট সফল হলে ৩ সেকেন্ড পর পেজ রিলোড হবে বা ফর্ম রিসেট হবে
+        setTimeout(() => {
+          document.getElementById('user-id').value = '';
+          document.getElementById('user-name-display').style.display = 'none';
+          document.getElementById('selfie-card').style.display = 'none';
+          base64Image = null;
+        }, 3000);
+      }
+    } catch(e) { 
+      showToast('সাবমিট ব্যর্থ হয়েছে! পুনরায় চেষ্টা করুন।'); 
+    }
+    document.getElementById('btn-submit').disabled = false;
+  }
+
+  // মাসিক রিপোর্টের তথ্য লোড
+  async function loadMonthlyReport() {
+    const month = document.getElementById('report-month').value;
+    const listDiv = document.getElementById('monthly-list');
+    listDiv.innerHTML = 'লোড হচ্ছে...';
+    
+    try {
+      const res = await fetch(API_URL, { method: 'POST', body: JSON.stringify({ action: 'getMonthlyReport', month: month }) });
+      const data = await res.json();
+      if(data.success) {
+        monthlyReportData = data.report;
+        renderMonthlyReport(monthlyReportData);
+      }
+    } catch(e) { listDiv.innerHTML = 'ডাটা লোড করতে সমস্যা হয়েছে।'; }
+  }
+
+  function renderMonthlyReport(data) {
+    const listDiv = document.getElementById('monthly-list');
+    if(data.length === 0) { listDiv.innerHTML = 'কোনো রেকর্ড নেই'; return; }
+    listDiv.innerHTML = data.map(r => `
+      <div class="list-item">
+        <div><strong>${r.name}</strong> <small>(${r.id})</small></div>
+        <div style="display:flex; gap: 5px;">
+          <span class="badge Present">উপস্থিত: ${r.present}</span>
+          <span class="badge Late">লেট: ${r.late}</span>
+          <span class="badge Absent">অনুপস্থিত: ${r.absent}</span>
+        </div>
+      </div>
+    `).join('');
+  }
+
+  function filterMonthlyReport() {
+    const query = document.getElementById('search-report').value.toLowerCase();
+    const filtered = monthlyReportData.filter(r => r.name.toLowerCase().includes(query) || r.id.includes(query));
+    renderMonthlyReport(filtered);
+  }
+
+  // আমার তথ্য পেজ লোড
+  async function loadMyRecords() {
+    const id = document.getElementById('my-id').value;
+    const month = document.getElementById('my-month').value;
+    if(!id || !month) return showToast('আইডি এবং মাস উভয়ই সিলেক্ট করুন');
+    
+    const listDiv = document.getElementById('my-history-list');
+    listDiv.innerHTML = 'খোঁজা হচ্ছে...';
+    
+    try {
+      const res = await fetch(API_URL, { method: 'POST', body: JSON.stringify({ action: 'getPersonalRecord', userId: id, monthStr: month }) });
+      const data = await res.json();
+      
+      if(data.success) {
+        document.getElementById('my-summary').style.display = 'flex';
+        document.getElementById('count-present').innerText = data.present;
+        document.getElementById('count-late').innerText = data.late;
+        document.getElementById('count-absent').innerText = data.absent;
+        
+        listDiv.innerHTML = data.records.map(r => `
+          <div class="list-item">
+            <div><strong>${r.date}</strong> <small>(${r.day})</small> <br> <small>সময়: ${r.time}</small></div>
+            <span class="badge ${r.status}">${r.status === 'Present' ? 'উপস্থিত' : 'লেট'}</span>
           </div>
         `).join('');
-      } catch(e) { list.innerHTML = 'নোটিশ লোড করা যায়নি।'; }
-    }
+      } else {
+        listDiv.innerHTML = data.message;
+      }
+    } catch(e) { listDiv.innerHTML = 'ত্রুটি ঘটেছে!'; }
+  }
 
-    async function submitNotice() {
-      const text = document.getElementById('notice-text').value;
-      if(!text) return showToast('নোটিশের বিবরণ লিখুন');
-      
-      try {
-        const res = await fetch(API_URL, { method: 'POST', body: JSON.stringify({ action: 'addNotice', notice: text }) });
-        const data = await res.json();
-        if(data.success) {
-          showToast('নোটিশ সফলভাবে দেওয়া হয়েছে');
-          document.getElementById('notice-text').value = '';
-          loadNotices();
-        }
-      } catch(e) { showToast('ব্যর্থ হয়েছে'); }
-    }
-  </script>
+  // নোটিশ বোর্ড হ্যান্ডলিং
+  async function loadNotices() {
+    const list = document.getElementById('notice-list');
+    list.innerHTML = 'লোড হচ্ছে...';
+    try {
+      const res = await fetch(API_URL + '?action=getNotices');
+      const data = await res.json();
+      list.innerHTML = data.map(n => `
+        <div class="card" style="margin-bottom:10px;">
+          <small style="color:var(--text-light)">📅 ${n.date}</small>
+          <p style="margin-top:5px;">${n.text}</p>
+        </div>
+      `).join('');
+    } catch(e) { list.innerHTML = 'নোটিশ লোড করা যায়নি।'; }
+  }
+
+  async function submitNotice() {
+    const text = document.getElementById('notice-text').value;
+    if(!text) return showToast('নোটিশের বিবরণ লিখুন');
+    
+    try {
+      const res = await fetch(API_URL, { method: 'POST', body: JSON.stringify({ action: 'addNotice', notice: text }) });
+      const data = await res.json();
+      if(data.success) {
+        showToast('নোটিশ সফলভাবে দেওয়া হয়েছে');
+        document.getElementById('notice-text').value = '';
+        loadNotices();
+      }
+    } catch(e) { showToast('ব্যর্থ হয়েছে'); }
+  }
+</script>
+
 </body>
 </html>
