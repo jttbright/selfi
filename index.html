@@ -6,6 +6,7 @@
 <title>উপস্থিতি সিস্টেম</title>
 <link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
+/* আপনার আগের CSS একই রাখুন */
 * {
     margin: 0;
     padding: 0;
@@ -22,7 +23,7 @@ body {
     margin: 0 auto;
 }
 
-/* Header */
+/* ... আপনার আগের সমস্ত CSS এখানে কপি করুন ... */
 .header {
     background: #161b22;
     padding: 15px;
@@ -47,7 +48,6 @@ body {
     font-family: monospace;
 }
 
-/* Navigation */
 .nav {
     display: flex;
     background: #161b22;
@@ -80,7 +80,6 @@ body {
     background: #1c2128;
 }
 
-/* Screens */
 .screen {
     display: none;
     padding: 20px 15px;
@@ -92,7 +91,6 @@ body {
     display: block;
 }
 
-/* Cards */
 .card {
     background: #161b22;
     border: 1px solid #30363d;
@@ -101,7 +99,6 @@ body {
     margin-bottom: 15px;
 }
 
-/* Form elements */
 input, textarea, select {
     width: 100%;
     padding: 12px;
@@ -136,21 +133,11 @@ button:active {
     transform: scale(0.98);
 }
 
-button:disabled {
-    opacity: 0.5;
-    cursor: not-allowed;
-}
-
 .btn-secondary {
     background: #21262d;
     border: 1px solid #30363d;
 }
 
-.btn-danger {
-    background: #f85149;
-}
-
-/* Status bar */
 .status-bar {
     background: #161b22;
     border-radius: 12px;
@@ -170,7 +157,6 @@ button:disabled {
     color: #d29922;
 }
 
-/* User card */
 .user-card {
     display: flex;
     align-items: center;
@@ -192,7 +178,6 @@ button:disabled {
     font-size: 2rem;
 }
 
-/* Camera */
 .camera-container {
     position: relative;
     background: #000;
@@ -207,18 +192,18 @@ video, #preview {
     display: block;
 }
 
-.camera-overlay {
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    border: 2px dashed #2f81f7;
-    border-radius: 12px;
-    pointer-events: none;
+.hidden {
+    display: none;
 }
 
-/* Tables */
+.text-center {
+    text-align: center;
+}
+
+.mt-20 {
+    margin-top: 20px;
+}
+
 .table-container {
     overflow-x: auto;
     margin: 15px 0;
@@ -238,10 +223,8 @@ th, td {
 th {
     background: #1c2128;
     color: #8b949e;
-    font-weight: 500;
 }
 
-/* Stats grid */
 .stats-grid {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
@@ -261,7 +244,6 @@ th {
     font-weight: bold;
 }
 
-/* Notices */
 .notice-item {
     background: #1c2128;
     padding: 15px;
@@ -281,7 +263,6 @@ th {
     margin-bottom: 8px;
 }
 
-/* Toast */
 .toast {
     position: fixed;
     bottom: 80px;
@@ -313,7 +294,6 @@ th {
     }
 }
 
-/* Modal */
 .modal {
     display: none;
     position: fixed;
@@ -340,49 +320,12 @@ th {
     width: 100%;
     border: 1px solid #30363d;
 }
-
-/* Loading */
-.loading {
-    text-align: center;
-    padding: 40px;
-    color: #8b949e;
-}
-
-.spinner {
-    border: 3px solid #21262d;
-    border-top: 3px solid #2f81f7;
-    border-radius: 50%;
-    width: 40px;
-    height: 40px;
-    animation: spin 1s linear infinite;
-    margin: 0 auto 15px;
-}
-
-@keyframes spin {
-    0% { transform: rotate(0deg); }
-    100% { transform: rotate(360deg); }
-}
-
-/* Utility */
-.hidden {
-    display: none;
-}
-
-.text-center {
-    text-align: center;
-}
-
-.mt-20 {
-    margin-top: 20px;
-}
 </style>
 </head>
 <body>
 
 <div class="header">
-    <div class="logo">
-        📋 উপস্থিতি সিস্টেম
-    </div>
+    <div class="logo">📋 উপস্থিতি সিস্টেম</div>
     <div class="time" id="currentTime"></div>
 </div>
 
@@ -395,13 +338,13 @@ th {
     <div id="step1">
         <div class="card">
             <label>আপনার আইডি লিখুন</label>
-            <input type="text" id="userId" placeholder="যেমন: EMP001" autocomplete="off">
+            <input type="text" id="userId" placeholder="যেমন: EMP001">
             <button onclick="checkUser()">পরবর্তী →</button>
         </div>
     </div>
 
     <div id="step2" class="hidden">
-        <div class="user-card" id="userCard">
+        <div class="user-card">
             <div class="user-avatar">👤</div>
             <div>
                 <div id="userName">-</div>
@@ -411,14 +354,13 @@ th {
 
         <div class="camera-container" id="cameraContainer">
             <video id="video" autoplay playsinline></video>
-            <div class="camera-overlay"></div>
         </div>
         <img id="preview" class="hidden">
         
         <button id="captureBtn" onclick="takePhoto()">📸 সেলফি তুলুন</button>
         <button id="retakeBtn" class="btn-secondary hidden" onclick="retakePhoto()">🔄 পুনরায় ছবি তুলুন</button>
         <button id="submitBtn" class="hidden" onclick="submitAttendance()">✅ জমা দিন</button>
-        <button id="backBtn" class="btn-secondary mt-20" onclick="goBack()">← পিছনে যান</button>
+        <button class="btn-secondary mt-20" onclick="goBack()">← পিছনে যান</button>
     </div>
 
     <div id="successScreen" class="hidden text-center">
@@ -447,7 +389,7 @@ th {
     
     <div id="adminPanel" class="hidden">
         <div class="card">
-            <div style="display: flex; justify-content: space-between; align-items: center;">
+            <div style="display: flex; justify-content: space-between;">
                 <span>👑 অ্যাডমিন মোড</span>
                 <button onclick="adminLogout()" class="btn-secondary" style="width: auto;">লগআউট</button>
             </div>
@@ -455,7 +397,7 @@ th {
     </div>
     
     <div id="noticesList">
-        <div class="loading">নোটিশ লোড হচ্ছে...</div>
+        <div class="card text-center">লোড হচ্ছে...</div>
     </div>
 </div>
 
@@ -475,7 +417,7 @@ th {
         </div>
         
         <div class="card">
-            <input type="text" id="searchUser" placeholder="🔍 নাম বা আইডি অনুসন্ধান..." onkeyup="filterReport()">
+            <input type="text" id="searchUser" placeholder="🔍 নাম বা আইডি অনুসন্ধান...">
         </div>
         
         <div id="reportContainer"></div>
@@ -486,14 +428,11 @@ th {
 <div class="screen" id="screen-mine">
     <div class="card">
         <label>আপনার আইডি</label>
-        <input type="text" id="myUserId" placeholder="যেমন: EMP001" autocomplete="off">
-        
+        <input type="text" id="myUserId">
         <label>মাস নির্বাচন করুন</label>
         <input type="month" id="myMonthPicker">
-        
         <button onclick="loadMyRecords()">👤 আমার রেকর্ড দেখুন</button>
     </div>
-    
     <div id="myRecords"></div>
 </div>
 
@@ -505,7 +444,7 @@ th {
     <button class="nav-btn" onclick="showScreen('mine')">👤 আমার</button>
 </div>
 
-<!-- Admin Login Modal -->
+<!-- Modals -->
 <div id="adminModal" class="modal">
     <div class="modal-content">
         <h3>🔐 অ্যাডমিন লগইন</h3>
@@ -516,7 +455,6 @@ th {
     </div>
 </div>
 
-<!-- Notice Modal -->
 <div id="noticeModal" class="modal">
     <div class="modal-content">
         <h3>📝 নতুন নোটিশ</h3>
@@ -531,12 +469,12 @@ th {
 <div id="toast" class="toast"></div>
 
 <script>
-// ==================== IMPORTANT: SET YOUR GAS URL HERE ====================
-const GAS_URL = 'https://script.google.com/macros/s/AKfycbzmBe7KnbuJilj4bYD--1pI87C1nvXboOoyoKOLuxx2l0BFKLFQ4AHoiGp13KNHtrUKpw/exec';
-// Example: 'https://script.google.com/macros/s/AKfycby.../exec'
-// ==========================================================================
+// ==================== কনফিগারেশন ====================
+// 👇 আপনার GAS URL এখানে দিন
+const GAS_URL = 'https://script.google.com/macros/s/AKfycbx24Gby0_i0UBhn3o1Ic7CsphDjj7DFUtvjXUWZ4duPncbuzIILHd7QlP2TAhKZNZD2VA/exec';
+// উদাহরণ: 'https://script.google.com/macros/s/AKfycbxxxxxx/exec'
 
-// ==================== GLOBAL VARIABLES ====================
+// ==================== গ্লোবাল ভেরিয়েবল ====================
 let currentUser = null;
 let capturedPhoto = null;
 let videoStream = null;
@@ -545,59 +483,67 @@ let adminId = '';
 let adminPin = '';
 let allReports = [];
 
-// ==================== API CALL (FOR GITHUB) ====================
-async function apiCall(action, params) {
-    try {
-        const response = await fetch(GAS_URL, {
-            method: 'POST',
-            mode: 'no-cors',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({ action, ...params })
-        });
-        
-        // For no-cors mode, we need to handle differently
-        const result = await response.json();
-        return result;
-    } catch (error) {
-        console.error('API Error:', error);
-        throw error;
-    }
-}
-
-// Alternative method if above doesn't work
-async function apiCallAlt(action, params) {
+// ==================== JSONP API কল ফাংশন (CORS সমাধান) ====================
+function apiCall(action, params) {
     return new Promise((resolve, reject) => {
-        const form = document.createElement('form');
-        const script = document.createElement('script');
+        // চেক করুন GAS URL সেট করা আছে কিনা
+        if (!GAS_URL || GAS_URL === 'YOUR_GAS_WEB_APP_URL_HERE') {
+            reject(new Error('GAS_URL সেট করুন'));
+            showToast('⚠️ দয়া করে GAS_URL সেট করুন', 'error');
+            return;
+        }
+
+        // ইউনিক কলব্যাক নাম তৈরি করুন
+        const callbackName = 'jsonp_callback_' + Date.now() + '_' + Math.random().toString(36).substr(2, 8);
         
-        // Create a hidden iframe for JSONP style
-        const callbackName = 'callback_' + Date.now();
-        window[callbackName] = function(data) {
-            delete window[callbackName];
-            document.body.removeChild(script);
-            resolve(data);
-        };
-        
-        const url = new URL(GAS_URL);
-        url.searchParams.append('action', action);
-        url.searchParams.append('data', JSON.stringify(params));
-        url.searchParams.append('callback', callbackName);
-        
-        script.src = url.toString();
-        document.body.appendChild(script);
-        
-        setTimeout(() => {
+        // টাইমআউট সেট করুন (30 সেকেন্ড)
+        const timeout = setTimeout(() => {
             if (window[callbackName]) {
                 delete window[callbackName];
                 reject(new Error('Request timeout'));
+                showToast('সংযোগ টাইমআউট হয়েছে', 'error');
             }
         }, 30000);
+        
+        // কলব্যাক ফাংশন ডিফাইন করুন
+        window[callbackName] = function(response) {
+            clearTimeout(timeout);
+            delete window[callbackName];
+            
+            // স্ক্রিপ্ট ট্যাগ রিমুভ করুন
+            const scripts = document.querySelectorAll('script[src*="' + callbackName + '"]');
+            scripts.forEach(script => script.remove());
+            
+            if (response && response.success !== undefined) {
+                resolve(response);
+            } else if (response && response.result) {
+                resolve(response.result);
+            } else {
+                resolve(response);
+            }
+        };
+        
+        // URL প্যারামিটার তৈরি করুন
+        const urlParams = new URLSearchParams();
+        urlParams.append('action', action);
+        urlParams.append('data', JSON.stringify(params));
+        urlParams.append('callback', callbackName);
+        
+        // JSONP স্ক্রিপ্ট তৈরি করুন
+        const script = document.createElement('script');
+        script.src = `${GAS_URL}?${urlParams.toString()}`;
+        script.onerror = function() {
+            clearTimeout(timeout);
+            delete window[callbackName];
+            reject(new Error('Network error'));
+            showToast('নেটওয়ার্ক সংযোগ সমস্যা', 'error');
+        };
+        
+        document.head.appendChild(script);
     });
 }
 
-// ==================== SCREEN MANAGEMENT ====================
+// ==================== স্ক্রিন ম্যানেজমেন্ট ====================
 function showScreen(screen) {
     document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
     document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
@@ -615,14 +561,13 @@ function showScreen(screen) {
     }
 }
 
-// ==================== CLOCK ====================
+// ==================== ক্লক এবং স্ট্যাটাস ====================
 function updateClock() {
     const now = new Date();
     const timeStr = now.toLocaleTimeString('bn-BD');
     const dateStr = now.toLocaleDateString('bn-BD');
     document.getElementById('currentTime').textContent = `${dateStr} ${timeStr}`;
     
-    // Update status bar
     const hour = now.getHours();
     const minute = now.getMinutes();
     const total = hour * 60 + minute;
@@ -646,7 +591,7 @@ function updateClock() {
 setInterval(updateClock, 1000);
 updateClock();
 
-// ==================== ATTENDANCE ====================
+// ==================== উপস্থিতি ফাংশন ====================
 async function checkUser() {
     const userId = document.getElementById('userId').value.trim().toUpperCase();
     if (!userId) {
@@ -654,7 +599,7 @@ async function checkUser() {
         return;
     }
     
-    showLoading(true);
+    showToast('যাচাই করা হচ্ছে...', 'info');
     try {
         const result = await apiCall('validateUser', { userId: userId });
         if (result.success) {
@@ -665,14 +610,14 @@ async function checkUser() {
             document.getElementById('step2').classList.remove('hidden');
             startCamera();
             saveUserId(userId);
+            showToast('আইডি বৈধ ✅', 'success');
         } else {
-            showToast(result.message, 'error');
+            showToast(result.message || 'আইডি পাওয়া যায়নি', 'error');
         }
     } catch (error) {
         console.error(error);
-        showToast('সংযোগ সমস্যা। GAS URL চেক করুন', 'error');
+        showToast('সংযোগ সমস্যা! GAS URL চেক করুন', 'error');
     }
-    showLoading(false);
 }
 
 function startCamera() {
@@ -698,31 +643,27 @@ function stopCamera() {
 function takePhoto() {
     const video = document.getElementById('video');
     const canvas = document.createElement('canvas');
-    canvas.width = video.videoWidth;
-    canvas.height = video.videoHeight;
+    canvas.width = video.videoWidth || 400;
+    canvas.height = video.videoHeight || 300;
     const ctx = canvas.getContext('2d');
     
-    // Flip horizontal for selfie
     ctx.translate(canvas.width, 0);
     ctx.scale(-1, 1);
-    ctx.drawImage(video, 0, 0);
+    ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
     ctx.setTransform(1, 0, 0, 1, 0, 0);
     
-    // Add timestamp
     const now = new Date();
     const timestamp = now.toLocaleString('bn-BD');
     ctx.fillStyle = 'rgba(0,0,0,0.7)';
     ctx.fillRect(0, canvas.height - 40, canvas.width, 40);
     ctx.fillStyle = '#fff';
-    ctx.font = '14px monospace';
+    ctx.font = '12px monospace';
     ctx.fillText(timestamp + ' ' + currentUser.id, 10, canvas.height - 15);
     
     capturedPhoto = canvas.toDataURL('image/jpeg', 0.85);
     
-    // Show preview
-    const preview = document.getElementById('preview');
-    preview.src = capturedPhoto;
-    preview.classList.remove('hidden');
+    document.getElementById('preview').src = capturedPhoto;
+    document.getElementById('preview').classList.remove('hidden');
     document.getElementById('cameraContainer').classList.add('hidden');
     document.getElementById('captureBtn').classList.add('hidden');
     document.getElementById('retakeBtn').classList.remove('hidden');
@@ -747,7 +688,7 @@ async function submitAttendance() {
         return;
     }
     
-    showLoading(true);
+    showToast('জমা দেওয়া হচ্ছে...', 'info');
     try {
         const result = await apiCall('submitAttendance', {
             userId: currentUser.id,
@@ -757,8 +698,7 @@ async function submitAttendance() {
         
         if (result.success) {
             document.getElementById('step2').classList.add('hidden');
-            const successDiv = document.getElementById('successScreen');
-            successDiv.classList.remove('hidden');
+            document.getElementById('successScreen').classList.remove('hidden');
             
             const icon = document.getElementById('successIcon');
             const title = document.getElementById('successTitle');
@@ -768,13 +708,13 @@ async function submitAttendance() {
                 icon.textContent = '✅';
                 title.textContent = 'উপস্থিতি সফল!';
                 message.textContent = `${currentUser.name}\n${result.date} ${result.time}\nসময়মতো উপস্থিতি হয়েছে`;
+                showToast('উপস্থিতি সফল ✅', 'success');
             } else {
                 icon.textContent = '⚠️';
                 title.textContent = 'লেট উপস্থিতি!';
                 message.textContent = `${currentUser.name}\n${result.date} ${result.time}\nলেট হিসাবে গণনা করা হবে`;
+                showToast('লেট উপস্থিতি ⚠️', 'warning');
             }
-            
-            showToast(result.status === 'Present' ? 'উপস্থিতি সফল ✅' : 'লেট উপস্থিতি ⚠️', 'success');
         } else {
             showToast(result.message, 'error');
         }
@@ -782,7 +722,6 @@ async function submitAttendance() {
         console.error(error);
         showToast('সংযোগ সমস্যা', 'error');
     }
-    showLoading(false);
 }
 
 function goBack() {
@@ -807,7 +746,7 @@ function resetAttendance() {
     currentUser = null;
 }
 
-// ==================== NOTICES ====================
+// ==================== নোটিশ ফাংশন ====================
 async function loadNotices() {
     try {
         const result = await apiCall('getNotices', {});
@@ -833,7 +772,7 @@ async function loadNotices() {
     }
 }
 
-// ==================== ADMIN ====================
+// ==================== অ্যাডমিন ফাংশন ====================
 function showAdminLogin() {
     document.getElementById('adminModal').classList.add('active');
 }
@@ -853,7 +792,7 @@ async function adminLogin() {
         return;
     }
     
-    showLoading(true);
+    showToast('লগইন হচ্ছে...', 'info');
     try {
         const result = await apiCall('adminLogin', { id: id, pin: pin });
         if (result.success) {
@@ -863,7 +802,6 @@ async function adminLogin() {
             
             closeAdminModal();
             
-            // Update UI
             document.getElementById('adminLoginBar').classList.add('hidden');
             document.getElementById('adminPanel').classList.remove('hidden');
             document.getElementById('adminNoticeBtn').classList.remove('hidden');
@@ -872,7 +810,6 @@ async function adminLogin() {
             
             showToast('অ্যাডমিন লগইন সফল 👑', 'success');
             
-            // Load monthly report
             const now = new Date();
             const month = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}`;
             document.getElementById('monthPicker').value = month;
@@ -884,7 +821,6 @@ async function adminLogin() {
         console.error(error);
         showToast('সংযোগ সমস্যা', 'error');
     }
-    showLoading(false);
 }
 
 function adminLogout() {
@@ -926,7 +862,7 @@ async function addNotice() {
         return;
     }
     
-    showLoading(true);
+    showToast('পোস্ট করা হচ্ছে...', 'info');
     try {
         const result = await apiCall('addNotice', {
             title: title,
@@ -947,10 +883,9 @@ async function addNotice() {
         console.error(error);
         showToast('সংযোগ সমস্যা', 'error');
     }
-    showLoading(false);
 }
 
-// ==================== MONTHLY REPORT ====================
+// ==================== মাসিক রিপোর্ট ====================
 async function loadMonthlyReport() {
     if (!isAdminMode) {
         showToast('অ্যাডমিন লগইন প্রয়োজন', 'error');
@@ -963,7 +898,7 @@ async function loadMonthlyReport() {
         return;
     }
     
-    showLoading(true);
+    showToast('রিপোর্ট লোড হচ্ছে...', 'info');
     try {
         const result = await apiCall('getMonthlySummary', {
             monthStr: month,
@@ -974,6 +909,7 @@ async function loadMonthlyReport() {
         if (result.success && result.data) {
             allReports = result.data;
             displayReport(allReports);
+            showToast('রিপোর্ট লোড হয়েছে ✅', 'success');
         } else {
             document.getElementById('reportContainer').innerHTML = '<div class="card text-center">এই মাসে কোনো রেকর্ড নেই</div>';
         }
@@ -981,7 +917,6 @@ async function loadMonthlyReport() {
         console.error(error);
         showToast('সংযোগ সমস্যা', 'error');
     }
-    showLoading(false);
 }
 
 function displayReport(data) {
@@ -992,7 +927,7 @@ function displayReport(data) {
     
     let html = '<div class="table-container"><table><thead><tr>';
     html += '<th>আইডি</th><th>নাম</th><th>উপস্থিত</th><th>লেট</th><th>অনুপস্থিত</th>';
-    html += '<tr></thead><tbody>';
+    html += '</tr></thead><tbody>';
     
     data.forEach(row => {
         html += `<tr>
@@ -1006,18 +941,20 @@ function displayReport(data) {
     
     html += '</tbody></table></div>';
     document.getElementById('reportContainer').innerHTML = html;
+    
+    // সার্চ ফাংশন
+    const searchInput = document.getElementById('searchUser');
+    searchInput.onkeyup = function() {
+        const term = this.value.toLowerCase();
+        const filtered = allReports.filter(row => 
+            row.id.toLowerCase().includes(term) || 
+            row.name.toLowerCase().includes(term)
+        );
+        displayReport(filtered);
+    };
 }
 
-function filterReport() {
-    const searchTerm = document.getElementById('searchUser').value.toLowerCase();
-    const filtered = allReports.filter(row => 
-        row.id.toLowerCase().includes(searchTerm) || 
-        row.name.toLowerCase().includes(searchTerm)
-    );
-    displayReport(filtered);
-}
-
-// ==================== MY RECORDS ====================
+// ==================== ব্যক্তিগত রেকর্ড ====================
 async function loadMyRecords() {
     const userId = document.getElementById('myUserId').value.trim().toUpperCase();
     const month = document.getElementById('myMonthPicker').value;
@@ -1033,7 +970,7 @@ async function loadMyRecords() {
     }
     
     saveUserId(userId);
-    showLoading(true);
+    showToast('রেকর্ড লোড হচ্ছে...', 'info');
     
     try {
         const result = await apiCall('getPersonalRecord', {
@@ -1044,7 +981,7 @@ async function loadMyRecords() {
         const container = document.getElementById('myRecords');
         
         if (result.success) {
-            if (result.records.length === 0) {
+            if (!result.records || result.records.length === 0) {
                 container.innerHTML = '<div class="card text-center">এই মাসে কোনো রেকর্ড নেই</div>';
                 return;
             }
@@ -1104,18 +1041,18 @@ async function loadMyRecords() {
             
             html += '</tbody></table></div>';
             container.innerHTML = html;
+            showToast('রেকর্ড লোড হয়েছে ✅', 'success');
         } else {
             container.innerHTML = `<div class="card text-center">${result.message}</div>`;
+            showToast(result.message, 'error');
         }
     } catch (error) {
         console.error(error);
         showToast('সংযোগ সমস্যা', 'error');
     }
-    
-    showLoading(false);
 }
 
-// ==================== UTILITIES ====================
+// ==================== ইউটিলিটি ফাংশন ====================
 function saveUserId(id) {
     let ids = JSON.parse(localStorage.getItem('attendance_ids') || '[]');
     ids = ids.filter(i => i !== id);
@@ -1127,6 +1064,7 @@ function saveUserId(id) {
 function showToast(message, type) {
     const toast = document.getElementById('toast');
     toast.textContent = message;
+    toast.style.background = type === 'error' ? '#f85149' : type === 'success' ? '#3fb950' : '#1c2128';
     toast.className = 'toast show';
     
     setTimeout(() => {
@@ -1134,34 +1072,31 @@ function showToast(message, type) {
     }, 3000);
 }
 
-function showLoading(show) {
-    // You can implement loading overlay here if needed
-}
-
 function escapeHtml(text) {
+    if (!text) return '';
     const div = document.createElement('div');
     div.textContent = text;
     return div.innerHTML;
 }
 
-// ==================== INITIALIZATION ====================
+// ==================== ইনিশিয়ালাইজেশন ====================
 async function init() {
-    // Check if GAS URL is set
-    if (GAS_URL === 'YOUR_GAS_WEB_APP_URL_HERE') {
-        showToast('দয়া করে GAS_URL সেট করুন', 'error');
+    if (!GAS_URL || GAS_URL === 'YOUR_GAS_WEB_APP_URL_HERE') {
+        showToast('⚠️ দয়া করে GAS_URL সেট করুন', 'error');
         console.error('Please set your GAS_URL in the script');
+        document.getElementById('noticesList').innerHTML = '<div class="card text-center">⚠️ GAS_URL সেট করুন</div>';
+    } else {
+        console.log('GAS_URL configured:', GAS_URL);
+        await loadNotices();
     }
     
-    // Set default month
     const now = new Date();
     const month = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}`;
     document.getElementById('myMonthPicker').value = month;
     document.getElementById('monthPicker').value = month;
-    
-    // Load notices
-    await loadNotices();
 }
 
+// স্টার্ট করুন
 init();
 </script>
 </body>
