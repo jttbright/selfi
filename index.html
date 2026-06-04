@@ -1,0 +1,1168 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<title>উপস্থিতি সিস্টেম</title>
+<link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Hind Siliguri', sans-serif;
+    background: #0d1117;
+    color: #e6edf3;
+    padding: 0;
+    margin: 0;
+    max-width: 500px;
+    margin: 0 auto;
+}
+
+/* Header */
+.header {
+    background: #161b22;
+    padding: 15px;
+    border-bottom: 1px solid #30363d;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+}
+
+.logo {
+    font-size: 1.5rem;
+    font-weight: bold;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.time {
+    font-size: 0.85rem;
+    color: #39d353;
+    margin-top: 5px;
+    font-family: monospace;
+}
+
+/* Navigation */
+.nav {
+    display: flex;
+    background: #161b22;
+    border-top: 1px solid #30363d;
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    max-width: 500px;
+    margin: 0 auto;
+    z-index: 100;
+}
+
+.nav-btn {
+    flex: 1;
+    padding: 12px;
+    text-align: center;
+    background: none;
+    border: none;
+    color: #8b949e;
+    cursor: pointer;
+    font-family: 'Hind Siliguri', sans-serif;
+    font-size: 0.85rem;
+    transition: all 0.3s;
+}
+
+.nav-btn.active {
+    color: #2f81f7;
+    border-top: 2px solid #2f81f7;
+    background: #1c2128;
+}
+
+/* Screens */
+.screen {
+    display: none;
+    padding: 20px 15px;
+    padding-bottom: 70px;
+    min-height: 100vh;
+}
+
+.screen.active {
+    display: block;
+}
+
+/* Cards */
+.card {
+    background: #161b22;
+    border: 1px solid #30363d;
+    border-radius: 12px;
+    padding: 20px;
+    margin-bottom: 15px;
+}
+
+/* Form elements */
+input, textarea, select {
+    width: 100%;
+    padding: 12px;
+    margin: 8px 0 15px;
+    background: #21262d;
+    border: 1px solid #30363d;
+    border-radius: 8px;
+    color: #e6edf3;
+    font-family: 'Hind Siliguri', sans-serif;
+    font-size: 1rem;
+}
+
+input:focus, textarea:focus, select:focus {
+    outline: none;
+    border-color: #2f81f7;
+}
+
+button {
+    background: #2f81f7;
+    color: white;
+    border: none;
+    padding: 12px 20px;
+    border-radius: 8px;
+    font-family: 'Hind Siliguri', sans-serif;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: all 0.3s;
+    width: 100%;
+}
+
+button:active {
+    transform: scale(0.98);
+}
+
+button:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.btn-secondary {
+    background: #21262d;
+    border: 1px solid #30363d;
+}
+
+.btn-danger {
+    background: #f85149;
+}
+
+/* Status bar */
+.status-bar {
+    background: #161b22;
+    border-radius: 12px;
+    padding: 15px;
+    margin-bottom: 15px;
+    text-align: center;
+    border-left: 4px solid;
+}
+
+.status-present {
+    border-left-color: #3fb950;
+    color: #3fb950;
+}
+
+.status-late {
+    border-left-color: #d29922;
+    color: #d29922;
+}
+
+/* User card */
+.user-card {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    background: #1c2128;
+    padding: 15px;
+    border-radius: 12px;
+    margin-bottom: 20px;
+}
+
+.user-avatar {
+    width: 60px;
+    height: 60px;
+    background: linear-gradient(135deg, #2f81f7, #a371f7);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 2rem;
+}
+
+/* Camera */
+.camera-container {
+    position: relative;
+    background: #000;
+    border-radius: 12px;
+    overflow: hidden;
+    margin-bottom: 15px;
+}
+
+video, #preview {
+    width: 100%;
+    height: auto;
+    display: block;
+}
+
+.camera-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    border: 2px dashed #2f81f7;
+    border-radius: 12px;
+    pointer-events: none;
+}
+
+/* Tables */
+.table-container {
+    overflow-x: auto;
+    margin: 15px 0;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+th, td {
+    padding: 10px;
+    text-align: left;
+    border-bottom: 1px solid #30363d;
+}
+
+th {
+    background: #1c2128;
+    color: #8b949e;
+    font-weight: 500;
+}
+
+/* Stats grid */
+.stats-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+    margin: 15px 0;
+}
+
+.stat-card {
+    background: #1c2128;
+    padding: 15px;
+    text-align: center;
+    border-radius: 8px;
+}
+
+.stat-number {
+    font-size: 1.8rem;
+    font-weight: bold;
+}
+
+/* Notices */
+.notice-item {
+    background: #1c2128;
+    padding: 15px;
+    border-radius: 8px;
+    margin-bottom: 10px;
+    border-left: 3px solid #2f81f7;
+}
+
+.notice-title {
+    font-weight: bold;
+    margin-bottom: 5px;
+}
+
+.notice-date {
+    font-size: 0.8rem;
+    color: #8b949e;
+    margin-bottom: 8px;
+}
+
+/* Toast */
+.toast {
+    position: fixed;
+    bottom: 80px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: #1c2128;
+    color: white;
+    padding: 10px 20px;
+    border-radius: 8px;
+    z-index: 1000;
+    display: none;
+    border: 1px solid #30363d;
+    white-space: nowrap;
+}
+
+.toast.show {
+    display: block;
+    animation: fadeInUp 0.3s;
+}
+
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateX(-50%) translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(-50%) translateY(0);
+    }
+}
+
+/* Modal */
+.modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0,0,0,0.8);
+    z-index: 200;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+}
+
+.modal.active {
+    display: flex;
+}
+
+.modal-content {
+    background: #161b22;
+    border-radius: 12px;
+    padding: 20px;
+    max-width: 400px;
+    width: 100%;
+    border: 1px solid #30363d;
+}
+
+/* Loading */
+.loading {
+    text-align: center;
+    padding: 40px;
+    color: #8b949e;
+}
+
+.spinner {
+    border: 3px solid #21262d;
+    border-top: 3px solid #2f81f7;
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    animation: spin 1s linear infinite;
+    margin: 0 auto 15px;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+/* Utility */
+.hidden {
+    display: none;
+}
+
+.text-center {
+    text-align: center;
+}
+
+.mt-20 {
+    margin-top: 20px;
+}
+</style>
+</head>
+<body>
+
+<div class="header">
+    <div class="logo">
+        📋 উপস্থিতি সিস্টেম
+    </div>
+    <div class="time" id="currentTime"></div>
+</div>
+
+<!-- Attendance Screen -->
+<div class="screen active" id="screen-attendance">
+    <div class="status-bar" id="statusBar">
+        <div class="status-text" id="statusText">⏳ লোড হচ্ছে...</div>
+    </div>
+
+    <div id="step1">
+        <div class="card">
+            <label>আপনার আইডি লিখুন</label>
+            <input type="text" id="userId" placeholder="যেমন: EMP001" autocomplete="off">
+            <button onclick="checkUser()">পরবর্তী →</button>
+        </div>
+    </div>
+
+    <div id="step2" class="hidden">
+        <div class="user-card" id="userCard">
+            <div class="user-avatar">👤</div>
+            <div>
+                <div id="userName">-</div>
+                <div id="userIdDisplay">-</div>
+            </div>
+        </div>
+
+        <div class="camera-container" id="cameraContainer">
+            <video id="video" autoplay playsinline></video>
+            <div class="camera-overlay"></div>
+        </div>
+        <img id="preview" class="hidden">
+        
+        <button id="captureBtn" onclick="takePhoto()">📸 সেলফি তুলুন</button>
+        <button id="retakeBtn" class="btn-secondary hidden" onclick="retakePhoto()">🔄 পুনরায় ছবি তুলুন</button>
+        <button id="submitBtn" class="hidden" onclick="submitAttendance()">✅ জমা দিন</button>
+        <button id="backBtn" class="btn-secondary mt-20" onclick="goBack()">← পিছনে যান</button>
+    </div>
+
+    <div id="successScreen" class="hidden text-center">
+        <div class="card">
+            <div style="font-size: 4rem;" id="successIcon">✓</div>
+            <h2 id="successTitle">উপস্থিতি সফল!</h2>
+            <p id="successMessage"></p>
+            <button onclick="resetAttendance()">🔄 নতুন উপস্থিতি</button>
+        </div>
+    </div>
+</div>
+
+<!-- Notices Screen -->
+<div class="screen" id="screen-notices">
+    <div class="card">
+        <div style="display: flex; justify-content: space-between; align-items: center;">
+            <h3>📢 নোটিশ বোর্ড</h3>
+            <button id="adminNoticeBtn" class="hidden" style="width: auto; padding: 8px 15px;" onclick="showNoticeForm()">+ নোটিশ</button>
+        </div>
+    </div>
+    
+    <div id="adminLoginBar" class="card text-center">
+        <p>অ্যাডমিন লগইন করুন</p>
+        <button onclick="showAdminLogin()" style="background: #d29922;">🔐 অ্যাডমিন লগইন</button>
+    </div>
+    
+    <div id="adminPanel" class="hidden">
+        <div class="card">
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+                <span>👑 অ্যাডমিন মোড</span>
+                <button onclick="adminLogout()" class="btn-secondary" style="width: auto;">লগআউট</button>
+            </div>
+        </div>
+    </div>
+    
+    <div id="noticesList">
+        <div class="loading">নোটিশ লোড হচ্ছে...</div>
+    </div>
+</div>
+
+<!-- Monthly Report Screen -->
+<div class="screen" id="screen-monthly">
+    <div id="monthlyGate" class="card text-center">
+        <p>মাসিক রিপোর্ট দেখতে অ্যাডমিন লগইন করুন</p>
+        <button onclick="showAdminLogin()" style="background: #d29922;">🔐 অ্যাডমিন লগইন</button>
+    </div>
+    
+    <div id="monthlyPanel" class="hidden">
+        <div class="card">
+            <div style="display: flex; gap: 10px;">
+                <input type="month" id="monthPicker" style="flex: 1;">
+                <button onclick="loadMonthlyReport()" style="width: auto;">দেখুন</button>
+            </div>
+        </div>
+        
+        <div class="card">
+            <input type="text" id="searchUser" placeholder="🔍 নাম বা আইডি অনুসন্ধান..." onkeyup="filterReport()">
+        </div>
+        
+        <div id="reportContainer"></div>
+    </div>
+</div>
+
+<!-- My Records Screen -->
+<div class="screen" id="screen-mine">
+    <div class="card">
+        <label>আপনার আইডি</label>
+        <input type="text" id="myUserId" placeholder="যেমন: EMP001" autocomplete="off">
+        
+        <label>মাস নির্বাচন করুন</label>
+        <input type="month" id="myMonthPicker">
+        
+        <button onclick="loadMyRecords()">👤 আমার রেকর্ড দেখুন</button>
+    </div>
+    
+    <div id="myRecords"></div>
+</div>
+
+<!-- Navigation -->
+<div class="nav">
+    <button class="nav-btn active" onclick="showScreen('attendance')">📸 উপস্থিতি</button>
+    <button class="nav-btn" onclick="showScreen('notices')">📢 নোটিশ</button>
+    <button class="nav-btn" onclick="showScreen('monthly')">📊 মাসিক</button>
+    <button class="nav-btn" onclick="showScreen('mine')">👤 আমার</button>
+</div>
+
+<!-- Admin Login Modal -->
+<div id="adminModal" class="modal">
+    <div class="modal-content">
+        <h3>🔐 অ্যাডমিন লগইন</h3>
+        <input type="text" id="adminId" placeholder="অ্যাডমিন আইডি">
+        <input type="password" id="adminPin" placeholder="পিন">
+        <button onclick="adminLogin()">প্রবেশ করুন</button>
+        <button onclick="closeAdminModal()" class="btn-secondary mt-20">বাতিল</button>
+    </div>
+</div>
+
+<!-- Notice Modal -->
+<div id="noticeModal" class="modal">
+    <div class="modal-content">
+        <h3>📝 নতুন নোটিশ</h3>
+        <input type="text" id="noticeTitle" placeholder="শিরোনাম">
+        <input type="date" id="noticeDate">
+        <textarea id="noticeBody" rows="4" placeholder="নোটিশের বিবরণ..."></textarea>
+        <button onclick="addNotice()">পোস্ট করুন</button>
+        <button onclick="closeNoticeModal()" class="btn-secondary mt-20">বাতিল</button>
+    </div>
+</div>
+
+<div id="toast" class="toast"></div>
+
+<script>
+// ==================== IMPORTANT: SET YOUR GAS URL HERE ====================
+const GAS_URL = 'https://script.google.com/macros/s/AKfycbzmBe7KnbuJilj4bYD--1pI87C1nvXboOoyoKOLuxx2l0BFKLFQ4AHoiGp13KNHtrUKpw/exec';
+// Example: 'https://script.google.com/macros/s/AKfycby.../exec'
+// ==========================================================================
+
+// ==================== GLOBAL VARIABLES ====================
+let currentUser = null;
+let capturedPhoto = null;
+let videoStream = null;
+let isAdminMode = false;
+let adminId = '';
+let adminPin = '';
+let allReports = [];
+
+// ==================== API CALL (FOR GITHUB) ====================
+async function apiCall(action, params) {
+    try {
+        const response = await fetch(GAS_URL, {
+            method: 'POST',
+            mode: 'no-cors',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ action, ...params })
+        });
+        
+        // For no-cors mode, we need to handle differently
+        const result = await response.json();
+        return result;
+    } catch (error) {
+        console.error('API Error:', error);
+        throw error;
+    }
+}
+
+// Alternative method if above doesn't work
+async function apiCallAlt(action, params) {
+    return new Promise((resolve, reject) => {
+        const form = document.createElement('form');
+        const script = document.createElement('script');
+        
+        // Create a hidden iframe for JSONP style
+        const callbackName = 'callback_' + Date.now();
+        window[callbackName] = function(data) {
+            delete window[callbackName];
+            document.body.removeChild(script);
+            resolve(data);
+        };
+        
+        const url = new URL(GAS_URL);
+        url.searchParams.append('action', action);
+        url.searchParams.append('data', JSON.stringify(params));
+        url.searchParams.append('callback', callbackName);
+        
+        script.src = url.toString();
+        document.body.appendChild(script);
+        
+        setTimeout(() => {
+            if (window[callbackName]) {
+                delete window[callbackName];
+                reject(new Error('Request timeout'));
+            }
+        }, 30000);
+    });
+}
+
+// ==================== SCREEN MANAGEMENT ====================
+function showScreen(screen) {
+    document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+    document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+    
+    document.getElementById(`screen-${screen}`).classList.add('active');
+    if (screen === 'attendance') {
+        document.querySelector('.nav-btn:first-child').classList.add('active');
+    } else if (screen === 'notices') {
+        document.querySelector('.nav-btn:nth-child(2)').classList.add('active');
+        loadNotices();
+    } else if (screen === 'monthly') {
+        document.querySelector('.nav-btn:nth-child(3)').classList.add('active');
+    } else if (screen === 'mine') {
+        document.querySelector('.nav-btn:last-child').classList.add('active');
+    }
+}
+
+// ==================== CLOCK ====================
+function updateClock() {
+    const now = new Date();
+    const timeStr = now.toLocaleTimeString('bn-BD');
+    const dateStr = now.toLocaleDateString('bn-BD');
+    document.getElementById('currentTime').textContent = `${dateStr} ${timeStr}`;
+    
+    // Update status bar
+    const hour = now.getHours();
+    const minute = now.getMinutes();
+    const total = hour * 60 + minute;
+    const start = 9 * 60 + 30;
+    const end = 10 * 60 + 30;
+    
+    const statusDiv = document.getElementById('statusBar');
+    const statusText = document.getElementById('statusText');
+    
+    if (total >= start && total <= end) {
+        statusDiv.className = 'status-bar status-present';
+        statusText.innerHTML = '✅ সময়মতো উপস্থিতি দেওয়া যাবে (৯:৩০ - ১০:৩০)';
+    } else if (total > end) {
+        statusDiv.className = 'status-bar status-late';
+        statusText.innerHTML = '⚠️ এখন দিলে লেট হিসাবে গণনা হবে';
+    } else {
+        statusDiv.className = 'status-bar';
+        statusText.innerHTML = '⏳ উপস্থিতির সময় হয়নি (৯:৩০ থেকে)';
+    }
+}
+setInterval(updateClock, 1000);
+updateClock();
+
+// ==================== ATTENDANCE ====================
+async function checkUser() {
+    const userId = document.getElementById('userId').value.trim().toUpperCase();
+    if (!userId) {
+        showToast('আইডি লিখুন', 'error');
+        return;
+    }
+    
+    showLoading(true);
+    try {
+        const result = await apiCall('validateUser', { userId: userId });
+        if (result.success) {
+            currentUser = result;
+            document.getElementById('userName').textContent = result.name;
+            document.getElementById('userIdDisplay').textContent = result.id;
+            document.getElementById('step1').classList.add('hidden');
+            document.getElementById('step2').classList.remove('hidden');
+            startCamera();
+            saveUserId(userId);
+        } else {
+            showToast(result.message, 'error');
+        }
+    } catch (error) {
+        console.error(error);
+        showToast('সংযোগ সমস্যা। GAS URL চেক করুন', 'error');
+    }
+    showLoading(false);
+}
+
+function startCamera() {
+    navigator.mediaDevices.getUserMedia({ video: { facingMode: 'user' } })
+        .then(stream => {
+            videoStream = stream;
+            const video = document.getElementById('video');
+            video.srcObject = stream;
+            video.play();
+        })
+        .catch(error => {
+            showToast('ক্যামেরা চালু করতে পারেনি', 'error');
+        });
+}
+
+function stopCamera() {
+    if (videoStream) {
+        videoStream.getTracks().forEach(track => track.stop());
+        videoStream = null;
+    }
+}
+
+function takePhoto() {
+    const video = document.getElementById('video');
+    const canvas = document.createElement('canvas');
+    canvas.width = video.videoWidth;
+    canvas.height = video.videoHeight;
+    const ctx = canvas.getContext('2d');
+    
+    // Flip horizontal for selfie
+    ctx.translate(canvas.width, 0);
+    ctx.scale(-1, 1);
+    ctx.drawImage(video, 0, 0);
+    ctx.setTransform(1, 0, 0, 1, 0, 0);
+    
+    // Add timestamp
+    const now = new Date();
+    const timestamp = now.toLocaleString('bn-BD');
+    ctx.fillStyle = 'rgba(0,0,0,0.7)';
+    ctx.fillRect(0, canvas.height - 40, canvas.width, 40);
+    ctx.fillStyle = '#fff';
+    ctx.font = '14px monospace';
+    ctx.fillText(timestamp + ' ' + currentUser.id, 10, canvas.height - 15);
+    
+    capturedPhoto = canvas.toDataURL('image/jpeg', 0.85);
+    
+    // Show preview
+    const preview = document.getElementById('preview');
+    preview.src = capturedPhoto;
+    preview.classList.remove('hidden');
+    document.getElementById('cameraContainer').classList.add('hidden');
+    document.getElementById('captureBtn').classList.add('hidden');
+    document.getElementById('retakeBtn').classList.remove('hidden');
+    document.getElementById('submitBtn').classList.remove('hidden');
+    
+    stopCamera();
+}
+
+function retakePhoto() {
+    capturedPhoto = null;
+    document.getElementById('preview').classList.add('hidden');
+    document.getElementById('cameraContainer').classList.remove('hidden');
+    document.getElementById('captureBtn').classList.remove('hidden');
+    document.getElementById('retakeBtn').classList.add('hidden');
+    document.getElementById('submitBtn').classList.add('hidden');
+    startCamera();
+}
+
+async function submitAttendance() {
+    if (!capturedPhoto || !currentUser) {
+        showToast('ছবি তুলুন', 'error');
+        return;
+    }
+    
+    showLoading(true);
+    try {
+        const result = await apiCall('submitAttendance', {
+            userId: currentUser.id,
+            name: currentUser.name,
+            photoBase64: capturedPhoto
+        });
+        
+        if (result.success) {
+            document.getElementById('step2').classList.add('hidden');
+            const successDiv = document.getElementById('successScreen');
+            successDiv.classList.remove('hidden');
+            
+            const icon = document.getElementById('successIcon');
+            const title = document.getElementById('successTitle');
+            const message = document.getElementById('successMessage');
+            
+            if (result.status === 'Present') {
+                icon.textContent = '✅';
+                title.textContent = 'উপস্থিতি সফল!';
+                message.textContent = `${currentUser.name}\n${result.date} ${result.time}\nসময়মতো উপস্থিতি হয়েছে`;
+            } else {
+                icon.textContent = '⚠️';
+                title.textContent = 'লেট উপস্থিতি!';
+                message.textContent = `${currentUser.name}\n${result.date} ${result.time}\nলেট হিসাবে গণনা করা হবে`;
+            }
+            
+            showToast(result.status === 'Present' ? 'উপস্থিতি সফল ✅' : 'লেট উপস্থিতি ⚠️', 'success');
+        } else {
+            showToast(result.message, 'error');
+        }
+    } catch (error) {
+        console.error(error);
+        showToast('সংযোগ সমস্যা', 'error');
+    }
+    showLoading(false);
+}
+
+function goBack() {
+    stopCamera();
+    capturedPhoto = null;
+    currentUser = null;
+    document.getElementById('step1').classList.remove('hidden');
+    document.getElementById('step2').classList.add('hidden');
+    document.getElementById('userId').value = '';
+    document.getElementById('preview').classList.add('hidden');
+    document.getElementById('cameraContainer').classList.remove('hidden');
+    document.getElementById('captureBtn').classList.remove('hidden');
+    document.getElementById('retakeBtn').classList.add('hidden');
+    document.getElementById('submitBtn').classList.add('hidden');
+}
+
+function resetAttendance() {
+    document.getElementById('successScreen').classList.add('hidden');
+    document.getElementById('step1').classList.remove('hidden');
+    document.getElementById('userId').value = '';
+    capturedPhoto = null;
+    currentUser = null;
+}
+
+// ==================== NOTICES ====================
+async function loadNotices() {
+    try {
+        const result = await apiCall('getNotices', {});
+        const container = document.getElementById('noticesList');
+        
+        if (result.success && result.notices && result.notices.length > 0) {
+            container.innerHTML = '';
+            result.notices.forEach(notice => {
+                container.innerHTML += `
+                    <div class="notice-item">
+                        <div class="notice-title">📌 ${escapeHtml(notice.title)}</div>
+                        <div class="notice-date">📅 ${notice.date}</div>
+                        <div>${escapeHtml(notice.body)}</div>
+                    </div>
+                `;
+            });
+        } else {
+            container.innerHTML = '<div class="card text-center">📭 কোনো নোটিশ নেই</div>';
+        }
+    } catch (error) {
+        console.error(error);
+        document.getElementById('noticesList').innerHTML = '<div class="card text-center">নোটিশ লোড করতে পারেনি</div>';
+    }
+}
+
+// ==================== ADMIN ====================
+function showAdminLogin() {
+    document.getElementById('adminModal').classList.add('active');
+}
+
+function closeAdminModal() {
+    document.getElementById('adminModal').classList.remove('active');
+    document.getElementById('adminId').value = '';
+    document.getElementById('adminPin').value = '';
+}
+
+async function adminLogin() {
+    const id = document.getElementById('adminId').value.trim().toUpperCase();
+    const pin = document.getElementById('adminPin').value.trim();
+    
+    if (!id || !pin) {
+        showToast('আইডি ও পিন দিন', 'error');
+        return;
+    }
+    
+    showLoading(true);
+    try {
+        const result = await apiCall('adminLogin', { id: id, pin: pin });
+        if (result.success) {
+            isAdminMode = true;
+            adminId = id;
+            adminPin = pin;
+            
+            closeAdminModal();
+            
+            // Update UI
+            document.getElementById('adminLoginBar').classList.add('hidden');
+            document.getElementById('adminPanel').classList.remove('hidden');
+            document.getElementById('adminNoticeBtn').classList.remove('hidden');
+            document.getElementById('monthlyGate').classList.add('hidden');
+            document.getElementById('monthlyPanel').classList.remove('hidden');
+            
+            showToast('অ্যাডমিন লগইন সফল 👑', 'success');
+            
+            // Load monthly report
+            const now = new Date();
+            const month = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}`;
+            document.getElementById('monthPicker').value = month;
+            await loadMonthlyReport();
+        } else {
+            showToast(result.message, 'error');
+        }
+    } catch (error) {
+        console.error(error);
+        showToast('সংযোগ সমস্যা', 'error');
+    }
+    showLoading(false);
+}
+
+function adminLogout() {
+    isAdminMode = false;
+    adminId = '';
+    adminPin = '';
+    
+    document.getElementById('adminLoginBar').classList.remove('hidden');
+    document.getElementById('adminPanel').classList.add('hidden');
+    document.getElementById('adminNoticeBtn').classList.add('hidden');
+    document.getElementById('monthlyGate').classList.remove('hidden');
+    document.getElementById('monthlyPanel').classList.add('hidden');
+    
+    showToast('লগআউট হয়েছে', 'info');
+}
+
+function showNoticeForm() {
+    if (!isAdminMode) {
+        showToast('অ্যাডমিন লগইন প্রয়োজন', 'error');
+        return;
+    }
+    document.getElementById('noticeModal').classList.add('active');
+    document.getElementById('noticeDate').value = new Date().toISOString().split('T')[0];
+}
+
+function closeNoticeModal() {
+    document.getElementById('noticeModal').classList.remove('active');
+    document.getElementById('noticeTitle').value = '';
+    document.getElementById('noticeBody').value = '';
+}
+
+async function addNotice() {
+    const title = document.getElementById('noticeTitle').value.trim();
+    const date = document.getElementById('noticeDate').value;
+    const body = document.getElementById('noticeBody').value.trim();
+    
+    if (!title || !date || !body) {
+        showToast('সব তথ্য পূরণ করুন', 'error');
+        return;
+    }
+    
+    showLoading(true);
+    try {
+        const result = await apiCall('addNotice', {
+            title: title,
+            date: date,
+            body: body,
+            adminId: adminId,
+            adminPin: adminPin
+        });
+        
+        if (result.success) {
+            showToast('নোটিশ পোস্ট হয়েছে ✅', 'success');
+            closeNoticeModal();
+            loadNotices();
+        } else {
+            showToast(result.message, 'error');
+        }
+    } catch (error) {
+        console.error(error);
+        showToast('সংযোগ সমস্যা', 'error');
+    }
+    showLoading(false);
+}
+
+// ==================== MONTHLY REPORT ====================
+async function loadMonthlyReport() {
+    if (!isAdminMode) {
+        showToast('অ্যাডমিন লগইন প্রয়োজন', 'error');
+        return;
+    }
+    
+    const month = document.getElementById('monthPicker').value;
+    if (!month) {
+        showToast('মাস নির্বাচন করুন', 'error');
+        return;
+    }
+    
+    showLoading(true);
+    try {
+        const result = await apiCall('getMonthlySummary', {
+            monthStr: month,
+            adminId: adminId,
+            adminPin: adminPin
+        });
+        
+        if (result.success && result.data) {
+            allReports = result.data;
+            displayReport(allReports);
+        } else {
+            document.getElementById('reportContainer').innerHTML = '<div class="card text-center">এই মাসে কোনো রেকর্ড নেই</div>';
+        }
+    } catch (error) {
+        console.error(error);
+        showToast('সংযোগ সমস্যা', 'error');
+    }
+    showLoading(false);
+}
+
+function displayReport(data) {
+    if (!data || data.length === 0) {
+        document.getElementById('reportContainer').innerHTML = '<div class="card text-center">কোনো ডাটা নেই</div>';
+        return;
+    }
+    
+    let html = '<div class="table-container"><table><thead><tr>';
+    html += '<th>আইডি</th><th>নাম</th><th>উপস্থিত</th><th>লেট</th><th>অনুপস্থিত</th>';
+    html += '<tr></thead><tbody>';
+    
+    data.forEach(row => {
+        html += `<tr>
+            <td>${escapeHtml(row.id)}</td>
+            <td>${escapeHtml(row.name)}</td>
+            <td style="color:#3fb950">${row.present}</td>
+            <td style="color:#d29922">${row.late}</td>
+            <td style="color:#f85149">${row.absent}</td>
+        </tr>`;
+    });
+    
+    html += '</tbody></table></div>';
+    document.getElementById('reportContainer').innerHTML = html;
+}
+
+function filterReport() {
+    const searchTerm = document.getElementById('searchUser').value.toLowerCase();
+    const filtered = allReports.filter(row => 
+        row.id.toLowerCase().includes(searchTerm) || 
+        row.name.toLowerCase().includes(searchTerm)
+    );
+    displayReport(filtered);
+}
+
+// ==================== MY RECORDS ====================
+async function loadMyRecords() {
+    const userId = document.getElementById('myUserId').value.trim().toUpperCase();
+    const month = document.getElementById('myMonthPicker').value;
+    
+    if (!userId) {
+        showToast('আইডি লিখুন', 'error');
+        return;
+    }
+    
+    if (!month) {
+        showToast('মাস নির্বাচন করুন', 'error');
+        return;
+    }
+    
+    saveUserId(userId);
+    showLoading(true);
+    
+    try {
+        const result = await apiCall('getPersonalRecord', {
+            userId: userId,
+            monthStr: month
+        });
+        
+        const container = document.getElementById('myRecords');
+        
+        if (result.success) {
+            if (result.records.length === 0) {
+                container.innerHTML = '<div class="card text-center">এই মাসে কোনো রেকর্ড নেই</div>';
+                return;
+            }
+            
+            let html = `
+                <div class="card">
+                    <h3>👤 ${escapeHtml(result.name)}</h3>
+                    <div class="stats-grid">
+                        <div class="stat-card">
+                            <div class="stat-number" style="color:#3fb950">${result.present}</div>
+                            <div>উপস্থিত</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-number" style="color:#d29922">${result.late}</div>
+                            <div>লেট</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-number" style="color:#f85149">${result.absent}</div>
+                            <div>অনুপস্থিত</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="table-container">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>তারিখ</th>
+                                <th>দিন</th>
+                                <th>স্ট্যাটাস</th>
+                                <th>সময়</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+            `;
+            
+            result.records.forEach(rec => {
+                let statusColor = '';
+                let statusText = '';
+                if (rec.status === 'Present') {
+                    statusColor = '#3fb950';
+                    statusText = 'উপস্থিত';
+                } else if (rec.status === 'Late') {
+                    statusColor = '#d29922';
+                    statusText = 'লেট';
+                } else {
+                    statusColor = '#f85149';
+                    statusText = 'অনুপস্থিত';
+                }
+                
+                html += `<tr>
+                    <td>${escapeHtml(rec.date)}</td>
+                    <td>${escapeHtml(rec.day)}</td>
+                    <td style="color:${statusColor}">${statusText}</td>
+                    <td>${escapeHtml(rec.time)}</td>
+                </tr>`;
+            });
+            
+            html += '</tbody></table></div>';
+            container.innerHTML = html;
+        } else {
+            container.innerHTML = `<div class="card text-center">${result.message}</div>`;
+        }
+    } catch (error) {
+        console.error(error);
+        showToast('সংযোগ সমস্যা', 'error');
+    }
+    
+    showLoading(false);
+}
+
+// ==================== UTILITIES ====================
+function saveUserId(id) {
+    let ids = JSON.parse(localStorage.getItem('attendance_ids') || '[]');
+    ids = ids.filter(i => i !== id);
+    ids.unshift(id);
+    if (ids.length > 10) ids.pop();
+    localStorage.setItem('attendance_ids', JSON.stringify(ids));
+}
+
+function showToast(message, type) {
+    const toast = document.getElementById('toast');
+    toast.textContent = message;
+    toast.className = 'toast show';
+    
+    setTimeout(() => {
+        toast.classList.remove('show');
+    }, 3000);
+}
+
+function showLoading(show) {
+    // You can implement loading overlay here if needed
+}
+
+function escapeHtml(text) {
+    const div = document.createElement('div');
+    div.textContent = text;
+    return div.innerHTML;
+}
+
+// ==================== INITIALIZATION ====================
+async function init() {
+    // Check if GAS URL is set
+    if (GAS_URL === 'YOUR_GAS_WEB_APP_URL_HERE') {
+        showToast('দয়া করে GAS_URL সেট করুন', 'error');
+        console.error('Please set your GAS_URL in the script');
+    }
+    
+    // Set default month
+    const now = new Date();
+    const month = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}`;
+    document.getElementById('myMonthPicker').value = month;
+    document.getElementById('monthPicker').value = month;
+    
+    // Load notices
+    await loadNotices();
+}
+
+init();
+</script>
+</body>
+</html>
