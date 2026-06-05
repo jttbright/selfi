@@ -321,7 +321,7 @@ tr:nth-child(even) td{background:#f5f7ff}
 // ══════════════════════════════════════════════
 //  CONFIG
 // ══════════════════════════════════════════════
-var GAS_URL = "https://script.google.com/macros/s/AKfycbzOPwjjqKslwY8ZPRcGzqmxFEg-4FeIlcaLavgxRPOeTVqExbo10WomHRU8Y_YqJTu5hQ/exec";
+var GAS_URL = "https://script.google.com/macros/s/AKfycbz5FpKZyMZQt2WpOmI1q0ZyC28kD5MXMUPOYKQP-pvlglTwKIxGfMMetoB67I8D00pb/exec";
 
 var ADMIN_LINKS = [
   { icon:"🔐", title:"অ্যাডমিন ড্যাশবোর্ড লগইন",  desc:"উপস্থিতি রিপোর্ট ও নোটিশ পরিচালনা",           url:"#admin-login", internal:true },
@@ -388,6 +388,94 @@ function pickId(uid,lid){
 }
 function hideSug(lid){ var e=document.getElementById(lid); if(e) e.style.display='none'; }
 
+
+
+
+
+
+// ফ্রন্টএন্ডে এই ফাংশনগুলো যোগ করুন বা প্রতিস্থাপন করুন
+
+function formatDateForDisplay(dateStr) {
+  // DD/MM/YYYY to YYYY-MM-DD for input display
+  if (!dateStr) return '';
+  var parts = dateStr.split('/');
+  if (parts.length !== 3) return '';
+  return parts[2] + '-' + parts[1] + '-' + parts[0];
+}
+
+function formatDateForAPI(dateStr) {
+  // YYYY-MM-DD to DD/MM/YYYY for sheet
+  if (!dateStr) return '';
+  var parts = dateStr.split('-');
+  if (parts.length !== 3) return '';
+  return parts[2] + '/' + parts[1] + '/' + parts[0];
+}
+
+// loadMyReport ফাংশন আপডেট করুন
+async function loadMyReport() {
+  var uid = document.getElementById('inpReportId').value.trim();
+  if (!uid) { toast('আইডি লিখুন'); return; }
+  
+  document.getElementById('myReportOut').innerHTML = '<div class="loader"><div class="spinner"></div></div>';
+  var r = await callGAS({action: 'getUserReport', userId: uid});
+  
+  if (!r || !r.success || !r.data || !r.data.length) {
+    document.getElementById('myReportOut').innerHTML = '<div class="msg msg-info">কোনো রেকর্ড নেই</div>';
+    return;
+  }
+  
+  var p = 0, l = 0, a = 0;
+  r.data.forEach(function(d) { 
+    if (d.status === 'Present') p++; 
+    else if (d.status === 'Late') l++; 
+    else a++; 
+  });
+  
+  var html = '<div class="stats-row">' +
+    '<div class="stat-tile st-present"><div class="st-num">' + p + '</div><div class="st-label">উপস্থিত</div></div>' +
+    '<div class="stat-tile st-late"><div class="st-num">' + l + '</div><div class="st-label">দেরি</div></div>' +
+    '<div class="stat-tile st-absent"><div class="st-num">' + a + '</div><div class="st-label">অনুপস্থিত</div></div>' +
+    '</div>';
+  
+  html += '<div class="card"><div class="table-wrap">' +
+    '<table><thead><tr><th>তারিখ</th><th>সময়</th><th>অবস্থা</th><th>ছবি</th></tr></thead><tbody>';
+  
+  r.data.forEach(function(d) {
+    var st = String(d.status || '').trim();
+    var statusText = st === 'Present' ? 'উপস্থিত' : (st === 'Late' ? 'দেরি' : 'অনুপস্থিত');
+    var statusClass = st === 'Present' ? 'present' : (st === 'Late' ? 'late' : 'absent');
+    var photoCell = d.photo && d.photo.startsWith('http') ? 
+      '<img class="photo-thumb" src="' + d.photo + '" onclick="openLightbox(\'' + d.photo + '\')" loading="lazy"/>' : '—';
+    
+    html += '<tr>' +
+      '<td>' + d.date + '</td>' +
+      '<td>' + d.time + '</td>' +
+      '<td><span class="badge badge-' + statusClass + '">' + statusText + '</span></td>' +
+      '<td>' + photoCell + '</td>' +
+      '</tr>';
+  });
+  
+  html += '</tbody></table></div></div>';
+  document.getElementById('myReportOut').innerHTML = html;
+}
+
+// loadDailyReport আপডেট করুন
+async function loadDailyReport() {
+  var v = document.getElementById('inpDailyDate').value;
+  if (!v) { toast('তারিখ নির্বাচন করুন'); return; }
+  
+  var sheetDate = formatDateForAPI(v); // YYYY-MM-DD to DD/MM/YYYY
+  
+  document.getElementById('dailyOut').innerHTML = '<div class="loader"><div class="spinner"></div></div>';
+  var r = await callGAS({action: 'getReport', filter: 'daily', date: sheetDate});
+  var st = renderAdminReport('dailyOut', r);
+  setStat(st.p, st.l, st.a, sheetDate + ' — দৈনিক | মোট: ' + (st.p + st.l + st.a) + ' জন');
+}
+
+
+
+
+  
 // ── CLOCK ──
 function startClock(){
   var days=['রবিবার','সোমবার','মঙ্গলবার','বুধবার','বৃহস্পতিবার','শুক্রবার','শনিবার'];
