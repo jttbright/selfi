@@ -1,440 +1,648 @@
 <!DOCTYPE html>
 <html lang="bn">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>সেলফি উপস্থিতি সিস্টেম</title>
-  <style>
-    :root {
-      --primary: #4f46e5;
-      --bg: #f3f4f6;
-      --card: #ffffff;
-      --text: #1f2937;
-      --text-light: #6b7280;
-      --success: #10b981;
-      --warning: #f59e0b;
-      --danger: #ef4444;
-    }
-    * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
-    body { background: var(--bg); color: var(--text); padding-bottom: 70px; }
-    
-    /* Header & Navigation */
-    header { background: var(--primary); color: white; padding: 15px; text-align: center; font-weight: bold; font-size: 1.2rem; sticky: top; }
-    nav { position: fixed; bottom: 0; left: 0; right: 0; background: white; display: flex; justify-content: space-around; padding: 10px 0; box-shadow: 0 -2px 10px rgba(0,0,0,0.1); z-index: 100; }
-    nav button { background: none; border: none; color: var(--text-light); font-size: 0.8rem; display: flex; flex-direction: column; align-items: center; cursor: pointer; width: 25%; }
-    nav button.active { color: var(--primary); font-weight: bold; }
-    nav button svg { width: 24px; height: 24px; margin-bottom: 2px; }
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0"/>
+<title>উপস্থিতি সিস্টেম</title>
+<link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
+<style>
+/* ── RESET & BASE ── */
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --primary:#0d47a1;--primary-light:#1565c0;--primary-dark:#002171;
+  --accent:#ff6f00;--accent-light:#ffa000;
+  --success:#2e7d32;--warn:#f57f17;--danger:#c62828;
+  --bg:#f0f4ff;--card:#fff;--text:#1a1a2e;--muted:#607d8b;
+  --radius:16px;--shadow:0 4px 24px rgba(13,71,161,.13);
+}
+html,body{height:100%;font-family:'Hind Siliguri',sans-serif;background:var(--bg);color:var(--text)}
+/* ── LAYOUT ── */
+#app{min-height:100vh;display:flex;flex-direction:column}
+.topbar{background:linear-gradient(135deg,var(--primary-dark),var(--primary));color:#fff;padding:14px 20px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100;box-shadow:0 2px 12px rgba(0,0,0,.2)}
+.topbar h1{font-size:1.1rem;font-weight:700;letter-spacing:.3px}
+.topbar .back-btn{background:rgba(255,255,255,.15);border:none;color:#fff;padding:6px 14px;border-radius:20px;cursor:pointer;font-family:inherit;font-size:.85rem;transition:.2s}
+.topbar .back-btn:hover{background:rgba(255,255,255,.25)}
+main{flex:1;padding:16px;max-width:540px;width:100%;margin:0 auto}
 
-    /* Pages & Cards */
-    .page { display: none; padding: 20px; max-width: 500px; margin: 0 auto; }
-    .page.active { display: block; }
-    .card { background: var(--card); padding: 20px; border-radius: 12px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); margin-bottom: 15px; }
-    h2 { font-size: 1.1rem; margin-bottom: 15px; color: var(--text); display: flex; align-items: center; gap: 8px; }
-    
-    /* Inputs & Buttons */
-    input, select, textarea { width: 100%; padding: 12px; margin-bottom: 15px; border: 1px solid #e5e7eb; border-radius: 8px; outline: none; font-size: 1rem; }
-    input:focus { border-color: var(--primary); }
-    button.btn { width: 100%; background: var(--primary); color: white; border: none; padding: 12px; border-radius: 8px; font-weight: bold; cursor: pointer; font-size: 1rem; transition: 0.2s; }
-    button.btn:disabled { background: #9ca3af; }
-    
-    /* Camera & Selfie Canvas Area */
-    #camera-container { position: relative; width: 100%; max-width: 320px; margin: 0 auto 15px; border-radius: 12px; overflow: hidden; background: #000; display: none; aspect-ratio: 4/3; }
-    video, canvas { width: 100%; height: 100%; object-fit: cover; }
-    #captured-image { width: 100%; max-width: 320px; display: none; margin: 0 auto 15px; border-radius: 12px; border: 2px solid var(--success); }
+/* ── CARDS ── */
+.card{background:var(--card);border-radius:var(--radius);padding:20px;box-shadow:var(--shadow);margin-bottom:16px}
+.card-title{font-size:1rem;font-weight:700;color:var(--primary-dark);margin-bottom:14px;display:flex;align-items:center;gap:8px}
+.card-title .icon{font-size:1.3rem}
 
-    /* Lists & Items */
-    .item-list { margin-top: 15px; }
-    .list-item { background: white; padding: 12px; border-radius: 8px; margin-bottom: 8px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 2px 4px rgba(0,0,0,0.02); }
-    .badge { padding: 4px 8px; border-radius: 20px; font-size: 0.75rem; font-weight: bold; color: white; }
-    .badge.Present { background: var(--success); }
-    .badge.Late { background: var(--warning); }
-    .badge.Absent { background: var(--danger); }
-    
-    /* Suggestions */
-    .suggestions { background: white; border: 1px solid #e5e7eb; border-radius: 8px; max-height: 120px; overflow-y: auto; margin-top: -10px; margin-bottom: 15px; }
-    .suggestion-item { padding: 10px; cursor: pointer; border-bottom: 1px solid #f3f4f6; }
-    .suggestion-item:hover { background: #f3f4f6; }
+/* ── FORMS ── */
+.field{margin-bottom:14px}
+label{display:block;font-size:.82rem;font-weight:600;color:var(--muted);margin-bottom:5px}
+input,textarea,select{width:100%;padding:12px 14px;border:1.5px solid #dde3f0;border-radius:10px;font-family:inherit;font-size:.95rem;color:var(--text);background:#f8faff;transition:.2s;outline:none}
+input:focus,textarea:focus{border-color:var(--primary);background:#fff;box-shadow:0 0 0 3px rgba(13,71,161,.1)}
+textarea{min-height:90px;resize:vertical}
 
-    /* Toast Notification */
-    #toast { position: fixed; top: 20px; left: 50%; transform: translateX(-50%); background: #374151; color: white; padding: 12px 24px; border-radius: 30px; font-size: 0.9rem; z-index: 1000; display: none; box-shadow: 0 4px 10px rgba(0,0,0,0.2); text-align: center; }
-  </style>
+/* ── BUTTONS ── */
+.btn{display:block;width:100%;padding:13px;border:none;border-radius:12px;font-family:inherit;font-size:1rem;font-weight:700;cursor:pointer;transition:.2s;text-align:center;letter-spacing:.3px}
+.btn-primary{background:linear-gradient(135deg,var(--primary),var(--primary-light));color:#fff;box-shadow:0 4px 14px rgba(13,71,161,.3)}
+.btn-primary:hover{transform:translateY(-1px);box-shadow:0 6px 18px rgba(13,71,161,.35)}
+.btn-primary:active{transform:translateY(0)}
+.btn-accent{background:linear-gradient(135deg,var(--accent),var(--accent-light));color:#fff;box-shadow:0 4px 14px rgba(255,111,0,.3)}
+.btn-outline{background:transparent;border:2px solid var(--primary);color:var(--primary)}
+.btn-danger{background:linear-gradient(135deg,var(--danger),#e53935);color:#fff}
+.btn-sm{padding:8px 18px;font-size:.85rem;width:auto;display:inline-block}
+
+/* ── HOME SCREEN ── */
+.hero{background:linear-gradient(135deg,var(--primary-dark) 0%,var(--primary) 60%,#1976d2 100%);color:#fff;border-radius:var(--radius);padding:28px 20px;text-align:center;margin-bottom:20px;position:relative;overflow:hidden}
+.hero::before{content:"";position:absolute;top:-40px;right:-40px;width:160px;height:160px;background:rgba(255,255,255,.06);border-radius:50%}
+.hero h2{font-size:1.5rem;font-weight:700;margin-bottom:6px}
+.hero p{font-size:.88rem;opacity:.85}
+.menu-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:16px}
+.menu-card{background:var(--card);border-radius:var(--radius);padding:22px 14px;text-align:center;cursor:pointer;box-shadow:var(--shadow);transition:.22s;border:2px solid transparent}
+.menu-card:hover{border-color:var(--primary);transform:translateY(-2px)}
+.menu-card .mc-icon{font-size:2.2rem;margin-bottom:8px}
+.menu-card .mc-label{font-size:.88rem;font-weight:700;color:var(--primary-dark)}
+.menu-card-full{grid-column:1/-1}
+
+/* ── STATUS BADGES ── */
+.badge{display:inline-block;padding:3px 12px;border-radius:20px;font-size:.78rem;font-weight:700}
+.badge-present{background:#e8f5e9;color:var(--success)}
+.badge-late{background:#fff3e0;color:var(--warn)}
+.badge-absent{background:#ffebee;color:var(--danger)}
+
+/* ── CAMERA ── */
+#cameraView{width:100%;border-radius:14px;background:#000;display:block;max-height:300px;object-fit:cover}
+.camera-container{position:relative;margin-bottom:14px}
+.camera-overlay{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:180px;height:180px;border:3px solid rgba(255,255,255,.6);border-radius:50%;pointer-events:none}
+#capturedImg{width:100%;border-radius:14px;display:none;margin-bottom:14px;border:2px solid var(--primary)}
+
+/* ── NOTICE ── */
+.notice-item{border-left:4px solid var(--accent);padding:12px 14px;background:var(--card);border-radius:0 12px 12px 0;margin-bottom:12px;box-shadow:var(--shadow)}
+.notice-item h3{font-size:.95rem;font-weight:700;color:var(--primary-dark);margin-bottom:4px}
+.notice-item .notice-meta{font-size:.78rem;color:var(--muted);margin-bottom:6px}
+.notice-item p{font-size:.88rem;line-height:1.6}
+
+/* ── TABLE ── */
+.table-wrap{overflow-x:auto;margin-top:6px}
+table{width:100%;border-collapse:collapse;font-size:.82rem}
+th{background:var(--primary);color:#fff;padding:9px 8px;text-align:left;font-weight:600}
+td{padding:8px;border-bottom:1px solid #eef0f8}
+tr:last-child td{border:none}
+tr:nth-child(even) td{background:#f5f7ff}
+
+/* ── STAT TILES ── */
+.stats-row{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:16px}
+.stat-tile{background:var(--card);border-radius:14px;padding:14px 10px;text-align:center;box-shadow:var(--shadow)}
+.stat-tile .st-num{font-size:1.8rem;font-weight:800;line-height:1}
+.stat-tile .st-label{font-size:.72rem;color:var(--muted);margin-top:4px;font-weight:600}
+.st-present .st-num{color:var(--success)}
+.st-late .st-num{color:var(--warn)}
+.st-absent .st-num{color:var(--danger)}
+
+/* ── TABS ── */
+.tab-bar{display:flex;background:#eef0f8;border-radius:12px;padding:4px;margin-bottom:16px;gap:4px}
+.tab-btn{flex:1;padding:9px;border:none;background:transparent;font-family:inherit;font-size:.82rem;font-weight:600;color:var(--muted);border-radius:9px;cursor:pointer;transition:.2s}
+.tab-btn.active{background:#fff;color:var(--primary-dark);box-shadow:0 2px 8px rgba(0,0,0,.1)}
+
+/* ── MESSAGES ── */
+.msg{padding:12px 16px;border-radius:10px;font-size:.88rem;font-weight:600;margin-bottom:12px;text-align:center}
+.msg-success{background:#e8f5e9;color:var(--success)}
+.msg-error{background:#ffebee;color:var(--danger)}
+.msg-info{background:#e3f2fd;color:var(--primary)}
+
+/* ── LOADER ── */
+.loader{display:flex;justify-content:center;padding:30px}
+.spinner{width:36px;height:36px;border:4px solid #dde3f0;border-top-color:var(--primary);border-radius:50%;animation:spin .7s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+/* ── SCREEN HIDE ── */
+.screen{display:none}.screen.active{display:block}
+
+/* ── SECTION HEADER ── */
+.section-hdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px}
+.section-hdr h2{font-size:1rem;font-weight:700;color:var(--primary-dark)}
+.divider{height:1px;background:#eef0f8;margin:14px 0}
+
+/* ── TOAST ── */
+#toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(80px);background:#1a1a2e;color:#fff;padding:11px 22px;border-radius:24px;font-size:.88rem;font-weight:600;z-index:999;transition:.3s;white-space:nowrap;pointer-events:none}
+#toast.show{transform:translateX(-50%) translateY(0)}
+</style>
 </head>
 <body>
+<div id="app">
 
-  <header id="page-title">উপস্থিতি সাবমিট</header>
-  <div id="toast">বার্তা</div>
+  <!-- TOPBAR -->
+  <div class="topbar">
+    <h1 id="pageTitle">🏫 উপস্থিতি সিস্টেম</h1>
+    <button class="back-btn" id="backBtn" onclick="goHome()" style="display:none">← হোম</button>
+  </div>
 
-  <div id="page-attendance" class="page active">
-    <div class="card">
-      <h2>👤 কর্মীর তথ্য যাচাই</h2>
-      <input type="text" id="user-id" placeholder="আপনার আইডি লিখুন (যেমন: 1001)" autocomplete="off" oninput="showSuggestions(this.value)">
-      <div id="suggestion-box" class="suggestions" style="display: none;"></div>
-      <p id="user-name-display" style="font-weight: bold; color: var(--success); margin-bottom: 15px; display: none;"></p>
-      <button class="btn" id="btn-verify" onclick="verifyUser()">আইডি যাচাই করুন</button>
-    </div>
+  <main>
 
-    <div class="card" id="selfie-card" style="display: none;">
-      <h2>📷 সেলফি ভেরিফিকেশন</h2>
-      <div id="camera-container">
-        <video id="video" autoplay playsinline></video>
+    <!-- ══ HOME ══ -->
+    <div class="screen active" id="homeScreen">
+      <div class="hero">
+        <h2>স্বাগতম! 🎓</h2>
+        <p>আপনার উপস্থিতি নিবন্ধন করুন অথবা রিপোর্ট দেখুন</p>
       </div>
-      <img id="captured-image" alt="Captured Selfie">
-      <button class="btn" id="btn-capture" onclick="takeSnapshot()" style="background: var(--warning); margin-bottom: 10px;">ছবি তুলুন</button>
-      <button class="btn" id="btn-submit" onclick="submitAttendance()" disabled style="background: var(--success);">উপস্থিতি নিশ্চিত করুন</button>
-    </div>
-  </div>
-
-  <div id="page-monthly" class="page">
-    <div class="card">
-      <h2>📅 মাসিক রিপোর্ট ফিল্টার</h2>
-      <input type="month" id="report-month" onchange="loadMonthlyReport()">
-      <input type="text" id="search-report" placeholder="নাম বা আইডি দিয়ে খুঁজুন..." oninput="filterMonthlyReport()">
-    </div>
-    <div id="monthly-list" class="item-list"></div>
-  </div>
-
-  <div id="page-myinfo" class="page">
-    <div class="card">
-      <h2>🔍 নিজের রেকর্ড দেখুন</h2>
-      <input type="text" id="my-id" placeholder="আপনার আইডি দিন">
-      <input type="month" id="my-month">
-      <button class="btn" onclick="loadMyRecords()">রেকর্ড খুঁজুন</button>
-    </div>
-    <div id="my-summary" class="card" style="display: none; display: flex; justify-content: space-around; text-align: center;">
-      <div><h3 style="color:var(--success)" id="count-present">0</h3><small>উপস্থিত</small></div>
-      <div><h3 style="color:var(--warning)" id="count-late">0</h3><small>লেট</small></div>
-      <div><h3 style="color:var(--danger)" id="count-absent">0</h3><small>অনুপস্থিত</small></div>
-    </div>
-    <div id="my-history-list" class="item-list"></div>
-  </div>
-
-  <div id="page-notice" class="page">
-    <div class="card">
-      <h2>📢 নতুন নোটিশ যোগ করুন</h2>
-      <textarea id="notice-text" placeholder="নোটিশের বিবরণ লিখুন..." rows="3"></textarea>
-      <button class="btn" onclick="submitNotice()">নোটিশ দিন</button>
-    </div>
-    <h2>📋 নোটিশ বোর্ড</h2>
-    <div id="notice-list" class="item-list"></div>
-  </div>
-
-  <nav>
-    <button onclick="switchPage('attendance', 'উপস্থিতি সাবমিট')" class="active">
-      <svg fill="currentColor" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/></svg>
-      উপস্থিতি
-    </button>
-    <button onclick="switchPage('monthly', 'মাসিক তালিকা')">
-      <svg fill="currentColor" viewBox="0 0 24 24"><path d="M19 3h-1V1h-2v2H8V1H6v2H5c-1.11 0-1.99.9-1.99 2L3 19c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 16H5V8h14v11z"/></svg>
-      মাসিক পেজ
-    </button>
-    <button onclick="switchPage('myinfo', 'আমার তথ্য')">
-      <svg fill="currentColor" viewBox="0 0 24 24"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg>
-      আমার তথ্য
-    </button>
-    <button onclick="switchPage('notice', 'নোটিশ বোর্ড')">
-      <svg fill="currentColor" viewBox="0 0 24 24"><path d="M20 2H4c-1.1 0-1.99.9-1.99 2L2 22l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm-7 9h-2V5h2v6zm0 4h-2v-2h2v2z"/></svg>
-      নোটিশ
-    </button>
-  </nav>
-<script>
-  // ⚠️ আপনার Google Apps Script Web App URL এখানে বসান
-  const API_URL = 'https://script.google.com/macros/s/AKfycbx1sTn647NySey4Hfv60MZHmPj4lyVIF3BTwT6dYbILa9FQRY1pkuZdPBdK64EiP36E8Q/exec'; 
-
-  let streamGlobal = null;
-  let base64Image = null;
-  let monthlyReportData = [];
-
-  // পেজ পরিবর্তন লজিক
-  function switchPage(pageId, title) {
-    document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-    document.querySelectorAll('nav button').forEach(b => b.classList.remove('active'));
-    document.getElementById('page-' + pageId).classList.add('active');
-    document.getElementById('page-title').innerText = title;
-    if(event && event.currentTarget) event.currentTarget.classList.add('active');
-    
-    stopCamera();
-    if(pageId === 'notice') loadNotices();
-    if(pageId === 'monthly') {
-      const now = new Date();
-      document.getElementById('report-month').value = now.getFullYear() + '-' + String(now.getMonth() + 1).padStart(2, '0');
-      loadMonthlyReport();
-    }
-  }
-
-  function showToast(msg) {
-    const toast = document.getElementById('toast');
-    toast.innerText = msg;
-    toast.style.display = 'block';
-    setTimeout(() => { toast.style.display = 'none'; }, 3000);
-  }
-
-  // আইডি অটো সাজেস্ট ও মনে রাখার লজিক
-  function saveIdToLocal(id) {
-    let savedIds = JSON.parse(localStorage.getItem('savedIds')) || [];
-    if (!savedIds.includes(id)) {
-      savedIds.push(id);
-      localStorage.setItem('savedIds', JSON.stringify(savedIds));
-    }
-  }
-
-  function showSuggestions(val) {
-    const box = document.getElementById('suggestion-box');
-    let savedIds = JSON.parse(localStorage.getItem('savedIds')) || [];
-    let filtered = savedIds.filter(id => id.startsWith(val));
-    
-    if(filtered.length > 0 && val !== '') {
-      box.innerHTML = filtered.map(id => `<div class="suggestion-item" onclick="selectId('${id}')">${id}</div>`).join('');
-      box.style.display = 'block';
-    } else {
-      box.style.display = 'none';
-    }
-  }
-
-  function selectId(id) {
-    document.getElementById('user-id').value = id;
-    document.getElementById('suggestion-box').style.display = 'none';
-    verifyUser(); // আইডি সিলেক্ট করলে অটো ভেরিফাই হবে
-  }
-
-  // ব্যবহারকারী যাচাই ও ক্যামেরা চালু (Fix প্রয়োগ করা হয়েছে)
-  async function verifyUser() {
-    const id = document.getElementById('user-id').value;
-    if(!id) return showToast('দয়া করে আইডি দিন');
-    
-    document.getElementById('btn-verify').disabled = true;
-    showToast('যাচাই করা হচ্ছে...');
-    
-    try {
-      const res = await fetch(API_URL, { method: 'POST', body: JSON.stringify({ action: 'checkUser', id: id }) });
-      const data = await res.json();
-      
-      if(data.success) {
-        document.getElementById('user-name-display').innerText = "👤 নাম: " + data.name;
-        document.getElementById('user-name-display').style.display = 'block';
-        
-        // 🛠️ ফিক্সড: ক্যামেরা কার্ড ও কন্টেইনার দৃশ্যমান করা
-        document.getElementById('selfie-card').style.display = 'block';
-        document.getElementById('camera-container').style.display = 'block';
-        document.getElementById('captured-image').style.display = 'none';
-        document.getElementById('btn-submit').disabled = true;
-        
-        saveIdToLocal(id);
-        
-        // ক্যামেরা স্টার্ট ফাংশন কল
-        await startCamera();
-      } else {
-        showToast(data.message);
-        document.getElementById('selfie-card').style.display = 'none';
-      }
-    } catch(e) { 
-      showToast('সার্ভার কানেকশনে সমস্যা হয়েছে!'); 
-      console.error(e);
-    }
-    document.getElementById('btn-verify').disabled = false;
-  }
-
-  // ক্যামেরা চালু করার ফাংশন
-  async function startCamera() {
-    stopCamera(); // আগে থেকে কোনো ক্যামেরা সেশন চালু থাকলে তা বন্ধ করা
-    try {
-      // মোবাইল ফ্রন্ট ক্যামেরা এবং ল্যাপটপ ক্যামেরা উভয় ক্ষেত্রেই পারফেক্ট কাজ করবে
-      const constraints = { 
-        video: { 
-          facingMode: "user",
-          width: { ideal: 640 },
-          height: { ideal: 480 }
-        } 
-      };
-      
-      streamGlobal = await navigator.mediaDevices.getUserMedia(constraints);
-      const video = document.getElementById('video');
-      video.srcObject = streamGlobal;
-      
-      // কিছু ব্রাউজারের অটো-প্লে পলিসির জন্য এক্সট্রা সেফটি প্লে
-      video.onloadedmetadata = () => {
-        video.play().catch(e => console.log("অটো প্লে ব্লকড, ইউজার ইন্টারঅ্যাকশন লাগবে"));
-      };
-      
-      showToast('ক্যামেরা চালু হয়েছে, ছবি তুলুন');
-    } catch (err) { 
-      console.error(err);
-      showToast("ক্যামেরা চালু করা যায়নি! ব্রাউজারের ক্যামেরা পারমিশন চেক করুন।"); 
-    }
-  }
-
-  function stopCamera() {
-    if(streamGlobal) {
-      streamGlobal.getTracks().forEach(track => track.stop());
-      streamGlobal = null;
-    }
-  }
-
-  // ছবি তোলা এবং টেক্সট জলছাপ (Timestamp Overlay)
-  function takeSnapshot() {
-    const video = document.getElementById('video');
-    if (!video.srcObject) {
-      showToast("ক্যামেরা সেশন সচল নেই! আবার আইডি যাচায় করুন।");
-      return;
-    }
-    
-    const canvas = document.createElement('canvas');
-    canvas.width = 640;
-    canvas.height = 480;
-    const ctx = canvas.getContext('2d');
-    
-    // ক্যানভাসে ভিডিওর ফ্রেম ড্র করা
-    ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
-    
-    // ছবিতে স্বয়ংক্রিয় তারিখ ও সময় বসানো (জলছাপ)
-    const now = new Date();
-    const timeStr = now.toLocaleDateString('bn-BD') + " | " + now.toLocaleTimeString('bn-BD');
-    ctx.fillStyle = "rgba(0, 0, 0, 0.6)";
-    ctx.fillRect(0, canvas.height - 40, canvas.width, 40);
-    ctx.fillStyle = "#ffffff";
-    ctx.font = "bold 20px Arial, SolaimanLipi, sans-serif";
-    ctx.fillText(timeStr, 20, canvas.height - 13);
-    
-    base64Image = canvas.toDataURL('image/jpeg');
-    
-    // প্রিভিউ সেট করা
-    document.getElementById('camera-container').style.display = 'none';
-    const img = document.getElementById('captured-image');
-    img.src = base64Image;
-    img.style.display = 'block';
-    
-    document.getElementById('btn-submit').disabled = false;
-    stopCamera(); // ছবি তোলা শেষ হলে ক্যামেরা বন্ধ করে রিসোর্স ফ্রি করা
-  }
-
-  // উপস্থিতি চূড়ান্ত সাবমিট
-  async function submitAttendance() {
-    const id = document.getElementById('user-id').value;
-    if(!base64Image) return showToast('আগে আপনার সেলফি তুলুন!');
-    
-    document.getElementById('btn-submit').disabled = true;
-    showToast('গুগল ড্রাইভে ছবি ও ডাটা আপলোড হচ্ছে...');
-    
-    try {
-      const res = await fetch(API_URL, {
-        method: 'POST',
-        body: JSON.stringify({ action: 'submitAttendance', id: id, image: base64Image })
-      });
-      const data = await res.json();
-      showToast(data.message);
-      if(data.success) {
-        // সাবমিট সফল হলে ৩ সেকেন্ড পর পেজ রিলোড হবে বা ফর্ম রিসেট হবে
-        setTimeout(() => {
-          document.getElementById('user-id').value = '';
-          document.getElementById('user-name-display').style.display = 'none';
-          document.getElementById('selfie-card').style.display = 'none';
-          base64Image = null;
-        }, 3000);
-      }
-    } catch(e) { 
-      showToast('সাবমিট ব্যর্থ হয়েছে! পুনরায় চেষ্টা করুন।'); 
-    }
-    document.getElementById('btn-submit').disabled = false;
-  }
-
-  // মাসিক রিপোর্টের তথ্য লোড
-  async function loadMonthlyReport() {
-    const month = document.getElementById('report-month').value;
-    const listDiv = document.getElementById('monthly-list');
-    listDiv.innerHTML = 'লোড হচ্ছে...';
-    
-    try {
-      const res = await fetch(API_URL, { method: 'POST', body: JSON.stringify({ action: 'getMonthlyReport', month: month }) });
-      const data = await res.json();
-      if(data.success) {
-        monthlyReportData = data.report;
-        renderMonthlyReport(monthlyReportData);
-      }
-    } catch(e) { listDiv.innerHTML = 'ডাটা লোড করতে সমস্যা হয়েছে।'; }
-  }
-
-  function renderMonthlyReport(data) {
-    const listDiv = document.getElementById('monthly-list');
-    if(data.length === 0) { listDiv.innerHTML = 'কোনো রেকর্ড নেই'; return; }
-    listDiv.innerHTML = data.map(r => `
-      <div class="list-item">
-        <div><strong>${r.name}</strong> <small>(${r.id})</small></div>
-        <div style="display:flex; gap: 5px;">
-          <span class="badge Present">উপস্থিত: ${r.present}</span>
-          <span class="badge Late">লেট: ${r.late}</span>
-          <span class="badge Absent">অনুপস্থিত: ${r.absent}</span>
+      <div id="homeNoticeBox"></div>
+      <div class="menu-grid">
+        <div class="menu-card" onclick="showScreen('userLoginScreen')">
+          <div class="mc-icon">👤</div>
+          <div class="mc-label">উপস্থিতি দিন</div>
+        </div>
+        <div class="menu-card" onclick="showScreen('myReportScreen')">
+          <div class="mc-icon">📊</div>
+          <div class="mc-label">আমার রিপোর্ট</div>
+        </div>
+        <div class="menu-card" onclick="showScreen('noticeScreen')">
+          <div class="mc-icon">📢</div>
+          <div class="mc-label">নোটিশ বোর্ড</div>
+        </div>
+        <div class="menu-card" onclick="showScreen('adminLoginScreen')">
+          <div class="mc-icon">🔐</div>
+          <div class="mc-label">অ্যাডমিন</div>
         </div>
       </div>
-    `).join('');
-  }
+    </div>
 
-  function filterMonthlyReport() {
-    const query = document.getElementById('search-report').value.toLowerCase();
-    const filtered = monthlyReportData.filter(r => r.name.toLowerCase().includes(query) || r.id.includes(query));
-    renderMonthlyReport(filtered);
-  }
+    <!-- ══ USER LOGIN (Attendance) ══ -->
+    <div class="screen" id="userLoginScreen">
+      <div class="card">
+        <div class="card-title"><span class="icon">🪪</span> আইডি যাচাই</div>
+        <div class="field">
+          <label>আপনার ব্যবহারকারী আইডি লিখুন</label>
+          <input type="text" id="userIdInput" placeholder="যেমন: U001" autocomplete="off"/>
+        </div>
+        <div id="userLoginMsg"></div>
+        <button class="btn btn-primary" onclick="verifyUser()">যাচাই করুন ও ক্যামেরা খুলুন</button>
+      </div>
+    </div>
 
-  // আমার তথ্য পেজ লোড
-  async function loadMyRecords() {
-    const id = document.getElementById('my-id').value;
-    const month = document.getElementById('my-month').value;
-    if(!id || !month) return showToast('আইডি এবং মাস উভয়ই সিলেক্ট করুন');
-    
-    const listDiv = document.getElementById('my-history-list');
-    listDiv.innerHTML = 'খোঁজা হচ্ছে...';
-    
-    try {
-      const res = await fetch(API_URL, { method: 'POST', body: JSON.stringify({ action: 'getPersonalRecord', userId: id, monthStr: month }) });
-      const data = await res.json();
-      
-      if(data.success) {
-        document.getElementById('my-summary').style.display = 'flex';
-        document.getElementById('count-present').innerText = data.present;
-        document.getElementById('count-late').innerText = data.late;
-        document.getElementById('count-absent').innerText = data.absent;
-        
-        listDiv.innerHTML = data.records.map(r => `
-          <div class="list-item">
-            <div><strong>${r.date}</strong> <small>(${r.day})</small> <br> <small>সময়: ${r.time}</small></div>
-            <span class="badge ${r.status}">${r.status === 'Present' ? 'উপস্থিত' : 'লেট'}</span>
+    <!-- ══ CAMERA ══ -->
+    <div class="screen" id="cameraScreen">
+      <div class="card">
+        <div class="card-title"><span class="icon">📸</span> সেলফি তুলুন</div>
+        <div id="userInfoBadge" class="msg msg-info" style="margin-bottom:12px"></div>
+        <div class="camera-container">
+          <video id="cameraView" autoplay playsinline></video>
+          <div class="camera-overlay"></div>
+        </div>
+        <canvas id="canvas" style="display:none"></canvas>
+        <img id="capturedImg" alt="captured"/>
+        <div id="cameraMsg"></div>
+        <div style="display:flex;gap:10px">
+          <button class="btn btn-primary" id="captureBtn" onclick="capturePhoto()">📷 ছবি তুলুন</button>
+          <button class="btn btn-accent" id="submitBtn" onclick="submitAttendance()" style="display:none">✅ জমা দিন</button>
+        </div>
+        <button class="btn btn-outline" style="margin-top:10px" onclick="retakePhoto()" id="retakeBtn" style="display:none">🔄 আবার তুলুন</button>
+      </div>
+    </div>
+
+    <!-- ══ MY REPORT ══ -->
+    <div class="screen" id="myReportScreen">
+      <div class="card">
+        <div class="card-title"><span class="icon">🔍</span> আমার রিপোর্ট</div>
+        <div class="field">
+          <label>আপনার ব্যবহারকারী আইডি</label>
+          <input type="text" id="reportUserIdInput" placeholder="যেমন: U001" autocomplete="off"/>
+        </div>
+        <button class="btn btn-primary" onclick="loadMyReport()">রিপোর্ট দেখুন</button>
+      </div>
+      <div id="myReportContent"></div>
+    </div>
+
+    <!-- ══ NOTICE BOARD ══ -->
+    <div class="screen" id="noticeScreen">
+      <div id="noticeListContent">
+        <div class="loader"><div class="spinner"></div></div>
+      </div>
+    </div>
+
+    <!-- ══ ADMIN LOGIN ══ -->
+    <div class="screen" id="adminLoginScreen">
+      <div class="card">
+        <div class="card-title"><span class="icon">🔐</span> অ্যাডমিন লগইন</div>
+        <div class="field">
+          <label>অ্যাডমিন আইডি</label>
+          <input type="text" id="adminIdInput" placeholder="ADMIN" autocomplete="off"/>
+        </div>
+        <div class="field">
+          <label>পাসওয়ার্ড</label>
+          <input type="password" id="adminPassInput" placeholder="••••••••"/>
+        </div>
+        <div id="adminLoginMsg"></div>
+        <button class="btn btn-primary" onclick="adminLogin()">লগইন করুন</button>
+      </div>
+    </div>
+
+    <!-- ══ ADMIN DASHBOARD ══ -->
+    <div class="screen" id="adminDashScreen">
+      <div id="dashStats"></div>
+      <div class="tab-bar">
+        <button class="tab-btn active" onclick="switchTab('daily')">দৈনিক</button>
+        <button class="tab-btn" onclick="switchTab('monthly')">মাসিক</button>
+        <button class="tab-btn" onclick="switchTab('notice')">নোটিশ</button>
+      </div>
+
+      <!-- Daily tab -->
+      <div id="tab-daily">
+        <div class="card">
+          <div class="card-title"><span class="icon">📅</span> তারিখ নির্বাচন</div>
+          <div class="field">
+            <input type="date" id="dailyDateInput"/>
           </div>
-        `).join('');
-      } else {
-        listDiv.innerHTML = data.message;
-      }
-    } catch(e) { listDiv.innerHTML = 'ত্রুটি ঘটেছে!'; }
-  }
-
-  // নোটিশ বোর্ড হ্যান্ডলিং
-  async function loadNotices() {
-    const list = document.getElementById('notice-list');
-    list.innerHTML = 'লোড হচ্ছে...';
-    try {
-      const res = await fetch(API_URL + '?action=getNotices');
-      const data = await res.json();
-      list.innerHTML = data.map(n => `
-        <div class="card" style="margin-bottom:10px;">
-          <small style="color:var(--text-light)">📅 ${n.date}</small>
-          <p style="margin-top:5px;">${n.text}</p>
+          <button class="btn btn-primary" onclick="loadDailyReport()">রিপোর্ট দেখুন</button>
         </div>
-      `).join('');
-    } catch(e) { list.innerHTML = 'নোটিশ লোড করা যায়নি।'; }
-  }
+        <div id="dailyReportContent"></div>
+      </div>
 
-  async function submitNotice() {
-    const text = document.getElementById('notice-text').value;
-    if(!text) return showToast('নোটিশের বিবরণ লিখুন');
-    
-    try {
-      const res = await fetch(API_URL, { method: 'POST', body: JSON.stringify({ action: 'addNotice', notice: text }) });
-      const data = await res.json();
-      if(data.success) {
-        showToast('নোটিশ সফলভাবে দেওয়া হয়েছে');
-        document.getElementById('notice-text').value = '';
-        loadNotices();
-      }
-    } catch(e) { showToast('ব্যর্থ হয়েছে'); }
+      <!-- Monthly tab -->
+      <div id="tab-monthly" style="display:none">
+        <div class="card">
+          <div class="card-title"><span class="icon">📆</span> মাস নির্বাচন</div>
+          <div class="field">
+            <input type="month" id="monthlyInput"/>
+          </div>
+          <button class="btn btn-primary" onclick="loadMonthlyReport()">রিপোর্ট দেখুন</button>
+        </div>
+        <div id="monthlyReportContent"></div>
+      </div>
+
+      <!-- Notice tab -->
+      <div id="tab-notice" style="display:none">
+        <div class="card">
+          <div class="card-title"><span class="icon">📢</span> নতুন নোটিশ প্রকাশ</div>
+          <div class="field">
+            <label>শিরোনাম</label>
+            <input type="text" id="noticeTitleInput" placeholder="নোটিশের শিরোনাম"/>
+          </div>
+          <div class="field">
+            <label>তারিখ</label>
+            <input type="date" id="noticeDateInput"/>
+          </div>
+          <div class="field">
+            <label>বিস্তারিত</label>
+            <textarea id="noticeDetailsInput" placeholder="নোটিশের বিস্তারিত লিখুন…"></textarea>
+          </div>
+          <div id="noticePostMsg"></div>
+          <button class="btn btn-accent" onclick="postNotice()">প্রকাশ করুন</button>
+        </div>
+        <div id="adminNoticeList"></div>
+      </div>
+    </div>
+
+  </main>
+</div>
+
+<!-- TOAST -->
+<div id="toast"></div>
+
+<script>
+// ═══════════════════════════════════════════════
+//  ⚙️ CONFIG — Paste your GAS Web App URL here
+// ═══════════════════════════════════════════════
+var GAS_URL = "https://script.google.com/macros/s/AKfycbz0HZCjIr-mP_ly7ie4pNY-ichUy8lNCn32ZnaTax-ZDST9nnLJkdP4UcTNF_KmjPl6UA/exec";
+// ═══════════════════════════════════════════════
+
+var currentUser = null;
+var capturedBlob = null;
+var mediaStream  = null;
+var isAdminLogged = false;
+
+// ── NAVIGATION ──
+function showScreen(id) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  document.getElementById('backBtn').style.display = (id === 'homeScreen') ? 'none' : 'block';
+  var titles = {
+    homeScreen:'🏫 উপস্থিতি সিস্টেম',
+    userLoginScreen:'👤 আইডি যাচাই',
+    cameraScreen:'📸 সেলফি তুলুন',
+    myReportScreen:'📊 আমার রিপোর্ট',
+    noticeScreen:'📢 নোটিশ বোর্ড',
+    adminLoginScreen:'🔐 অ্যাডমিন লগইন',
+    adminDashScreen:'🛠️ অ্যাডমিন ড্যাশবোর্ড'
+  };
+  document.getElementById('pageTitle').textContent = titles[id] || '🏫 উপস্থিতি সিস্টেম';
+  if (id === 'noticeScreen') loadNotices();
+  if (id === 'adminDashScreen') loadDashboard();
+}
+
+function goHome() {
+  stopCamera();
+  showScreen('homeScreen');
+  loadHomeNotice();
+}
+
+// ── API CALL ──
+async function callGAS(payload) {
+  var res = await fetch(GAS_URL, {
+    method:'POST', redirect:'follow',
+    headers:{'Content-Type':'text/plain'},
+    body: JSON.stringify(payload)
+  });
+  return await res.json();
+}
+
+// ── TOAST ──
+function toast(msg) {
+  var t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 3000);
+}
+
+function setMsg(id, msg, type) {
+  var el = document.getElementById(id);
+  el.innerHTML = msg ? '<div class="msg msg-'+type+'">'+msg+'</div>' : '';
+}
+
+// ── HOME NOTICE PREVIEW ──
+async function loadHomeNotice() {
+  try {
+    var r = await callGAS({action:'getNotices'});
+    var box = document.getElementById('homeNoticeBox');
+    if (r.success && r.data.length) {
+      var n = r.data[0];
+      box.innerHTML = '<div class="notice-item"><h3>📢 '+n.title+'</h3><div class="notice-meta">'+n.date+'</div><p>'+n.details.substring(0,100)+(n.details.length>100?'…':'')+'</p></div>';
+    }
+  } catch(e){}
+}
+
+// ── USER VERIFY ──
+async function verifyUser() {
+  var uid = document.getElementById('userIdInput').value.trim();
+  if (!uid) { setMsg('userLoginMsg','আইডি লিখুন','error'); return; }
+  setMsg('userLoginMsg','যাচাই হচ্ছে…','info');
+  try {
+    var r = await callGAS({action:'verifyUser', userId: uid});
+    if (r.success) {
+      currentUser = r.user;
+      setMsg('userLoginMsg','','');
+      openCamera();
+    } else {
+      setMsg('userLoginMsg', r.message, 'error');
+    }
+  } catch(e) { setMsg('userLoginMsg','সংযোগ সমস্যা। আবার চেষ্টা করুন।','error'); }
+}
+
+// ── CAMERA ──
+async function openCamera() {
+  showScreen('cameraScreen');
+  document.getElementById('userInfoBadge').textContent =
+    '👤 ' + currentUser.name + ' | ' + currentUser.role + ' | ' + currentUser.area;
+  document.getElementById('capturedImg').style.display = 'none';
+  document.getElementById('cameraView').style.display  = 'block';
+  document.getElementById('captureBtn').style.display  = 'block';
+  document.getElementById('submitBtn').style.display   = 'none';
+  document.getElementById('retakeBtn').style.display   = 'none';
+  setMsg('cameraMsg','','');
+  capturedBlob = null;
+  try {
+    mediaStream = await navigator.mediaDevices.getUserMedia({video:{facingMode:'user'},audio:false});
+    document.getElementById('cameraView').srcObject = mediaStream;
+  } catch(e) {
+    setMsg('cameraMsg','ক্যামেরা খোলা যায়নি: '+e.message,'error');
   }
+}
+
+function capturePhoto() {
+  var video  = document.getElementById('cameraView');
+  var canvas = document.getElementById('canvas');
+  canvas.width  = video.videoWidth  || 640;
+  canvas.height = video.videoHeight || 480;
+  canvas.getContext('2d').drawImage(video, 0, 0);
+  capturedBlob = canvas.toDataURL('image/jpeg', 0.7);
+  var img = document.getElementById('capturedImg');
+  img.src = capturedBlob;
+  img.style.display = 'block';
+  video.style.display = 'none';
+  document.getElementById('captureBtn').style.display = 'none';
+  document.getElementById('submitBtn').style.display  = 'block';
+  document.getElementById('retakeBtn').style.display  = 'block';
+  stopCamera();
+}
+
+function retakePhoto() {
+  capturedBlob = null;
+  document.getElementById('capturedImg').style.display = 'none';
+  document.getElementById('submitBtn').style.display   = 'none';
+  document.getElementById('retakeBtn').style.display   = 'none';
+  openCamera();
+}
+
+function stopCamera() {
+  if (mediaStream) { mediaStream.getTracks().forEach(t => t.stop()); mediaStream = null; }
+}
+
+async function submitAttendance() {
+  if (!capturedBlob) { setMsg('cameraMsg','ছবি তুলুন','error'); return; }
+  setMsg('cameraMsg','জমা হচ্ছে…','info');
+  document.getElementById('submitBtn').disabled = true;
+  try {
+    var r = await callGAS({
+      action:'markAttendance',
+      userId: currentUser.id,
+      name:   currentUser.name,
+      area:   currentUser.area,
+      photo:  capturedBlob
+    });
+    if (r.success) {
+      toast('✅ ' + r.message);
+      stopCamera();
+      showSuccessScreen(r);
+    } else {
+      setMsg('cameraMsg', r.message, 'error');
+      document.getElementById('submitBtn').disabled = false;
+    }
+  } catch(e) {
+    setMsg('cameraMsg','সংযোগ সমস্যা।','error');
+    document.getElementById('submitBtn').disabled = false;
+  }
+}
+
+function showSuccessScreen(r) {
+  var colorMap = {Present:'var(--success)', Late:'var(--warn)', Absent:'var(--danger)'};
+  var mainEl = document.querySelector('main');
+  var html = '<div class="card" style="text-align:center;padding:36px 20px">'
+    + '<div style="font-size:4rem;margin-bottom:12px">' + (r.status==='Present'?'🎉':r.status==='Late'?'⏰':'❌') + '</div>'
+    + '<h2 style="color:'+colorMap[r.status]+';margin-bottom:8px">' + (r.status==='Present'?'সময়মতো উপস্থিত!':r.status==='Late'?'দেরিতে উপস্থিত':'অনুপস্থিত গণ্য') + '</h2>'
+    + '<p style="color:var(--muted);margin-bottom:6px">সময়: ' + r.time + '</p>'
+    + '<p style="color:var(--muted);margin-bottom:20px">'+r.message+'</p>'
+    + '<button class="btn btn-primary" onclick="goHome()">হোমে ফিরুন</button>'
+    + '</div>';
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById('backBtn').style.display = 'block';
+  var tmp = document.createElement('div');
+  tmp.id = 'successTemp';
+  tmp.innerHTML = html;
+  mainEl.appendChild(tmp);
+}
+
+// ── MY REPORT ──
+async function loadMyReport() {
+  var uid = document.getElementById('reportUserIdInput').value.trim();
+  if (!uid) { toast('আইডি লিখুন'); return; }
+  document.getElementById('myReportContent').innerHTML = '<div class="loader"><div class="spinner"></div></div>';
+  try {
+    var r = await callGAS({action:'getUserReport', userId: uid});
+    if (!r.success) { document.getElementById('myReportContent').innerHTML='<div class="msg msg-error">'+r.message+'</div>'; return; }
+    if (!r.data.length) { document.getElementById('myReportContent').innerHTML='<div class="msg msg-info">কোনো রেকর্ড নেই</div>'; return; }
+    var present=0,late=0,absent=0;
+    r.data.forEach(d=>{if(d.status==='Present')present++;else if(d.status==='Late')late++;else absent++;});
+    var html = '<div class="stats-row">'
+      +'<div class="stat-tile st-present"><div class="st-num">'+present+'</div><div class="st-label">উপস্থিত</div></div>'
+      +'<div class="stat-tile st-late"><div class="st-num">'+late+'</div><div class="st-label">দেরি</div></div>'
+      +'<div class="stat-tile st-absent"><div class="st-num">'+absent+'</div><div class="st-label">অনুপস্থিত</div></div>'
+      +'</div>';
+    html += '<div class="card"><div class="table-wrap"><table><thead><tr><th>তারিখ</th><th>সময়</th><th>অবস্থা</th></tr></thead><tbody>';
+    r.data.forEach(d => {
+      html += '<tr><td>'+d.date+'</td><td>'+d.time+'</td><td><span class="badge badge-'+d.status.toLowerCase()+'">'+
+        (d.status==='Present'?'উপস্থিত':d.status==='Late'?'দেরি':'অনুপস্থিত')+'</span></td></tr>';
+    });
+    html += '</tbody></table></div></div>';
+    document.getElementById('myReportContent').innerHTML = html;
+  } catch(e) { document.getElementById('myReportContent').innerHTML='<div class="msg msg-error">সংযোগ সমস্যা</div>'; }
+}
+
+// ── NOTICES ──
+async function loadNotices() {
+  document.getElementById('noticeListContent').innerHTML = '<div class="loader"><div class="spinner"></div></div>';
+  try {
+    var r = await callGAS({action:'getNotices'});
+    if (!r.success || !r.data.length) {
+      document.getElementById('noticeListContent').innerHTML = '<div class="msg msg-info">কোনো নোটিশ নেই</div>'; return;
+    }
+    var html = r.data.map(n =>
+      '<div class="notice-item"><h3>'+n.title+'</h3><div class="notice-meta">📅 '+n.date+' | '+n.by+'</div><p>'+n.details+'</p></div>'
+    ).join('');
+    document.getElementById('noticeListContent').innerHTML = html;
+  } catch(e) { document.getElementById('noticeListContent').innerHTML='<div class="msg msg-error">লোড হয়নি</div>'; }
+}
+
+// ── ADMIN LOGIN ──
+async function adminLogin() {
+  var uid  = document.getElementById('adminIdInput').value.trim();
+  var pass = document.getElementById('adminPassInput').value.trim();
+  if (!uid||!pass) { setMsg('adminLoginMsg','সব তথ্য দিন','error'); return; }
+  setMsg('adminLoginMsg','যাচাই হচ্ছে…','info');
+  try {
+    var r = await callGAS({action:'adminLogin', userId:uid, password:pass});
+    if (r.success) {
+      isAdminLogged = true;
+      setMsg('adminLoginMsg','','');
+      showScreen('adminDashScreen');
+      setDefaultDates();
+    } else { setMsg('adminLoginMsg', r.message, 'error'); }
+  } catch(e) { setMsg('adminLoginMsg','সংযোগ সমস্যা','error'); }
+}
+
+function setDefaultDates() {
+  var today = new Date().toISOString().split('T')[0];
+  document.getElementById('dailyDateInput').value  = today;
+  document.getElementById('noticeDateInput').value = today;
+  var ym = today.substring(0,7);
+  document.getElementById('monthlyInput').value = ym;
+}
+
+// ── DASHBOARD ──
+async function loadDashboard() {
+  try {
+    var r = await callGAS({action:'getDashboard'});
+    if (!r.success) return;
+    document.getElementById('dashStats').innerHTML =
+      '<div class="stats-row">'
+      +'<div class="stat-tile st-present"><div class="st-num">'+r.present+'</div><div class="st-label">উপস্থিত</div></div>'
+      +'<div class="stat-tile st-late"><div class="st-num">'+r.late+'</div><div class="st-label">দেরি</div></div>'
+      +'<div class="stat-tile st-absent"><div class="st-num">'+r.absent+'</div><div class="st-label">অনুপস্থিত</div></div>'
+      +'</div>'
+      +'<div class="msg msg-info" style="margin-bottom:12px">আজকের তারিখ: '+r.today+' | মোট ব্যবহারকারী: '+r.total+'</div>';
+  } catch(e){}
+}
+
+// ── TABS ──
+function switchTab(tab) {
+  ['daily','monthly','notice'].forEach(t => {
+    document.getElementById('tab-'+t).style.display = (t===tab)?'block':'none';
+  });
+  document.querySelectorAll('.tab-btn').forEach((b,i) => {
+    b.classList.toggle('active', ['daily','monthly','notice'][i] === tab);
+  });
+  if (tab === 'notice') loadAdminNotices();
+}
+
+// ── DAILY REPORT ──
+async function loadDailyReport() {
+  var d = document.getElementById('dailyDateInput').value;
+  if (!d) { toast('তারিখ নির্বাচন করুন'); return; }
+  var parts = d.split('-');
+  var dateStr = parts[2]+'/'+parts[1]+'/'+parts[0];
+  document.getElementById('dailyReportContent').innerHTML = '<div class="loader"><div class="spinner"></div></div>';
+  try {
+    var r = await callGAS({action:'getReport', filter:'daily', date:dateStr});
+    renderReport('dailyReportContent', r);
+  } catch(e) { document.getElementById('dailyReportContent').innerHTML='<div class="msg msg-error">সংযোগ সমস্যা</div>'; }
+}
+
+// ── MONTHLY REPORT ──
+async function loadMonthlyReport() {
+  var m = document.getElementById('monthlyInput').value;
+  if (!m) { toast('মাস নির্বাচন করুন'); return; }
+  var parts = m.split('-');
+  var monthStr = parts[1]+'/'+parts[0];
+  document.getElementById('monthlyReportContent').innerHTML = '<div class="loader"><div class="spinner"></div></div>';
+  try {
+    var r = await callGAS({action:'getReport', filter:'monthly', month:monthStr});
+    renderReport('monthlyReportContent', r);
+  } catch(e) { document.getElementById('monthlyReportContent').innerHTML='<div class="msg msg-error">সংযোগ সমস্যা</div>'; }
+}
+
+function renderReport(elId, r) {
+  if (!r.success || !r.data.length) { document.getElementById(elId).innerHTML='<div class="msg msg-info">কোনো রেকর্ড নেই</div>'; return; }
+  var present=0,late=0,absent=0;
+  r.data.forEach(d=>{if(d.status==='Present')present++;else if(d.status==='Late')late++;else absent++;});
+  var html = '<div class="stats-row">'
+    +'<div class="stat-tile st-present"><div class="st-num">'+present+'</div><div class="st-label">উপস্থিত</div></div>'
+    +'<div class="stat-tile st-late"><div class="st-num">'+late+'</div><div class="st-label">দেরি</div></div>'
+    +'<div class="stat-tile st-absent"><div class="st-num">'+absent+'</div><div class="st-label">অনুপস্থিত</div></div>'
+    +'</div>';
+  html += '<div class="card"><div class="table-wrap"><table><thead><tr><th>তারিখ</th><th>আইডি</th><th>নাম</th><th>সময়</th><th>অবস্থা</th></tr></thead><tbody>';
+  r.data.forEach(d => {
+    html += '<tr><td>'+d.date+'</td><td>'+d.userId+'</td><td>'+d.name+'</td><td>'+d.time+'</td><td><span class="badge badge-'+d.status.toLowerCase()+'">'+(d.status==='Present'?'উপস্থিত':d.status==='Late'?'দেরি':'অনুপস্থিত')+'</span></td></tr>';
+  });
+  html += '</tbody></table></div></div>';
+  document.getElementById(elId).innerHTML = html;
+}
+
+// ── POST NOTICE ──
+async function postNotice() {
+  var title   = document.getElementById('noticeTitleInput').value.trim();
+  var date    = document.getElementById('noticeDateInput').value;
+  var details = document.getElementById('noticeDetailsInput').value.trim();
+  if (!title||!date||!details) { setMsg('noticePostMsg','সব তথ্য পূরণ করুন','error'); return; }
+  var parts = date.split('-');
+  var dateStr = parts[2]+'/'+parts[1]+'/'+parts[0];
+  setMsg('noticePostMsg','প্রকাশ হচ্ছে…','info');
+  try {
+    var r = await callGAS({action:'postNotice', title:title, date:dateStr, details:details, postedBy:'Admin'});
+    if (r.success) {
+      setMsg('noticePostMsg', r.message, 'success');
+      document.getElementById('noticeTitleInput').value = '';
+      document.getElementById('noticeDetailsInput').value = '';
+      loadAdminNotices();
+    } else { setMsg('noticePostMsg', r.message, 'error'); }
+  } catch(e) { setMsg('noticePostMsg','সংযোগ সমস্যা','error'); }
+}
+
+async function loadAdminNotices() {
+  document.getElementById('adminNoticeList').innerHTML = '<div class="loader"><div class="spinner"></div></div>';
+  try {
+    var r = await callGAS({action:'getNotices'});
+    if (!r.success || !r.data.length) { document.getElementById('adminNoticeList').innerHTML='<div class="msg msg-info">কোনো নোটিশ নেই</div>'; return; }
+    var html = r.data.map(n =>
+      '<div class="notice-item"><h3>'+n.title+'</h3><div class="notice-meta">📅 '+n.date+'</div><p>'+n.details+'</p></div>'
+    ).join('');
+    document.getElementById('adminNoticeList').innerHTML = html;
+  } catch(e){}
+}
+
+// ── INIT ──
+window.addEventListener('load', loadHomeNotice);
 </script>
-
 </body>
 </html>
