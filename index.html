@@ -352,7 +352,7 @@ tr:nth-child(even) td{background:#f5f7ff}
 // ══════════════════════════════════════════════
 //  ⚙️ CONFIG
 // ══════════════════════════════════════════════
-var GAS_URL = "https://script.google.com/macros/s/AKfycbwdCbdqIk0l3_Ii68Dq8gp-jovgeF9rgFdZrndRpVegAGK4vVjACatb_nUT6YBUdCQXUw/exec";
+var GAS_URL = "https://script.google.com/macros/s/AKfycbwOebjW2RoOcHbVXfVrTMGQzhGHTOl5L0K1DeholFa5jg8ObbY_baa0VYtfdabfcSYF5A/exec";
 
 // ══ সেকেন্ডারি লিংক — url: বদলান ══
 var ADMIN_LINKS = [
@@ -367,6 +367,28 @@ var ADMIN_LINKS = [
 
 var CU=null, CAP=null, MS=null, PT=null;
 var ID_KEY="att_ids";
+
+// ══ তারিখ হেল্পার — এই ফাংশনগুলো না থাকলে রিপোর্ট কাজ করে না ══
+// yyyy-MM-dd  →  dd/MM/yyyy
+function isoToDMY(s){
+  if(!s) return "";
+  var p=s.split("-");
+  if(p.length===3) return p[2].padStart(2,"0")+"/"+p[1].padStart(2,"0")+"/"+p[0];
+  return s;
+}
+// yyyy-MM  →  MM/yyyy
+function isoToMY(s){
+  if(!s) return "";
+  var p=s.split("-");
+  if(p.length===2) return p[1].padStart(2,"0")+"/"+p[0];
+  return s;
+}
+// আজকের তারিখ dd/MM/yyyy (browser local)
+function todayDMY(){
+  var n=new Date();
+  var pad=function(x){ return String(x).padStart(2,"0"); };
+  return pad(n.getDate())+"/"+pad(n.getMonth()+1)+"/"+n.getFullYear();
+}
 
 // ── saved IDs ──
 function getIds(){ try{ return JSON.parse(localStorage.getItem(ID_KEY)||"[]"); }catch(e){ return []; } }
@@ -431,23 +453,6 @@ async function api(payload){
 }
 function toast(m){ var t=document.getElementById("tst"); t.textContent=m; t.classList.add("show"); setTimeout(function(){ t.classList.remove("show"); },3000); }
 function msg(id,m,t){ document.getElementById(id).innerHTML=m?'<div class="msg msg-'+t+'">'+m+"</div>":""; }
-
-// ── helper: আজকের তারিখ dd/MM/yyyy ──
-function todayDMY(){
-  var n=new Date();
-  var p=function(x){ return String(x).padStart(2,"0"); };
-  return p(n.getDate())+"/"+p(n.getMonth()+1)+"/"+n.getFullYear();
-}
-// input[type=date] value (yyyy-MM-dd) → dd/MM/yyyy
-function isoToDMY(s){
-  if(!s) return "";
-  var p=s.split("-"); return p[2]+"/"+p[1]+"/"+p[0];
-}
-// input[type=month] value (yyyy-MM) → MM/yyyy
-function isoToMY(s){
-  if(!s) return "";
-  var p=s.split("-"); return p[1]+"/"+p[0];
-}
 
 // ── popup ──
 function showPopup(r){
