@@ -1,715 +1,725 @@
-
-
-
-
-
-
-
-
-
-
-
 <!DOCTYPE html>
 <html lang="bn">
 <head>
 <meta charset="UTF-8"/>
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0"/>
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1"/>
 <title>উপস্থিতি সিস্টেম</title>
 <link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
 :root{
-  --primary:#0d47a1;--primary-light:#1565c0;--primary-dark:#002171;
-  --accent:#ff6f00;--accent-light:#ffa000;
-  --success:#2e7d32;--warn:#f57f17;--danger:#c62828;
-  --bg:#f0f4ff;--card:#fff;--text:#1a1a2e;--muted:#607d8b;
-  --radius:16px;--shadow:0 4px 24px rgba(13,71,161,.13);
+  --pr:#0d47a1;--prl:#1565c0;--prd:#002171;
+  --ac:#ff6f00;--acl:#ffa000;
+  --ok:#2e7d32;--wn:#f57f17;--er:#c62828;
+  --bg:#f0f4ff;--cd:#fff;--tx:#1a1a2e;--mt:#607d8b;
+  --rd:16px;--sh:0 4px 24px rgba(13,71,161,.13);
 }
-html,body{height:100%;font-family:'Hind Siliguri',sans-serif;background:var(--bg);color:var(--text)}
+html,body{height:100%;font-family:'Hind Siliguri',sans-serif;background:var(--bg);color:var(--tx)}
 #app{min-height:100vh;display:flex;flex-direction:column}
-.topbar{background:linear-gradient(135deg,var(--primary-dark),var(--primary));color:#fff;padding:10px 16px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:200;box-shadow:0 2px 12px rgba(0,0,0,.2);gap:10px}
-.topbar-left{display:flex;flex-direction:column;min-width:0}
+
+/* topbar */
+.topbar{background:linear-gradient(135deg,var(--prd),var(--pr));color:#fff;padding:10px 16px;
+  display:flex;align-items:center;justify-content:space-between;
+  position:sticky;top:0;z-index:200;box-shadow:0 2px 12px rgba(0,0,0,.2);gap:10px}
+.tbl{display:flex;flex-direction:column;min-width:0;flex:1}
 .topbar h1{font-size:1rem;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-#clockBox{font-size:.72rem;opacity:.85;letter-spacing:.2px;margin-top:1px;white-space:nowrap}
-.topbar-right{display:flex;gap:8px;align-items:center;flex-shrink:0}
-.back-btn{background:rgba(255,255,255,.18);border:none;color:#fff;padding:6px 13px;border-radius:20px;cursor:pointer;font-family:inherit;font-size:.82rem;transition:.2s;white-space:nowrap}
-.back-btn:hover{background:rgba(255,255,255,.28)}
+#clk{font-size:.7rem;opacity:.88;margin-top:2px;white-space:nowrap}
+.back-btn{background:rgba(255,255,255,.18);border:none;color:#fff;padding:6px 13px;
+  border-radius:20px;cursor:pointer;font-family:inherit;font-size:.8rem;white-space:nowrap;flex-shrink:0}
+.back-btn:hover{background:rgba(255,255,255,.27)}
+
 main{flex:1;padding:14px;max-width:540px;width:100%;margin:0 auto}
-.card{background:var(--card);border-radius:var(--radius);padding:18px;box-shadow:var(--shadow);margin-bottom:14px}
-.card-title{font-size:.95rem;font-weight:700;color:var(--primary-dark);margin-bottom:12px;display:flex;align-items:center;gap:8px}
-.field{margin-bottom:13px;position:relative}
-label{display:block;font-size:.8rem;font-weight:600;color:var(--muted);margin-bottom:5px}
-input,textarea,select{width:100%;padding:11px 13px;border:1.5px solid #dde3f0;border-radius:10px;font-family:inherit;font-size:.93rem;color:var(--text);background:#f8faff;transition:.2s;outline:none}
-input:focus,textarea:focus{border-color:var(--primary);background:#fff;box-shadow:0 0 0 3px rgba(13,71,161,.1)}
-textarea{min-height:85px;resize:vertical}
+
+/* card */
+.card{background:var(--cd);border-radius:var(--rd);padding:18px;box-shadow:var(--sh);margin-bottom:14px}
+.ctit{font-size:.93rem;font-weight:700;color:var(--prd);margin-bottom:12px}
+
+/* field */
+.fld{margin-bottom:12px;position:relative}
+label{display:block;font-size:.78rem;font-weight:600;color:var(--mt);margin-bottom:4px}
+input,textarea,select{width:100%;padding:10px 12px;border:1.5px solid #dde3f0;border-radius:10px;
+  font-family:inherit;font-size:.91rem;color:var(--tx);background:#f8faff;transition:.2s;outline:none}
+input:focus,textarea:focus{border-color:var(--pr);background:#fff;box-shadow:0 0 0 3px rgba(13,71,161,.1)}
+textarea{min-height:80px;resize:vertical}
+
 /* autocomplete */
-.autocomplete-list{position:absolute;top:100%;left:0;right:0;background:#fff;border:1.5px solid var(--primary);border-radius:0 0 10px 10px;z-index:100;box-shadow:0 4px 16px rgba(13,71,161,.15);max-height:160px;overflow-y:auto}
-.autocomplete-item{padding:10px 13px;font-size:.9rem;cursor:pointer;display:flex;align-items:center;gap:8px;border-bottom:1px solid #eef0f8}
-.autocomplete-item:last-child{border:none}
-.autocomplete-item:hover{background:#f0f4ff}
-.autocomplete-item .ai-id{font-weight:700;color:var(--primary)}
-.autocomplete-item .ai-name{font-size:.78rem;color:var(--muted)}
+.ac-box{position:absolute;top:100%;left:0;right:0;background:#fff;
+  border:1.5px solid var(--pr);border-top:none;border-radius:0 0 10px 10px;
+  z-index:300;box-shadow:0 6px 18px rgba(13,71,161,.15);max-height:150px;overflow-y:auto}
+.ac-item{padding:9px 13px;font-size:.88rem;cursor:pointer;display:flex;gap:8px;
+  align-items:center;border-bottom:1px solid #f0f4ff}
+.ac-item:last-child{border:none}
+.ac-item:hover{background:#e3f2fd}
+.ac-id{font-weight:700;color:var(--pr)}
+.ac-nm{font-size:.76rem;color:var(--mt)}
+
 /* buttons */
-.btn{display:block;width:100%;padding:12px;border:none;border-radius:12px;font-family:inherit;font-size:.95rem;font-weight:700;cursor:pointer;transition:.2s;text-align:center}
-.btn-primary{background:linear-gradient(135deg,var(--primary),var(--primary-light));color:#fff;box-shadow:0 4px 14px rgba(13,71,161,.3)}
-.btn-primary:hover{transform:translateY(-1px)}
-.btn-accent{background:linear-gradient(135deg,var(--accent),var(--accent-light));color:#fff;box-shadow:0 4px 14px rgba(255,111,0,.3)}
-.btn-outline{background:transparent;border:2px solid var(--primary);color:var(--primary)}
+.btn{display:block;width:100%;padding:11px;border:none;border-radius:12px;
+  font-family:inherit;font-size:.93rem;font-weight:700;cursor:pointer;transition:.2s;text-align:center}
+.btn-p{background:linear-gradient(135deg,var(--pr),var(--prl));color:#fff;box-shadow:0 4px 14px rgba(13,71,161,.3)}
+.btn-p:hover{transform:translateY(-1px)}
+.btn-a{background:linear-gradient(135deg,var(--ac),var(--acl));color:#fff;box-shadow:0 4px 14px rgba(255,111,0,.3)}
+.btn-o{background:transparent;border:2px solid var(--pr);color:var(--pr)}
+
 /* home */
-.hero{background:linear-gradient(135deg,var(--primary-dark) 0%,var(--primary) 60%,#1976d2 100%);color:#fff;border-radius:var(--radius);padding:24px 18px;text-align:center;margin-bottom:16px;position:relative;overflow:hidden}
-.hero::before{content:"";position:absolute;top:-40px;right:-40px;width:150px;height:150px;background:rgba(255,255,255,.06);border-radius:50%}
+.hero{background:linear-gradient(135deg,var(--prd),var(--pr) 60%,#1976d2);color:#fff;
+  border-radius:var(--rd);padding:24px 18px;text-align:center;margin-bottom:16px;position:relative;overflow:hidden}
+.hero::before{content:"";position:absolute;top:-40px;right:-40px;width:150px;height:150px;
+  background:rgba(255,255,255,.06);border-radius:50%}
 .hero h2{font-size:1.4rem;font-weight:700;margin-bottom:5px}
-.hero p{font-size:.85rem;opacity:.85}
-.menu-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:14px}
-.menu-card{background:var(--card);border-radius:var(--radius);padding:20px 12px;text-align:center;cursor:pointer;box-shadow:var(--shadow);transition:.22s;border:2px solid transparent}
-.menu-card:hover,.menu-card:active{border-color:var(--primary);transform:translateY(-2px)}
-.menu-card .mc-icon{font-size:2rem;margin-bottom:7px}
-.menu-card .mc-label{font-size:.85rem;font-weight:700;color:var(--primary-dark)}
-/* badges */
-.badge{display:inline-block;padding:3px 11px;border-radius:20px;font-size:.76rem;font-weight:700}
-.badge-present{background:#e8f5e9;color:var(--success)}
-.badge-late{background:#fff3e0;color:var(--warn)}
-.badge-absent{background:#ffebee;color:var(--danger)}
+.hero p{font-size:.84rem;opacity:.85}
+.mgrid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:14px}
+.mc{background:var(--cd);border-radius:var(--rd);padding:20px 12px;text-align:center;
+  cursor:pointer;box-shadow:var(--sh);transition:.2s;border:2px solid transparent}
+.mc:hover,.mc:active{border-color:var(--pr);transform:translateY(-2px)}
+.mc-ic{font-size:2rem;margin-bottom:7px}
+.mc-lb{font-size:.84rem;font-weight:700;color:var(--prd)}
+
+/* badge */
+.bdg{display:inline-block;padding:3px 10px;border-radius:20px;font-size:.74rem;font-weight:700}
+.bdg-present{background:#e8f5e9;color:var(--ok)}
+.bdg-late{background:#fff3e0;color:var(--wn)}
+.bdg-absent{background:#ffebee;color:var(--er)}
+
 /* camera */
-#cameraView{width:100%;border-radius:14px;background:#000;display:block;max-height:280px;object-fit:cover}
-.camera-container{position:relative;margin-bottom:12px}
-.camera-overlay{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:170px;height:170px;border:3px solid rgba(255,255,255,.65);border-radius:50%;pointer-events:none}
-#capturedImg{width:100%;border-radius:14px;display:none;margin-bottom:12px;border:2px solid var(--primary)}
+#camV{width:100%;border-radius:14px;background:#000;display:block;max-height:280px;object-fit:cover}
+.cam-wrap{position:relative;margin-bottom:12px}
+.cam-ring{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);
+  width:170px;height:170px;border:3px solid rgba(255,255,255,.65);border-radius:50%;pointer-events:none}
+#capImg{width:100%;border-radius:14px;display:none;margin-bottom:12px;border:2px solid var(--pr)}
+
 /* notice */
-.notice-item{border-left:4px solid var(--accent);padding:11px 13px;background:var(--card);border-radius:0 12px 12px 0;margin-bottom:11px;box-shadow:var(--shadow)}
-.notice-item h3{font-size:.92rem;font-weight:700;color:var(--primary-dark);margin-bottom:3px}
-.notice-item .notice-meta{font-size:.75rem;color:var(--muted);margin-bottom:5px}
-.notice-item p{font-size:.86rem;line-height:1.6}
+.ni{border-left:4px solid var(--ac);padding:11px 13px;background:var(--cd);
+  border-radius:0 12px 12px 0;margin-bottom:11px;box-shadow:var(--sh)}
+.ni h3{font-size:.9rem;font-weight:700;color:var(--prd);margin-bottom:3px}
+.ni-meta{font-size:.73rem;color:var(--mt);margin-bottom:4px}
+.ni p{font-size:.84rem;line-height:1.6}
+
 /* table */
-.table-wrap{overflow-x:auto;margin-top:4px}
-table{width:100%;border-collapse:collapse;font-size:.79rem}
-th{background:var(--primary);color:#fff;padding:8px 7px;text-align:left;font-weight:600}
+.tw{overflow-x:auto;margin-top:4px}
+table{width:100%;border-collapse:collapse;font-size:.77rem}
+th{background:var(--pr);color:#fff;padding:8px 7px;text-align:left;font-weight:600;white-space:nowrap}
 td{padding:7px;border-bottom:1px solid #eef0f8;vertical-align:middle}
 tr:last-child td{border:none}
 tr:nth-child(even) td{background:#f5f7ff}
-/* stats — ড্যাশবোর্ড উপরের সামারি */
-.dash-stats-wrap{margin-bottom:14px}
-.stats-row{display:grid;grid-template-columns:repeat(3,1fr);gap:9px;margin-bottom:8px}
-.stat-tile{background:var(--card);border-radius:14px;padding:13px 8px;text-align:center;box-shadow:var(--shadow)}
-.stat-tile .st-num{font-size:1.7rem;font-weight:800;line-height:1}
-.stat-tile .st-label{font-size:.7rem;color:var(--muted);margin-top:4px;font-weight:600}
-.st-present .st-num{color:var(--success)}
-.st-late .st-num{color:var(--warn)}
-.st-absent .st-num{color:var(--danger)}
-.dash-meta{font-size:.8rem;color:var(--primary);background:#e3f2fd;border-radius:10px;padding:8px 13px;text-align:center;font-weight:600;margin-bottom:0}
-/* tabs — ৩টি ট্যাব */
-.tab-bar{display:flex;background:#eef0f8;border-radius:12px;padding:4px;margin-bottom:14px;gap:3px}
-.tab-btn{flex:1;padding:8px 4px;border:none;background:transparent;font-family:inherit;font-size:.82rem;font-weight:600;color:var(--muted);border-radius:9px;cursor:pointer;transition:.2s}
-.tab-btn.active{background:#fff;color:var(--primary-dark);box-shadow:0 2px 8px rgba(0,0,0,.1)}
-/* messages */
-.msg{padding:10px 14px;border-radius:10px;font-size:.86rem;font-weight:600;margin-bottom:11px;text-align:center}
-.msg-success{background:#e8f5e9;color:var(--success)}
-.msg-error{background:#ffebee;color:var(--danger)}
-.msg-info{background:#e3f2fd;color:var(--primary)}
+
+/* stats top */
+.srow{display:grid;grid-template-columns:repeat(3,1fr);gap:9px;margin-bottom:8px}
+.st{background:var(--cd);border-radius:14px;padding:13px 8px;text-align:center;box-shadow:var(--sh)}
+.st .sn{font-size:1.7rem;font-weight:800;line-height:1}
+.st .sl{font-size:.68rem;color:var(--mt);margin-top:4px;font-weight:600}
+.st-p .sn{color:var(--ok)} .st-l .sn{color:var(--wn)} .st-a .sn{color:var(--er)}
+.dmeta{font-size:.78rem;color:var(--pr);background:#e3f2fd;border-radius:9px;
+  padding:7px 12px;text-align:center;font-weight:600;margin-bottom:14px}
+
+/* tabs */
+.tbar{display:flex;background:#eef0f8;border-radius:12px;padding:4px;margin-bottom:14px;gap:3px}
+.tbtn{flex:1;padding:8px 2px;border:none;background:transparent;font-family:inherit;
+  font-size:.8rem;font-weight:600;color:var(--mt);border-radius:9px;cursor:pointer;transition:.2s}
+.tbtn.act{background:#fff;color:var(--prd);box-shadow:0 2px 8px rgba(0,0,0,.1)}
+
+/* msg */
+.msg{padding:10px 14px;border-radius:10px;font-size:.84rem;font-weight:600;margin-bottom:11px;text-align:center}
+.msg-ok{background:#e8f5e9;color:var(--ok)}
+.msg-er{background:#ffebee;color:var(--er)}
+.msg-in{background:#e3f2fd;color:var(--pr)}
+
 /* loader */
-.loader{display:flex;justify-content:center;padding:28px}
-.spinner{width:34px;height:34px;border:4px solid #dde3f0;border-top-color:var(--primary);border-radius:50%;animation:spin .7s linear infinite}
-@keyframes spin{to{transform:rotate(360deg)}}
+.ldr{display:flex;justify-content:center;padding:28px}
+.sp{width:34px;height:34px;border:4px solid #dde3f0;border-top-color:var(--pr);
+  border-radius:50%;animation:sp .7s linear infinite}
+@keyframes sp{to{transform:rotate(360deg)}}
+
 /* screens */
-.screen{display:none}.screen.active{display:block}
+.sc{display:none}.sc.act{display:block}
+
 /* toast */
-#toast{position:fixed;bottom:22px;left:50%;transform:translateX(-50%) translateY(80px);background:#1a1a2e;color:#fff;padding:10px 20px;border-radius:24px;font-size:.86rem;font-weight:600;z-index:9999;transition:.3s;white-space:nowrap;pointer-events:none}
-#toast.show{transform:translateX(-50%) translateY(0)}
+#tst{position:fixed;bottom:20px;left:50%;transform:translateX(-50%) translateY(80px);
+  background:#1a1a2e;color:#fff;padding:10px 20px;border-radius:24px;font-size:.84rem;
+  font-weight:600;z-index:9999;transition:.3s;white-space:nowrap;pointer-events:none}
+#tst.show{transform:translateX(-50%) translateY(0)}
+
 /* popup */
-#successPopup{display:none;position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:5000;justify-content:center;align-items:center;padding:20px}
-#successPopup.show{display:flex}
-.popup-box{background:#fff;border-radius:22px;padding:36px 24px;text-align:center;max-width:380px;width:100%;box-shadow:0 12px 48px rgba(0,0,0,.25);animation:popIn .3s cubic-bezier(.34,1.56,.64,1)}
-@keyframes popIn{from{transform:scale(.7);opacity:0}to{transform:scale(1);opacity:1}}
-.popup-emoji{font-size:4.5rem;margin-bottom:10px}
-.popup-title{font-size:1.5rem;font-weight:800;margin-bottom:8px}
-.popup-sub{font-size:.88rem;color:var(--muted);margin-bottom:18px;line-height:1.6}
-.popup-bar{height:5px;background:#eef0f8;border-radius:3px;margin-bottom:18px;overflow:hidden}
-.popup-bar-fill{height:100%;border-radius:3px;animation:barFill 3s linear forwards}
-@keyframes barFill{from{width:100%}to{width:0%}}
+#sPopup{display:none;position:fixed;inset:0;background:rgba(0,0,0,.55);
+  z-index:5000;justify-content:center;align-items:center;padding:20px}
+#sPopup.show{display:flex}
+.pb{background:#fff;border-radius:22px;padding:34px 22px;text-align:center;
+  max-width:360px;width:100%;box-shadow:0 12px 48px rgba(0,0,0,.25);
+  animation:pIn .3s cubic-bezier(.34,1.56,.64,1)}
+@keyframes pIn{from{transform:scale(.7);opacity:0}to{transform:scale(1);opacity:1}}
+.pe{font-size:4rem;margin-bottom:10px}
+.pt{font-size:1.45rem;font-weight:800;margin-bottom:8px}
+.ps{font-size:.85rem;color:var(--mt);margin-bottom:16px;line-height:1.6}
+.pbar{height:5px;background:#eef0f8;border-radius:3px;margin-bottom:16px;overflow:hidden}
+.pbf{height:100%;border-radius:3px;animation:pbfA 3s linear forwards}
+@keyframes pbfA{from{width:100%}to{width:0%}}
+
 /* admin links */
-#adminLinksScreen .links-intro{font-size:.88rem;color:var(--muted);margin-bottom:14px;line-height:1.6}
-.link-card{background:var(--card);border-radius:14px;padding:14px 16px;margin-bottom:10px;box-shadow:var(--shadow);display:flex;align-items:center;gap:14px;cursor:pointer;border:2px solid transparent;transition:.2s}
-.link-card:hover{border-color:var(--primary);transform:translateY(-1px)}
-.link-card .lc-icon{font-size:2rem;flex-shrink:0}
-.link-card .lc-info{flex:1;min-width:0}
-.link-card .lc-title{font-size:.9rem;font-weight:700;color:var(--primary-dark)}
-.link-card .lc-desc{font-size:.76rem;color:var(--muted);margin-top:2px}
-.link-card .lc-arrow{color:var(--primary);font-size:1.1rem;flex-shrink:0}
-/* iframe modal */
-#iframeModal{display:none;position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:8000;flex-direction:column}
-#iframeModal.show{display:flex}
-.iframe-topbar{background:var(--primary-dark);color:#fff;padding:10px 16px;display:flex;align-items:center;justify-content:space-between;flex-shrink:0}
-.iframe-topbar span{font-size:.9rem;font-weight:700;flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.iframe-close{background:rgba(255,255,255,.15);border:none;color:#fff;padding:6px 14px;border-radius:16px;cursor:pointer;font-family:inherit;font-size:.83rem}
-.iframe-wrap{flex:1;overflow:hidden;background:#fff}
-.iframe-wrap iframe{width:1280px;height:100%;border:none;transform-origin:top left}
-/* hint box */
-.hint-box{background:#fff8e1;border:1.5px solid #ffe082;border-radius:12px;padding:14px 16px;margin-bottom:14px}
-.hint-box .hb-title{font-size:.88rem;font-weight:700;color:#e65100;margin-bottom:8px}
-.hint-box ol{padding-left:18px}
-.hint-box li{font-size:.82rem;color:#5d4037;margin-bottom:5px;line-height:1.6}
-.hint-box code{background:#fff;border:1px solid #ffe082;border-radius:4px;padding:1px 5px;font-family:monospace;font-size:.8rem;color:#bf360c}
-/* section divider */
-.sec-label{font-size:.78rem;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;margin:14px 0 8px;padding-left:4px}
+.lk{background:var(--cd);border-radius:14px;padding:14px 15px;margin-bottom:10px;
+  box-shadow:var(--sh);display:flex;align-items:center;gap:13px;cursor:pointer;
+  border:2px solid transparent;transition:.2s;text-decoration:none}
+.lk:hover,.lk:active{border-color:var(--pr);transform:translateY(-1px)}
+.lk-ic{font-size:1.8rem;flex-shrink:0}
+.lk-in{flex:1;min-width:0}
+.lk-t{font-size:.88rem;font-weight:700;color:var(--prd)}
+.lk-d{font-size:.73rem;color:var(--mt);margin-top:2px}
+.lk-ar{color:var(--pr);font-size:1.2rem;flex-shrink:0}
+/* hint */
+.hint{background:#fff8e1;border:1.5px solid #ffe082;border-radius:12px;
+  padding:13px 15px;margin-bottom:14px}
+.hint strong{font-size:.85rem;color:#e65100;display:block;margin-bottom:7px}
+.hint ol{padding-left:16px}
+.hint li{font-size:.8rem;color:#5d4037;margin-bottom:4px;line-height:1.6}
+.hint code{background:#fff3e0;border-radius:4px;padding:1px 5px;font-family:monospace;
+  font-size:.79rem;color:#bf360c}
 </style>
 </head>
 <body>
 <div id="app">
+
+  <!-- TOPBAR -->
   <div class="topbar">
-    <div class="topbar-left">
-      <h1 id="pageTitle">🏫 উপস্থিতি সিস্টেম</h1>
-      <div id="clockBox">লোড হচ্ছে…</div>
+    <div class="tbl">
+      <h1 id="pgtit">🏫 উপস্থিতি সিস্টেম</h1>
+      <div id="clk">লোড হচ্ছে…</div>
     </div>
-    <div class="topbar-right">
-      <button class="back-btn" id="backBtn" onclick="goHome()" style="display:none">← হোম</button>
-    </div>
+    <button class="back-btn" id="bbtn" onclick="goHome()" style="display:none">← হোম</button>
   </div>
 
   <main>
+
     <!-- HOME -->
-    <div class="screen active" id="homeScreen">
+    <div class="sc act" id="homeScreen">
       <div class="hero"><h2>স্বাগতম! 🎓</h2><p>উপস্থিতি নিবন্ধন করুন অথবা রিপোর্ট দেখুন</p></div>
-      <div id="homeNoticeBox"></div>
-      <div class="menu-grid">
-        <div class="menu-card" onclick="showScreen('userLoginScreen')"><div class="mc-icon">👤</div><div class="mc-label">উপস্থিতি দিন</div></div>
-        <div class="menu-card" onclick="showScreen('myReportScreen')"><div class="mc-icon">📊</div><div class="mc-label">আমার রিপোর্ট</div></div>
-        <div class="menu-card" onclick="showScreen('noticeScreen')"><div class="mc-icon">📢</div><div class="mc-label">নোটিশ বোর্ড</div></div>
-        <div class="menu-card" onclick="showScreen('adminLinksScreen')"><div class="mc-icon">🔐</div><div class="mc-label">অ্যাডমিন</div></div>
+      <div id="homeNtc"></div>
+      <div class="mgrid">
+        <div class="mc" onclick="go('userLoginScreen')"><div class="mc-ic">👤</div><div class="mc-lb">উপস্থিতি দিন</div></div>
+        <div class="mc" onclick="go('myReportScreen')"><div class="mc-ic">📊</div><div class="mc-lb">আমার রিপোর্ট</div></div>
+        <div class="mc" onclick="go('noticeScreen')"><div class="mc-ic">📢</div><div class="mc-lb">নোটিশ বোর্ড</div></div>
+        <div class="mc" onclick="go('adminLinksScreen')"><div class="mc-ic">🔐</div><div class="mc-lb">অ্যাডমিন</div></div>
       </div>
     </div>
 
     <!-- USER LOGIN -->
-    <div class="screen" id="userLoginScreen">
+    <div class="sc" id="userLoginScreen">
       <div class="card">
-        <div class="card-title">🪪 আইডি যাচাই</div>
-        <div class="field">
+        <div class="ctit">🪪 আইডি যাচাই</div>
+        <div class="fld">
           <label>আপনার ব্যবহারকারী আইডি লিখুন</label>
-          <input type="text" id="userIdInput" placeholder="যেমন: U001" autocomplete="off"
-            oninput="showIdSuggestions(this.value,'userIdSuggest')"
-            onfocus="showIdSuggestions(this.value,'userIdSuggest')"
-            onblur="setTimeout(()=>hideSuggestions('userIdSuggest'),180)"/>
-          <div class="autocomplete-list" id="userIdSuggest" style="display:none"></div>
+          <input type="text" id="uidIn" placeholder="যেমন: U001" autocomplete="off"
+            oninput="acShow(this.value,'acU')" onfocus="acShow(this.value,'acU')"
+            onblur="setTimeout(()=>acHide('acU'),200)"/>
+          <div class="ac-box" id="acU" style="display:none"></div>
         </div>
-        <div id="userLoginMsg"></div>
-        <button class="btn btn-primary" onclick="verifyUser()">যাচাই করুন ও ক্যামেরা খুলুন</button>
+        <div id="ulMsg"></div>
+        <button class="btn btn-p" onclick="verifyUser()">যাচাই করুন ও ক্যামেরা খুলুন</button>
       </div>
     </div>
 
     <!-- CAMERA -->
-    <div class="screen" id="cameraScreen">
+    <div class="sc" id="cameraScreen">
       <div class="card">
-        <div class="card-title">📸 সেলফি তুলুন</div>
-        <div id="userInfoBadge" class="msg msg-info" style="margin-bottom:10px"></div>
-        <div class="camera-container">
-          <video id="cameraView" autoplay playsinline></video>
-          <div class="camera-overlay"></div>
-        </div>
-        <canvas id="canvas" style="display:none"></canvas>
-        <img id="capturedImg" alt="captured"/>
-        <div id="cameraMsg"></div>
+        <div class="ctit">📸 সেলফি তুলুন</div>
+        <div id="uBadge" class="msg msg-in" style="margin-bottom:10px"></div>
+        <div class="cam-wrap"><video id="camV" autoplay playsinline></video><div class="cam-ring"></div></div>
+        <canvas id="cvs" style="display:none"></canvas>
+        <img id="capImg" alt="captured"/>
+        <div id="camMsg"></div>
         <div style="display:flex;gap:10px">
-          <button class="btn btn-primary" id="captureBtn" onclick="capturePhoto()">📷 ছবি তুলুন</button>
-          <button class="btn btn-accent" id="submitBtn" onclick="submitAttendance()" style="display:none">✅ জমা দিন</button>
+          <button class="btn btn-p" id="capBtn" onclick="capturePhoto()">📷 ছবি তুলুন</button>
+          <button class="btn btn-a" id="subBtn" onclick="submitAtt()" style="display:none">✅ জমা দিন</button>
         </div>
-        <button class="btn btn-outline" style="margin-top:10px;display:none" id="retakeBtn" onclick="retakePhoto()">🔄 আবার তুলুন</button>
+        <button class="btn btn-o" style="margin-top:10px;display:none" id="retBtn" onclick="retakePhoto()">🔄 আবার তুলুন</button>
       </div>
     </div>
 
     <!-- MY REPORT -->
-    <div class="screen" id="myReportScreen">
+    <div class="sc" id="myReportScreen">
       <div class="card">
-        <div class="card-title">🔍 আমার রিপোর্ট</div>
-        <div class="field">
+        <div class="ctit">🔍 আমার রিপোর্ট</div>
+        <div class="fld">
           <label>আপনার ব্যবহারকারী আইডি</label>
-          <input type="text" id="reportUserIdInput" placeholder="যেমন: U001" autocomplete="off"
-            oninput="showIdSuggestions(this.value,'reportIdSuggest')"
-            onfocus="showIdSuggestions(this.value,'reportIdSuggest')"
-            onblur="setTimeout(()=>hideSuggestions('reportIdSuggest'),180)"/>
-          <div class="autocomplete-list" id="reportIdSuggest" style="display:none"></div>
+          <input type="text" id="ruidIn" placeholder="যেমন: U001" autocomplete="off"
+            oninput="acShow(this.value,'acR')" onfocus="acShow(this.value,'acR')"
+            onblur="setTimeout(()=>acHide('acR'),200)"/>
+          <div class="ac-box" id="acR" style="display:none"></div>
         </div>
-        <button class="btn btn-primary" onclick="loadMyReport()">রিপোর্ট দেখুন</button>
+        <button class="btn btn-p" onclick="loadMyReport()">রিপোর্ট দেখুন</button>
       </div>
-      <div id="myReportContent"></div>
+      <div id="myRptC"></div>
     </div>
 
     <!-- NOTICE BOARD -->
-    <div class="screen" id="noticeScreen">
-      <div id="noticeListContent"><div class="loader"><div class="spinner"></div></div></div>
+    <div class="sc" id="noticeScreen">
+      <div id="ntcC"><div class="ldr"><div class="sp"></div></div></div>
     </div>
 
     <!-- ADMIN LINKS -->
-    <div class="screen" id="adminLinksScreen">
+    <div class="sc" id="adminLinksScreen">
       <div class="card">
-        <div class="card-title">🔐 অ্যাডমিন প্যানেল</div>
-        <p class="links-intro">নিচের যেকোনো বিকল্পটি বেছে নিন।</p>
-        <div id="adminLinksList"></div>
+        <div class="ctit">🔐 অ্যাডমিন প্যানেল</div>
+        <div id="alkList"></div>
       </div>
-      <div class="hint-box">
-        <div class="hb-title">⚙️ লিংক পরিবর্তন করবেন যেভাবে</div>
+      <div class="hint">
+        <strong>⚙️ লিংক পরিবর্তন করবেন যেভাবে</strong>
         <ol>
           <li><strong>Index.html</strong> ফাইলটি Notepad বা VS Code-এ খুলুন।</li>
-          <li><code>var ADMIN_LINKS = [</code> লাইনটি খুঁজুন (script অংশের শুরুতে)।</li>
+          <li><code>var ADMIN_LINKS = [</code> লাইনটি খুঁজুন।</li>
           <li>প্রতিটি লিংকের <code>url:</code> এর পাশের মান বদলান।</li>
-          <li>Sheet ID: Google Sheet-এর URL থেকে <code>/d/</code> ও <code>/edit</code> এর মাঝের অংশ।</li>
-          <li>Folder ID: Drive ফোল্ডার URL-এর শেষ অংশ।</li>
+          <li>Sheet ID: Google Sheet URL-এর <code>/d/</code> ও <code>/edit</code> এর মাঝের অংশ।</li>
           <li>সেভ করে GitHub-এ আপলোড করুন।</li>
         </ol>
       </div>
     </div>
 
     <!-- ADMIN LOGIN -->
-    <div class="screen" id="adminLoginScreen">
+    <div class="sc" id="adminLoginScreen">
       <div class="card">
-        <div class="card-title">🔐 অ্যাডমিন লগইন</div>
-        <div class="field"><label>অ্যাডমিন আইডি</label><input type="text" id="adminIdInput" placeholder="ADMIN" autocomplete="off"/></div>
-        <div class="field"><label>পাসওয়ার্ড</label><input type="password" id="adminPassInput" placeholder="••••••••"/></div>
-        <div id="adminLoginMsg"></div>
-        <button class="btn btn-primary" onclick="adminLogin()">লগইন করুন</button>
+        <div class="ctit">🔐 অ্যাডমিন লগইন</div>
+        <div class="fld"><label>অ্যাডমিন আইডি</label><input type="text" id="aId" placeholder="ADMIN" autocomplete="off"/></div>
+        <div class="fld"><label>পাসওয়ার্ড</label><input type="password" id="aPw" placeholder="••••••••"/></div>
+        <div id="alMsg"></div>
+        <button class="btn btn-p" onclick="adminLogin()">লগইন করুন</button>
       </div>
     </div>
 
     <!-- ADMIN DASHBOARD -->
-    <div class="screen" id="adminDashScreen">
-
-      <!-- উপরের ডায়নামিক সামারি — ট্যাব অনুযায়ী বদলায় -->
-      <div class="dash-stats-wrap">
-        <div class="stats-row">
-          <div class="stat-tile st-present"><div class="st-num" id="dSumPresent">—</div><div class="st-label" id="dSumPLabel">উপস্থিত</div></div>
-          <div class="stat-tile st-late"><div class="st-num" id="dSumLate">—</div><div class="st-label" id="dSumLLabel">দেরি</div></div>
-          <div class="stat-tile st-absent"><div class="st-num" id="dSumAbsent">—</div><div class="st-label" id="dSumALabel">অনুপস্থিত</div></div>
-        </div>
-        <div class="dash-meta" id="dashMeta">লোড হচ্ছে…</div>
+    <div class="sc" id="adminDashScreen">
+      <!-- উপরের ডায়নামিক stats -->
+      <div class="srow">
+        <div class="st st-p"><div class="sn" id="dsP">—</div><div class="sl" id="dsPlb">উপস্থিত</div></div>
+        <div class="st st-l"><div class="sn" id="dsL">—</div><div class="sl" id="dsLlb">দেরি</div></div>
+        <div class="st st-a"><div class="sn" id="dsA">—</div><div class="sl" id="dsAlb">অনুপস্থিত</div></div>
       </div>
+      <div class="dmeta" id="dsMeta">লোড হচ্ছে…</div>
 
-      <!-- ৩টি ট্যাব: দৈনিক | মাসিক | নোটিশ -->
-      <div class="tab-bar">
-        <button class="tab-btn active" id="tab-btn-daily"   onclick="switchTab('daily')">📅 দৈনিক</button>
-        <button class="tab-btn"        id="tab-btn-monthly" onclick="switchTab('monthly')">📆 মাসিক</button>
-        <button class="tab-btn"        id="tab-btn-notice"  onclick="switchTab('notice')">📢 নোটিশ</button>
+      <div class="tbar">
+        <button class="tbtn act" id="tb-daily"   onclick="swTab('daily')">📅 দৈনিক</button>
+        <button class="tbtn"     id="tb-monthly" onclick="swTab('monthly')">📆 মাসিক</button>
+        <button class="tbtn"     id="tb-notice"  onclick="swTab('notice')">📢 নোটিশ</button>
       </div>
 
       <!-- দৈনিক -->
-      <div id="tab-daily">
+      <div id="t-daily">
         <div class="card">
-          <div class="card-title">📅 তারিখ নির্বাচন</div>
-          <div class="field"><input type="date" id="dailyDateInput"/></div>
-          <button class="btn btn-primary" onclick="loadDailyReport()">রিপোর্ট দেখুন</button>
+          <div class="ctit">📅 তারিখ নির্বাচন</div>
+          <div class="fld"><input type="date" id="dtIn"/></div>
+          <button class="btn btn-p" onclick="loadDaily()">রিপোর্ট দেখুন</button>
         </div>
-        <div id="dailyReportContent"></div>
+        <div id="dailyC"></div>
       </div>
 
       <!-- মাসিক -->
-      <div id="tab-monthly" style="display:none">
+      <div id="t-monthly" style="display:none">
         <div class="card">
-          <div class="card-title">📆 মাস নির্বাচন</div>
-          <div class="field"><input type="month" id="monthlyInput"/></div>
-          <button class="btn btn-primary" onclick="loadMonthlyReport()">রিপোর্ট দেখুন</button>
+          <div class="ctit">📆 মাস নির্বাচন</div>
+          <div class="fld"><input type="month" id="moIn"/></div>
+          <button class="btn btn-p" onclick="loadMonthly()">রিপোর্ট দেখুন</button>
         </div>
-        <div id="monthlyReportContent"></div>
+        <div id="monthlyC"></div>
       </div>
 
       <!-- নোটিশ -->
-      <div id="tab-notice" style="display:none">
+      <div id="t-notice" style="display:none">
         <div class="card">
-          <div class="card-title">📢 নতুন নোটিশ প্রকাশ</div>
-          <div class="field"><label>শিরোনাম</label><input type="text" id="noticeTitleInput" placeholder="নোটিশের শিরোনাম"/></div>
-          <div class="field"><label>তারিখ</label><input type="date" id="noticeDateInput"/></div>
-          <div class="field"><label>বিস্তারিত</label><textarea id="noticeDetailsInput" placeholder="নোটিশের বিস্তারিত লিখুন…"></textarea></div>
-          <div id="noticePostMsg"></div>
-          <button class="btn btn-accent" onclick="postNotice()">প্রকাশ করুন</button>
+          <div class="ctit">📢 নতুন নোটিশ প্রকাশ</div>
+          <div class="fld"><label>শিরোনাম</label><input type="text" id="ntcTit" placeholder="নোটিশের শিরোনাম"/></div>
+          <div class="fld"><label>তারিখ</label><input type="date" id="ntcDt"/></div>
+          <div class="fld"><label>বিস্তারিত</label><textarea id="ntcDtl" placeholder="বিস্তারিত লিখুন…"></textarea></div>
+          <div id="ntcMsg"></div>
+          <button class="btn btn-a" onclick="postNotice()">প্রকাশ করুন</button>
         </div>
-        <div id="adminNoticeList"></div>
+        <div id="ntcList"></div>
       </div>
+    </div>
 
-    </div><!-- /adminDashScreen -->
   </main>
 </div>
 
 <!-- SUCCESS POPUP -->
-<div id="successPopup">
-  <div class="popup-box">
-    <div class="popup-emoji" id="popupEmoji"></div>
-    <div class="popup-title" id="popupTitle"></div>
-    <div class="popup-sub"   id="popupSub"></div>
-    <div class="popup-bar"><div class="popup-bar-fill" id="popupBar"></div></div>
-    <button class="btn btn-primary" onclick="closePopup()">হোমে ফিরুন</button>
+<div id="sPopup">
+  <div class="pb">
+    <div class="pe" id="pEm"></div>
+    <div class="pt" id="pTit"></div>
+    <div class="ps" id="pSub"></div>
+    <div class="pbar"><div class="pbf" id="pBar"></div></div>
+    <button class="btn btn-p" onclick="closePopup()">হোমে ফিরুন</button>
   </div>
 </div>
-
-<!-- IFRAME MODAL -->
-<div id="iframeModal">
-  <div class="iframe-topbar">
-    <span id="iframeTitle">লোড হচ্ছে…</span>
-    <button class="iframe-close" onclick="closeIframe()">✕ বন্ধ করুন</button>
-  </div>
-  <div class="iframe-wrap" id="iframeWrap">
-    <iframe id="desktopFrame" src="about:blank" sandbox="allow-same-origin allow-scripts allow-forms allow-popups"></iframe>
-  </div>
-</div>
-
-<div id="toast"></div>
+<div id="tst"></div>
 
 <script>
 // ══════════════════════════════════════════════
-//  CONFIG
+//  ⚙️ CONFIG
 // ══════════════════════════════════════════════
-var GAS_URL = "https://script.google.com/macros/s/AKfycbwZXRpv5MXI72CdXGbOvP6A1cCqRg3Ix4d9-whL-eyZhEWRyPRNwGfhhnsqN0mSC3wLUA/exec";
+var GAS_URL = "https://script.google.com/macros/s/AKfycbwdCbdqIk0l3_Ii68Dq8gp-jovgeF9rgFdZrndRpVegAGK4vVjACatb_nUT6YBUdCQXUw/exec";
 
-// ══════════════════════════════════════════════
-//  অ্যাডমিন লিংক — url: এর মান বদলান
-// ══════════════════════════════════════════════
+// ══ সেকেন্ডারি লিংক — url: বদলান ══
 var ADMIN_LINKS = [
   { icon:"🔐", title:"অ্যাডমিন ড্যাশবোর্ড লগইন",   desc:"উপস্থিতি রিপোর্ট ও নোটিশ পরিচালনা",           url:"#admin-login", internal:true },
-  { icon:"💰", title:"Financial",           desc:"JTT Income, Expnse, Sales, Buy, Payment ", url:"https://script.google.com/macros/s/AKfycbwKgpT-pPWthk93JWi1hxLgFu1g5lzEiKRLyL82Ru5xK08OYMJKiYuh-T3bXTcUT1Bt/exec",    internal:false },
-  { icon:"📈", title:"Dealer-Retailer Sales",           desc:"Dealer-Retailer Sales & Income",             url:"https://script.google.com/macros/s/AKfycbw1p4qBTHrOsXFtXTLsnd0dnT1Sn5ZE0FSqUSxN8mdCAG-_31F-NDcUghExHBz5zztaxw/exec",                              internal:false },
-  { icon:"👥", title:"Employees ",            desc:"Create Employees Id card, Biodata & Delete",                 url:"https://script.google.com/macros/s/AKfycbyDXG2pmjSNZREbmRNtVVb5_VUjXaE0aWRuwc3GICJe7SGEvQqFSYnE5L4w6vSBTkuX/exec",        internal:false },
-  { icon:"📋", title:"Attendance List",            desc:"Attendance System",              url:"https://script.google.com/macros/s/AKfycbxRWwE3oGt-JqNTmXzPLZyxpVEubtglHbRKXu63blB_hlDBWS4tEmo-sACXrdD95qUJIA/exec",  internal:false },
-  { icon:"🎁", title:"Package",            desc:"Dealer Retailer dales Offer ",              url:"https://script.google.com/macros/s/AKfycbxRWwE3oGt-JqNTmXzPLZyxpVEubtglHbRKXu63blB_hlDBWS4tEmo-sACXrdD95qUJIA/exec",  internal:false }
+  { icon:"💰", title:"Financial",           desc:"JTT Income, Expense, Sales, Buy, Payment",  url:"https://script.google.com/macros/s/AKfycbwKgpT-pPWthk93JWi1hxLgFu1g5lzEiKRLyL82Ru5xK08OYMJKiYuh-T3bXTcUT1Bt/exec", internal:false },
+  { icon:"📈", title:"Dealer-Retailer Sales", desc:"Dealer-Retailer Sales & Income",           url:"https://script.google.com/macros/s/AKfycbw1p4qBTHrOsXFtXTLsnd0dnT1Sn5ZE0FSqUSxN8mdCAG-_31F-NDcUghExHBz5zztaxw/exec", internal:false },
+  { icon:"👥", title:"Employees",            desc:"Create Employees Id card, Biodata & Delete",url:"https://script.google.com/macros/s/AKfycbyDXG2pmjSNZREbmRNtVVb5_VUjXaE0aWRuwc3GICJe7SGEvQqFSYnE5L4w6vSBTkuX/exec", internal:false },
+  { icon:"📋", title:"Attendance List",      desc:"Attendance System",                          url:"https://script.google.com/macros/s/AKfycbxRWwE3oGt-JqNTmXzPLZyxpVEubtglHbRKXu63blB_hlDBWS4tEmo-sACXrdD95qUJIA/exec", internal:false },
+  { icon:"🎁", title:"Package",              desc:"Dealer Retailer Sales Offer",               url:"https://script.google.com/macros/s/AKfycbxRWwE3oGt-JqNTmXzPLZyxpVEubtglHbRKXu63blB_hlDBWS4tEmo-sACXrdD95qUJIA/exec", internal:false }
 ];
+// ══════════════════════════════════════════════
 
+var CU=null, CAP=null, MS=null, PT=null;
+var ID_KEY="att_ids";
 
-// ── ID মেমোরি ──
-var ID_KEY = "att_saved_ids";
-function getSavedIds(){ try{ return JSON.parse(localStorage.getItem(ID_KEY)||"[]"); }catch(e){ return []; } }
-function saveId(uid,name){
-  if(!uid) return;
-  var ids = getSavedIds().filter(function(x){ return x.id!==uid; });
-  ids.unshift({id:uid, name:name||""});
-  if(ids.length>10) ids=ids.slice(0,10);
-  try{ localStorage.setItem(ID_KEY, JSON.stringify(ids)); }catch(e){}
+// ── saved IDs ──
+function getIds(){ try{ return JSON.parse(localStorage.getItem(ID_KEY)||"[]"); }catch(e){ return []; } }
+function saveId(id,nm){
+  if(!id) return;
+  var a=getIds().filter(function(x){ return x.id!==id; });
+  a.unshift({id:id,nm:nm||""});
+  if(a.length>12) a=a.slice(0,12);
+  try{ localStorage.setItem(ID_KEY,JSON.stringify(a)); }catch(e){}
 }
-function showIdSuggestions(val,listId){
-  var list=document.getElementById(listId);
-  var ids=getSavedIds();
+function acShow(val,bid){
+  var box=document.getElementById(bid), ids=getIds();
   var q=val.trim().toUpperCase();
-  var filtered=q ? ids.filter(function(x){ return x.id.toUpperCase().indexOf(q)>=0||(x.name&&x.name.indexOf(val)>=0); }) : ids;
-  if(!filtered.length){ list.style.display="none"; return; }
-  list.innerHTML=filtered.map(function(x){
-    return '<div class="autocomplete-item" onmousedown="pickId(\''+x.id+'\',\''+listId+'\')">'
-      +'<span class="ai-id">'+x.id+'</span>'
-      +(x.name?'<span class="ai-name">'+x.name+'</span>':'')
-      +'</div>';
+  var f=q ? ids.filter(function(x){ return x.id.toUpperCase().indexOf(q)>=0||(x.nm&&x.nm.toUpperCase().indexOf(q)>=0); }) : ids;
+  if(!f.length){ box.style.display="none"; return; }
+  box.innerHTML=f.map(function(x){
+    return '<div class="ac-item" onmousedown="acPick(\''+x.id+'\',\''+bid+'\')">'
+      +'<span class="ac-id">'+x.id+'</span>'+(x.nm?'<span class="ac-nm">'+x.nm+'</span>':'')+'</div>';
   }).join("");
-  list.style.display="block";
+  box.style.display="block";
 }
-function pickId(uid,listId){
-  if(listId==="userIdSuggest")   document.getElementById("userIdInput").value=uid;
-  if(listId==="reportIdSuggest") document.getElementById("reportUserIdInput").value=uid;
-  hideSuggestions(listId);
+function acPick(id,bid){
+  if(bid==="acU") document.getElementById("uidIn").value=id;
+  if(bid==="acR") document.getElementById("ruidIn").value=id;
+  acHide(bid);
 }
-function hideSuggestions(listId){ var l=document.getElementById(listId); if(l) l.style.display="none"; }
+function acHide(bid){ var b=document.getElementById(bid); if(b) b.style.display="none"; }
 
-// ── CLOCK ──
+// ── clock ──
 function startClock(){
   function tick(){
-    var now=new Date(), h=now.getHours(), m=now.getMinutes(), s=now.getSeconds();
-    var ap=h>=12?'PM':'AM'; h=h%12||12;
-    var pad=function(n){ return String(n).padStart(2,'0'); };
-    var days=['রবিবার','সোমবার','মঙ্গলবার','বুধবার','বৃহস্পতিবার','শুক্রবার','শনিবার'];
-    var months=['জানুয়ারি','ফেব্রুয়ারি','মার্চ','এপ্রিল','মে','জুন','জুলাই','আগস্ট','সেপ্টেম্বর','অক্টোবর','নভেম্বর','ডিসেম্বর'];
-    document.getElementById('clockBox').textContent=
-      pad(h)+':'+pad(m)+':'+pad(s)+' '+ap+' | '+days[now.getDay()]+', '+now.getDate()+' '+months[now.getMonth()]+' '+now.getFullYear();
+    var n=new Date(),h=n.getHours(),m=n.getMinutes(),s=n.getSeconds();
+    var ap=h>=12?"PM":"AM"; h=h%12||12;
+    var p=function(x){ return String(x).padStart(2,"0"); };
+    var D=["রবিবার","সোমবার","মঙ্গলবার","বুধবার","বৃহস্পতিবার","শুক্রবার","শনিবার"];
+    var M=["জানুয়ারি","ফেব্রুয়ারি","মার্চ","এপ্রিল","মে","জুন","জুলাই","আগস্ট","সেপ্টেম্বর","অক্টোবর","নভেম্বর","ডিসেম্বর"];
+    document.getElementById("clk").textContent=p(h)+":"+p(m)+":"+p(s)+" "+ap+" | "+D[n.getDay()]+", "+n.getDate()+" "+M[n.getMonth()]+" "+n.getFullYear();
   }
   tick(); setInterval(tick,1000);
 }
 
-var currentUser=null, capturedBlob=null, mediaStream=null, popupTimer=null;
-
-// ── NAVIGATION ──
-function showScreen(id){
-  document.querySelectorAll('.screen').forEach(function(s){ s.classList.remove('active'); });
-  document.getElementById(id).classList.add('active');
-  document.getElementById('backBtn').style.display=(id==='homeScreen')?'none':'block';
-  var titles={homeScreen:'🏫 উপস্থিতি সিস্টেম',userLoginScreen:'👤 আইডি যাচাই',cameraScreen:'📸 সেলফি তুলুন',myReportScreen:'📊 আমার রিপোর্ট',noticeScreen:'📢 নোটিশ বোর্ড',adminLinksScreen:'🔐 অ্যাডমিন প্যানেল',adminLoginScreen:'🔐 অ্যাডমিন লগইন',adminDashScreen:'🛠️ অ্যাডমিন ড্যাশবোর্ড'};
-  document.getElementById('pageTitle').textContent=titles[id]||'🏫 উপস্থিতি সিস্টেম';
-  if(id==='noticeScreen')    loadNotices();
-  if(id==='adminDashScreen') initAdminDash();
-  if(id==='adminLinksScreen') renderAdminLinks();
+// ── nav ──
+var TITLES={homeScreen:"🏫 উপস্থিতি সিস্টেম",userLoginScreen:"👤 আইডি যাচাই",
+  cameraScreen:"📸 সেলফি তুলুন",myReportScreen:"📊 আমার রিপোর্ট",
+  noticeScreen:"📢 নোটিশ বোর্ড",adminLinksScreen:"🔐 অ্যাডমিন প্যানেল",
+  adminLoginScreen:"🔐 অ্যাডমিন লগইন",adminDashScreen:"🛠️ ড্যাশবোর্ড"};
+function go(id){
+  document.querySelectorAll(".sc").forEach(function(s){ s.classList.remove("act"); });
+  document.getElementById(id).classList.add("act");
+  document.getElementById("bbtn").style.display=(id==="homeScreen")?"none":"block";
+  document.getElementById("pgtit").textContent=TITLES[id]||"উপস্থিতি সিস্টেম";
+  if(id==="noticeScreen")    loadNotices();
+  if(id==="adminDashScreen") initDash();
+  if(id==="adminLinksScreen") renderLinks();
 }
-function goHome(){ stopCamera(); closePopupImmediate(); showScreen('homeScreen'); loadHomeNotice(); }
+function goHome(){ stopCam(); closePopup2(); go("homeScreen"); loadHomeNtc(); }
 
-// ── API ──
-async function callGAS(payload){
-  var res=await fetch(GAS_URL,{method:'POST',redirect:'follow',headers:{'Content-Type':'text/plain'},body:JSON.stringify(payload)});
-  return await res.json();
+// ── api ──
+async function api(payload){
+  var r=await fetch(GAS_URL,{method:"POST",redirect:"follow",headers:{"Content-Type":"text/plain"},body:JSON.stringify(payload)});
+  return await r.json();
+}
+function toast(m){ var t=document.getElementById("tst"); t.textContent=m; t.classList.add("show"); setTimeout(function(){ t.classList.remove("show"); },3000); }
+function msg(id,m,t){ document.getElementById(id).innerHTML=m?'<div class="msg msg-'+t+'">'+m+"</div>":""; }
+
+// ── helper: আজকের তারিখ dd/MM/yyyy ──
+function todayDMY(){
+  var n=new Date();
+  var p=function(x){ return String(x).padStart(2,"0"); };
+  return p(n.getDate())+"/"+p(n.getMonth()+1)+"/"+n.getFullYear();
+}
+// input[type=date] value (yyyy-MM-dd) → dd/MM/yyyy
+function isoToDMY(s){
+  if(!s) return "";
+  var p=s.split("-"); return p[2]+"/"+p[1]+"/"+p[0];
+}
+// input[type=month] value (yyyy-MM) → MM/yyyy
+function isoToMY(s){
+  if(!s) return "";
+  var p=s.split("-"); return p[1]+"/"+p[0];
 }
 
-// ── TOAST / MSG ──
-function toast(msg){ var t=document.getElementById('toast'); t.textContent=msg; t.classList.add('show'); setTimeout(function(){ t.classList.remove('show'); },3000); }
-function setMsg(id,msg,type){ document.getElementById(id).innerHTML=msg?'<div class="msg msg-'+type+'">'+msg+'</div>':''; }
-
-// ── SUCCESS POPUP ──
-function showSuccessPopup(r){
-  var cm={Present:'var(--success)',Late:'var(--warn)',Absent:'var(--danger)'};
-  var em={Present:'🎉',Late:'⏰',Absent:'❌'};
-  var tm={Present:'সময়মতো উপস্থিত!',Late:'দেরিতে উপস্থিত',Absent:'অনুপস্থিত গণ্য'};
-  document.getElementById('popupEmoji').textContent=em[r.status]||'✅';
-  document.getElementById('popupTitle').textContent=tm[r.status]||r.status;
-  document.getElementById('popupTitle').style.color=cm[r.status]||'#000';
-  document.getElementById('popupSub').innerHTML='সময়: <strong>'+r.time+'</strong><br>'+r.message;
-  var b=document.getElementById('popupBar');
-  b.style.background=cm[r.status]||'var(--primary)';
-  b.style.animation='none'; b.offsetHeight; b.style.animation='';
-  document.getElementById('successPopup').classList.add('show');
-  if(popupTimer) clearTimeout(popupTimer);
-  popupTimer=setTimeout(function(){ closePopupImmediate(); goHome(); },3000);
+// ── popup ──
+function showPopup(r){
+  var em={Present:"🎉",Late:"⏰",Absent:"❌"};
+  var tl={Present:"সময়মতো উপস্থিত!",Late:"দেরিতে উপস্থিত",Absent:"অনুপস্থিত গণ্য"};
+  var cl={Present:"#2e7d32",Late:"#f57f17",Absent:"#c62828"};
+  document.getElementById("pEm").textContent=em[r.status]||"✅";
+  document.getElementById("pTit").textContent=tl[r.status]||r.status;
+  document.getElementById("pTit").style.color=cl[r.status]||"#000";
+  document.getElementById("pSub").innerHTML="সময়: <strong>"+r.time+"</strong><br>"+r.message;
+  var b=document.getElementById("pBar");
+  b.style.background=cl[r.status]||"var(--pr)";
+  b.style.animation="none"; b.offsetHeight; b.style.animation="";
+  document.getElementById("sPopup").classList.add("show");
+  if(PT) clearTimeout(PT);
+  PT=setTimeout(function(){ closePopup2(); goHome(); },3000);
 }
-function closePopup(){ if(popupTimer) clearTimeout(popupTimer); closePopupImmediate(); goHome(); }
-function closePopupImmediate(){ document.getElementById('successPopup').classList.remove('show'); }
+function closePopup(){ if(PT) clearTimeout(PT); closePopup2(); goHome(); }
+function closePopup2(){ document.getElementById("sPopup").classList.remove("show"); }
 
-// ── HOME NOTICE ──
-async function loadHomeNotice(){
+// ── home notice ──
+async function loadHomeNtc(){
   try{
-    var r=await callGAS({action:'getNotices'});
+    var r=await api({action:"getNotices"});
     if(r.success&&r.data.length){
       var n=r.data[0];
-      document.getElementById('homeNoticeBox').innerHTML='<div class="notice-item"><h3>📢 '+n.title+'</h3><div class="notice-meta">'+n.date+'</div><p>'+n.details.substring(0,100)+(n.details.length>100?'…':'')+'</p></div>';
+      document.getElementById("homeNtc").innerHTML='<div class="ni"><h3>📢 '+n.title+'</h3><div class="ni-meta">'+n.date+'</div><p>'+n.details.substring(0,100)+(n.details.length>100?"…":"")+"</p></div>";
     }
   }catch(e){}
 }
 
-// ── USER VERIFY ──
+// ── verify user ──
 async function verifyUser(){
-  var uid=document.getElementById('userIdInput').value.trim();
-  if(!uid){ setMsg('userLoginMsg','আইডি লিখুন','error'); return; }
-  setMsg('userLoginMsg','যাচাই হচ্ছে…','info');
+  var uid=document.getElementById("uidIn").value.trim();
+  if(!uid){ msg("ulMsg","আইডি লিখুন","er"); return; }
+  acHide("acU");
+  msg("ulMsg","যাচাই হচ্ছে…","in");
   try{
-    var r=await callGAS({action:'verifyUser',userId:uid});
-    if(r.success){ currentUser=r.user; saveId(r.user.id,r.user.name); setMsg('userLoginMsg','',''); openCamera(); }
-    else setMsg('userLoginMsg',r.message,'error');
-  }catch(e){ setMsg('userLoginMsg','সংযোগ সমস্যা।','error'); }
+    var r=await api({action:"verifyUser",userId:uid});
+    if(r.success){ CU=r.user; saveId(r.user.id,r.user.name); msg("ulMsg","",""); openCam(); }
+    else msg("ulMsg",r.message,"er");
+  }catch(e){ msg("ulMsg","সংযোগ সমস্যা।","er"); }
 }
 
-// ── CAMERA ──
-async function openCamera(){
-  showScreen('cameraScreen');
-  document.getElementById('userInfoBadge').textContent='👤 '+currentUser.name+' | '+currentUser.role+' | '+currentUser.area;
-  document.getElementById('capturedImg').style.display='none';
-  document.getElementById('cameraView').style.display='block';
-  document.getElementById('captureBtn').style.display='block';
-  document.getElementById('submitBtn').style.display='none';
-  document.getElementById('retakeBtn').style.display='none';
-  setMsg('cameraMsg','',''); capturedBlob=null;
-  try{ mediaStream=await navigator.mediaDevices.getUserMedia({video:{facingMode:'user'},audio:false}); document.getElementById('cameraView').srcObject=mediaStream; }
-  catch(e){ setMsg('cameraMsg','ক্যামেরা খোলা যায়নি: '+e.message,'error'); }
+// ── camera ──
+async function openCam(){
+  go("cameraScreen");
+  document.getElementById("uBadge").textContent="👤 "+CU.name+" | "+CU.role+" | "+CU.area;
+  document.getElementById("capImg").style.display="none";
+  document.getElementById("camV").style.display="block";
+  document.getElementById("capBtn").style.display="block";
+  document.getElementById("subBtn").style.display="none";
+  document.getElementById("retBtn").style.display="none";
+  msg("camMsg","",""); CAP=null;
+  try{
+    MS=await navigator.mediaDevices.getUserMedia({video:{facingMode:"user"},audio:false});
+    document.getElementById("camV").srcObject=MS;
+  }catch(e){ msg("camMsg","ক্যামেরা খোলা যায়নি: "+e.message,"er"); }
 }
 function capturePhoto(){
-  var v=document.getElementById('cameraView'),c=document.getElementById('canvas');
+  var v=document.getElementById("camV"),c=document.getElementById("cvs");
   c.width=v.videoWidth||640; c.height=v.videoHeight||480;
-  c.getContext('2d').drawImage(v,0,0);
-  capturedBlob=c.toDataURL('image/jpeg',.7);
-  var img=document.getElementById('capturedImg'); img.src=capturedBlob; img.style.display='block';
-  v.style.display='none';
-  document.getElementById('captureBtn').style.display='none';
-  document.getElementById('submitBtn').style.display='block';
-  document.getElementById('retakeBtn').style.display='block';
-  stopCamera();
+  c.getContext("2d").drawImage(v,0,0);
+  CAP=c.toDataURL("image/jpeg",.7);
+  var i=document.getElementById("capImg"); i.src=CAP; i.style.display="block";
+  v.style.display="none";
+  document.getElementById("capBtn").style.display="none";
+  document.getElementById("subBtn").style.display="block";
+  document.getElementById("retBtn").style.display="block";
+  stopCam();
 }
-function retakePhoto(){ capturedBlob=null; document.getElementById('capturedImg').style.display='none'; document.getElementById('submitBtn').style.display='none'; document.getElementById('retakeBtn').style.display='none'; openCamera(); }
-function stopCamera(){ if(mediaStream){ mediaStream.getTracks().forEach(function(t){ t.stop(); }); mediaStream=null; } }
-async function submitAttendance(){
-  if(!capturedBlob){ setMsg('cameraMsg','ছবি তুলুন','error'); return; }
-  setMsg('cameraMsg','জমা হচ্ছে…','info');
-  document.getElementById('submitBtn').disabled=true;
+function retakePhoto(){ CAP=null; document.getElementById("capImg").style.display="none"; document.getElementById("subBtn").style.display="none"; document.getElementById("retBtn").style.display="none"; openCam(); }
+function stopCam(){ if(MS){ MS.getTracks().forEach(function(t){ t.stop(); }); MS=null; } }
+async function submitAtt(){
+  if(!CAP){ msg("camMsg","ছবি তুলুন","er"); return; }
+  msg("camMsg","জমা হচ্ছে…","in");
+  document.getElementById("subBtn").disabled=true;
   try{
-    var r=await callGAS({action:'markAttendance',userId:currentUser.id,name:currentUser.name,area:currentUser.area,photo:capturedBlob});
-    if(r.success){ stopCamera(); showSuccessPopup(r); document.getElementById('userIdInput').value=''; document.getElementById('submitBtn').disabled=false; }
-    else{ setMsg('cameraMsg',r.message,'error'); document.getElementById('submitBtn').disabled=false; }
-  }catch(e){ setMsg('cameraMsg','সংযোগ সমস্যা।','error'); document.getElementById('submitBtn').disabled=false; }
+    var r=await api({action:"markAttendance",userId:CU.id,name:CU.name,area:CU.area,photo:CAP});
+    if(r.success){ stopCam(); showPopup(r); document.getElementById("uidIn").value=""; document.getElementById("subBtn").disabled=false; }
+    else{ msg("camMsg",r.message,"er"); document.getElementById("subBtn").disabled=false; }
+  }catch(e){ msg("camMsg","সংযোগ সমস্যা।","er"); document.getElementById("subBtn").disabled=false; }
 }
 
-// ── MY REPORT ──
+// ── my report ──
 async function loadMyReport(){
-  var uid=document.getElementById('reportUserIdInput').value.trim();
-  if(!uid){ toast('আইডি লিখুন'); return; }
-  document.getElementById('myReportContent').innerHTML='<div class="loader"><div class="spinner"></div></div>';
+  var uid=document.getElementById("ruidIn").value.trim();
+  if(!uid){ toast("আইডি লিখুন"); return; }
+  acHide("acR");
+  document.getElementById("myRptC").innerHTML='<div class="ldr"><div class="sp"></div></div>';
   try{
-    var r=await callGAS({action:'getUserReport',userId:uid});
-    if(!r.success){ document.getElementById('myReportContent').innerHTML='<div class="msg msg-error">'+r.message+'</div>'; return; }
-    if(!r.data.length){ document.getElementById('myReportContent').innerHTML='<div class="msg msg-info">কোনো রেকর্ড নেই</div>'; return; }
+    var r=await api({action:"getUserReport",userId:uid});
+    if(!r.success){ document.getElementById("myRptC").innerHTML='<div class="msg msg-er">'+r.message+"</div>"; return; }
+    if(!r.data.length){ document.getElementById("myRptC").innerHTML='<div class="msg msg-in">কোনো রেকর্ড নেই</div>'; return; }
     var p=0,l=0,a=0;
-    r.data.forEach(function(d){ if(d.status==='Present')p++; else if(d.status==='Late')l++; else a++; });
-    var html='<div class="stats-row"><div class="stat-tile st-present"><div class="st-num">'+p+'</div><div class="st-label">উপস্থিত</div></div><div class="stat-tile st-late"><div class="st-num">'+l+'</div><div class="st-label">দেরি</div></div><div class="stat-tile st-absent"><div class="st-num">'+a+'</div><div class="st-label">অনুপস্থিত</div></div></div>';
-    html+='<div class="card"><div class="table-wrap"><table><thead><tr><th>তারিখ</th><th>সময়</th><th>অবস্থা</th></tr></thead><tbody>';
-    r.data.forEach(function(d){ html+='<tr><td>'+d.date+'</td><td>'+d.time+'</td><td><span class="badge badge-'+d.status.toLowerCase()+'">'+(d.status==='Present'?'উপস্থিত':d.status==='Late'?'দেরি':'অনুপস্থিত')+'</span></td></tr>'; });
-    html+='</tbody></table></div></div>';
-    document.getElementById('myReportContent').innerHTML=html;
-  }catch(e){ document.getElementById('myReportContent').innerHTML='<div class="msg msg-error">সংযোগ সমস্যা</div>'; }
+    r.data.forEach(function(d){ if(d.status==="Present")p++; else if(d.status==="Late")l++; else a++; });
+    var h='<div class="srow"><div class="st st-p"><div class="sn">'+p+'</div><div class="sl">উপস্থিত</div></div><div class="st st-l"><div class="sn">'+l+'</div><div class="sl">দেরি</div></div><div class="st st-a"><div class="sn">'+a+'</div><div class="sl">অনুপস্থিত</div></div></div>';
+    h+='<div class="card"><div class="tw"><table><thead><tr><th>তারিখ</th><th>সময়</th><th>অবস্থা</th></tr></thead><tbody>';
+    r.data.forEach(function(d){ h+='<tr><td>'+d.date+'</td><td>'+d.time+'</td><td><span class="bdg bdg-'+d.status.toLowerCase()+'">'+(d.status==="Present"?"উপস্থিত":d.status==="Late"?"দেরি":"অনুপস্থিত")+"</span></td></tr>"; });
+    h+='</tbody></table></div></div>';
+    document.getElementById("myRptC").innerHTML=h;
+  }catch(e){ document.getElementById("myRptC").innerHTML='<div class="msg msg-er">সংযোগ সমস্যা</div>'; }
 }
 
-// ── NOTICES ──
+// ── notices ──
 async function loadNotices(){
-  document.getElementById('noticeListContent').innerHTML='<div class="loader"><div class="spinner"></div></div>';
+  document.getElementById("ntcC").innerHTML='<div class="ldr"><div class="sp"></div></div>';
   try{
-    var r=await callGAS({action:'getNotices'});
-    if(!r.success||!r.data.length){ document.getElementById('noticeListContent').innerHTML='<div class="msg msg-info">কোনো নোটিশ নেই</div>'; return; }
-    document.getElementById('noticeListContent').innerHTML=r.data.map(function(n){ return '<div class="notice-item"><h3>'+n.title+'</h3><div class="notice-meta">📅 '+n.date+' | '+n.by+'</div><p>'+n.details+'</p></div>'; }).join('');
-  }catch(e){ document.getElementById('noticeListContent').innerHTML='<div class="msg msg-error">লোড হয়নি</div>'; }
+    var r=await api({action:"getNotices"});
+    if(!r.success||!r.data.length){ document.getElementById("ntcC").innerHTML='<div class="msg msg-in">কোনো নোটিশ নেই</div>'; return; }
+    document.getElementById("ntcC").innerHTML=r.data.map(function(n){ return '<div class="ni"><h3>'+n.title+'</h3><div class="ni-meta">📅 '+n.date+" | "+n.by+'</div><p>'+n.details+'</p></div>'; }).join("");
+  }catch(e){ document.getElementById("ntcC").innerHTML='<div class="msg msg-er">লোড হয়নি</div>'; }
 }
 
-// ── ADMIN LINKS ──
-function renderAdminLinks(){
-  document.getElementById('adminLinksList').innerHTML=ADMIN_LINKS.map(function(lk,i){
-    return '<div class="link-card" onclick="openAdminLink('+i+')">'+'<div class="lc-icon">'+lk.icon+'</div>'+'<div class="lc-info"><div class="lc-title">'+lk.title+'</div><div class="lc-desc">'+lk.desc+'</div></div>'+'<div class="lc-arrow">›</div>'+'</div>';
-  }).join('');
+// ── admin links — নতুন ট্যাবে খোলে (iframe নয়, তাই স্লো নেই) ──
+function renderLinks(){
+  document.getElementById("alkList").innerHTML=ADMIN_LINKS.map(function(lk,i){
+    return '<div class="lk" onclick="openLink('+i+')">'
+      +'<div class="lk-ic">'+lk.icon+'</div>'
+      +'<div class="lk-in"><div class="lk-t">'+lk.title+'</div><div class="lk-d">'+lk.desc+'</div></div>'
+      +'<div class="lk-ar">›</div>'
+      +'</div>';
+  }).join("");
 }
-function openAdminLink(idx){ var lk=ADMIN_LINKS[idx]; if(lk.internal&&lk.url==='#admin-login'){ showScreen('adminLoginScreen'); return; } openDesktopFrame(lk.url,lk.icon+' '+lk.title); }
-function openDesktopFrame(url,title){ document.getElementById('iframeTitle').textContent=title; document.getElementById('desktopFrame').src=url; scaleIframe(); document.getElementById('iframeModal').classList.add('show'); }
-function scaleIframe(){ var wrap=document.getElementById('iframeWrap'),frame=document.getElementById('desktopFrame'),dW=1280,aW=wrap.offsetWidth||window.innerWidth,sc=aW/dW; frame.style.transform='scale('+sc+')'; frame.style.width=dW+'px'; frame.style.height=(wrap.offsetHeight/sc)+'px'; }
-function closeIframe(){ document.getElementById('iframeModal').classList.remove('show'); document.getElementById('desktopFrame').src='about:blank'; }
-window.addEventListener('resize',function(){ if(document.getElementById('iframeModal').classList.contains('show')) scaleIframe(); });
+function openLink(i){
+  var lk=ADMIN_LINKS[i];
+  if(lk.internal&&lk.url==="#admin-login"){ go("adminLoginScreen"); return; }
+  window.open(lk.url,"_blank");  // নতুন ট্যাবে খোলে — সব GAS সাইট পূর্ণ স্ক্রিনে লোড হবে
+}
 
-// ── ADMIN LOGIN ──
+// ── admin login ──
 async function adminLogin(){
-  var uid=document.getElementById('adminIdInput').value.trim(), pass=document.getElementById('adminPassInput').value.trim();
-  if(!uid||!pass){ setMsg('adminLoginMsg','সব তথ্য দিন','error'); return; }
-  setMsg('adminLoginMsg','যাচাই হচ্ছে…','info');
+  var uid=document.getElementById("aId").value.trim(), pw=document.getElementById("aPw").value.trim();
+  if(!uid||!pw){ msg("alMsg","সব তথ্য দিন","er"); return; }
+  msg("alMsg","যাচাই হচ্ছে…","in");
   try{
-    var r=await callGAS({action:'adminLogin',userId:uid,password:pass});
-    if(r.success){ setMsg('adminLoginMsg','',''); showScreen('adminDashScreen'); }
-    else setMsg('adminLoginMsg',r.message,'error');
-  }catch(e){ setMsg('adminLoginMsg','সংযোগ সমস্যা','error'); }
+    var r=await api({action:"adminLogin",userId:uid,password:pw});
+    if(r.success){ msg("alMsg","",""); go("adminDashScreen"); }
+    else msg("alMsg",r.message,"er");
+  }catch(e){ msg("alMsg","সংযোগ সমস্যা","er"); }
 }
 
-// ══════════════════════════════════════════════
-//  ADMIN DASHBOARD
-// ══════════════════════════════════════════════
-
-// ড্যাশবোর্ড ইনিট — আজকের ডেটা লোড করে উপরের স্ট্যাটস বক্সে দেখায়
-async function initAdminDash(){
-  setDefaultDates();
-  // আজকের তারিখ dd/MM/yyyy
-  var now=new Date(), pad=function(n){ return String(n).padStart(2,'0'); };
-  var todayFmt=pad(now.getDate())+'/'+pad(now.getMonth()+1)+'/'+now.getFullYear();
-  updateTopStats(null,null,null,'লোড হচ্ছে…');
-  try{
-    var r=await callGAS({action:'getReport',filter:'daily',date:todayFmt});
+// ── admin dashboard init ──
+function initDash(){
+  setDefDates();
+  // আজকের stats লোড করে উপরে দেখাও
+  var td=todayDMY();
+  updateStats(null,null,null,"লোড হচ্ছে…");
+  api({action:"getReport",filter:"daily",date:td}).then(function(r){
     var p=0,l=0,a=0;
-    if(r.success&&r.data){ r.data.forEach(function(d){ if(d.status==='Present')p++; else if(d.status==='Late')l++; else a++; }); }
-    updateTopStats(p,l,a,'আজ: '+todayFmt+' (দৈনিক ভিউ)');
-  }catch(e){ updateTopStats(0,0,0,'ডেটা লোড হয়নি'); }
+    if(r.success&&r.data) r.data.forEach(function(d){ if(d.status==="Present")p++; else if(d.status==="Late")l++; else a++; });
+    updateStats(p,l,a,"আজ: "+td+" | মোট দৈনিক রেকর্ড: "+(p+l+a));
+  }).catch(function(){ updateStats(0,0,0,"ডেটা লোড হয়নি"); });
+}
+function setDefDates(){
+  var t=new Date().toISOString().split("T")[0];
+  document.getElementById("dtIn").value=t;
+  document.getElementById("ntcDt").value=t;
+  document.getElementById("moIn").value=t.substring(0,7);
+}
+function updateStats(p,l,a,meta){
+  document.getElementById("dsP").textContent=p===null?"—":p;
+  document.getElementById("dsL").textContent=l===null?"—":l;
+  document.getElementById("dsA").textContent=a===null?"—":a;
+  document.getElementById("dsMeta").textContent=meta||"";
 }
 
-function updateTopStats(p,l,a,meta){
-  document.getElementById('dSumPresent').textContent= p===null?'—':p;
-  document.getElementById('dSumLate').textContent=    l===null?'—':l;
-  document.getElementById('dSumAbsent').textContent=  a===null?'—':a;
-  document.getElementById('dashMeta').textContent=    meta||'';
-}
-
-function setDefaultDates(){
-  var today=new Date().toISOString().split('T')[0];
-  document.getElementById('dailyDateInput').value=today;
-  document.getElementById('noticeDateInput').value=today;
-  document.getElementById('monthlyInput').value=today.substring(0,7);
-}
-
-// ── TABS (৩টি) ──
-function switchTab(tab){
-  ['daily','monthly','notice'].forEach(function(t){
-    document.getElementById('tab-'+t).style.display=(t===tab)?'block':'none';
-    document.getElementById('tab-btn-'+t).classList.toggle('active',t===tab);
+// ── tabs ──
+function swTab(tab){
+  ["daily","monthly","notice"].forEach(function(t){
+    document.getElementById("t-"+t).style.display=(t===tab)?"block":"none";
+    document.getElementById("tb-"+t).classList.toggle("act",t===tab);
   });
-  if(tab==='notice') loadAdminNotices();
+  if(tab==="notice") loadAdminNtc();
 }
 
-// ── DAILY REPORT ──
-async function loadDailyReport(){
-  var d=document.getElementById('dailyDateInput').value;
-  if(!d){ toast('তারিখ নির্বাচন করুন'); return; }
-  var p=d.split('-'), dateStr=p[2]+'/'+p[1]+'/'+p[0];
-  document.getElementById('dailyReportContent').innerHTML='<div class="loader"><div class="spinner"></div></div>';
-  updateTopStats(null,null,null,'লোড হচ্ছে…');
+// ── daily report ──
+async function loadDaily(){
+  var val=document.getElementById("dtIn").value;
+  if(!val){ toast("তারিখ নির্বাচন করুন"); return; }
+  var dmy=isoToDMY(val);
+  document.getElementById("dailyC").innerHTML='<div class="ldr"><div class="sp"></div></div>';
+  updateStats(null,null,null,"লোড হচ্ছে…");
   try{
-    var r=await callGAS({action:'getReport',filter:'daily',date:dateStr});
-    var stats=renderReport('dailyReportContent',r);
-    updateTopStats(stats.p,stats.l,stats.a,dateStr+' — দৈনিক রিপোর্ট');
-  }catch(e){ document.getElementById('dailyReportContent').innerHTML='<div class="msg msg-error">সংযোগ সমস্যা</div>'; }
+    var r=await api({action:"getReport",filter:"daily",date:dmy});
+    var st=renderRpt("dailyC",r);
+    updateStats(st.p,st.l,st.a,dmy+" — দৈনিক রিপোর্ট ("+( st.p+st.l+st.a)+" জন)");
+  }catch(e){ document.getElementById("dailyC").innerHTML='<div class="msg msg-er">সংযোগ সমস্যা</div>'; }
 }
 
-// ── MONTHLY REPORT ──
-async function loadMonthlyReport(){
-  var m=document.getElementById('monthlyInput').value;
-  if(!m){ toast('মাস নির্বাচন করুন'); return; }
-  var p=m.split('-'), monthStr=p[1]+'/'+p[0];
-  document.getElementById('monthlyReportContent').innerHTML='<div class="loader"><div class="spinner"></div></div>';
-  updateTopStats(null,null,null,'লোড হচ্ছে…');
+// ── monthly report ──
+async function loadMonthly(){
+  var val=document.getElementById("moIn").value;
+  if(!val){ toast("মাস নির্বাচন করুন"); return; }
+  var my=isoToMY(val);
+  document.getElementById("monthlyC").innerHTML='<div class="ldr"><div class="sp"></div></div>';
+  updateStats(null,null,null,"লোড হচ্ছে…");
   try{
-    var r=await callGAS({action:'getReport',filter:'monthly',month:monthStr});
-    var stats=renderReport('monthlyReportContent',r);
-    updateTopStats(stats.p,stats.l,stats.a,monthStr+' — মাসিক রিপোর্ট');
-  }catch(e){ document.getElementById('monthlyReportContent').innerHTML='<div class="msg msg-error">সংযোগ সমস্যা</div>'; }
+    var r=await api({action:"getReport",filter:"monthly",month:my});
+    var st=renderRpt("monthlyC",r);
+    updateStats(st.p,st.l,st.a,my+" — মাসিক রিপোর্ট ("+(st.p+st.l+st.a)+" রেকর্ড)");
+  }catch(e){ document.getElementById("monthlyC").innerHTML='<div class="msg msg-er">সংযোগ সমস্যা</div>'; }
 }
 
-// ── RENDER REPORT — ইউজার সারসংক্ষেপ + বিস্তারিত রেকর্ড ──
-// returns {p,l,a} for top stats update
-function renderReport(elId,r){
-  if(!r.success||!r.data.length){
-    document.getElementById(elId).innerHTML='<div class="msg msg-info">এই সময়ের কোনো রেকর্ড নেই</div>';
+// ── report renderer ──
+function renderRpt(elId,r){
+  if(!r.success||!r.data||!r.data.length){
+    document.getElementById(elId).innerHTML='<div class="msg msg-in">এই সময়ে কোনো রেকর্ড নেই</div>';
     return {p:0,l:0,a:0};
   }
   var p=0,l=0,a=0;
-  // ইউজার অনুযায়ী গ্রুপ
   var users={};
   r.data.forEach(function(d){
-    if(d.status==='Present')p++; else if(d.status==='Late')l++; else a++;
-    if(!users[d.userId]) users[d.userId]={name:d.name,area:d.area,present:0,late:0,absent:0};
-    if(d.status==='Present') users[d.userId].present++;
-    else if(d.status==='Late') users[d.userId].late++;
-    else users[d.userId].absent++;
+    if(d.status==="Present")p++; else if(d.status==="Late")l++; else a++;
+    if(!users[d.userId]) users[d.userId]={nm:d.name,ar:d.area,p:0,l:0,a:0};
+    if(d.status==="Present") users[d.userId].p++;
+    else if(d.status==="Late") users[d.userId].l++;
+    else users[d.userId].a++;
   });
 
-  // ইউজার সারসংক্ষেপ টেবিল
-  var html='<div class="card"><div class="card-title">👥 ইউজারভিত্তিক সারসংক্ষেপ</div><div class="table-wrap"><table>'
-    +'<thead><tr><th>নাম / আইডি</th><th style="color:#a5d6a7;text-align:center">✅</th><th style="color:#ffe082;text-align:center">⏰</th><th style="color:#ef9a9a;text-align:center">❌</th></tr></thead><tbody>';
+  // ইউজার সারসংক্ষেপ
+  var h='<div class="card"><div class="ctit">👥 ইউজারভিত্তিক সারসংক্ষেপ</div><div class="tw"><table>'
+    +'<thead><tr><th>নাম / আইডি</th>'
+    +'<th style="text-align:center;background:#1b5e20">✅ উপ.</th>'
+    +'<th style="text-align:center;background:#e65100">⏰ দেরি</th>'
+    +'<th style="text-align:center;background:#b71c1c">❌ অনু.</th>'
+    +'</tr></thead><tbody>';
   Object.keys(users).forEach(function(uid){
     var u=users[uid];
-    html+='<tr>'
-      +'<td><strong>'+u.name+'</strong><br><small style="color:var(--muted)">'+uid+'</small></td>'
-      +'<td style="text-align:center;color:var(--success);font-weight:700">'+u.present+'</td>'
-      +'<td style="text-align:center;color:var(--warn);font-weight:700">'+u.late+'</td>'
-      +'<td style="text-align:center;color:var(--danger);font-weight:700">'+u.absent+'</td>'
+    h+='<tr>'
+      +'<td><strong>'+u.nm+'</strong><br><small style="color:var(--mt)">'+uid+'</small></td>'
+      +'<td style="text-align:center;color:var(--ok);font-weight:800">'+u.p+'</td>'
+      +'<td style="text-align:center;color:var(--wn);font-weight:800">'+u.l+'</td>'
+      +'<td style="text-align:center;color:var(--er);font-weight:800">'+u.a+'</td>'
       +'</tr>';
   });
-  html+='</tbody></table></div></div>';
+  h+='</tbody></table></div></div>';
 
   // বিস্তারিত রেকর্ড
-  html+='<div class="card"><div class="card-title">📋 বিস্তারিত রেকর্ড</div><div class="table-wrap"><table>'
+  h+='<div class="card"><div class="ctit">📋 বিস্তারিত রেকর্ড</div><div class="tw"><table>'
     +'<thead><tr><th>তারিখ</th><th>আইডি</th><th>নাম</th><th>সময়</th><th>অবস্থা</th></tr></thead><tbody>';
   r.data.forEach(function(d){
-    html+='<tr><td>'+d.date+'</td><td>'+d.userId+'</td><td>'+d.name+'</td><td>'+d.time+'</td>'
-      +'<td><span class="badge badge-'+d.status.toLowerCase()+'">'+(d.status==='Present'?'উপস্থিত':d.status==='Late'?'দেরি':'অনুপস্থিত')+'</span></td></tr>';
+    h+='<tr><td>'+d.date+'</td><td>'+d.userId+'</td><td>'+d.name+'</td><td>'+d.time+'</td>'
+      +'<td><span class="bdg bdg-'+d.status.toLowerCase()+'">'+(d.status==="Present"?"উপস্থিত":d.status==="Late"?"দেরি":"অনুপস্থিত")+"</span></td></tr>";
   });
-  html+='</tbody></table></div></div>';
-  document.getElementById(elId).innerHTML=html;
+  h+='</tbody></table></div></div>';
+  document.getElementById(elId).innerHTML=h;
   return {p:p,l:l,a:a};
 }
 
-// ── NOTICE POST ──
+// ── notice post ──
 async function postNotice(){
-  var title=document.getElementById('noticeTitleInput').value.trim();
-  var date=document.getElementById('noticeDateInput').value;
-  var details=document.getElementById('noticeDetailsInput').value.trim();
-  if(!title||!date||!details){ setMsg('noticePostMsg','সব তথ্য পূরণ করুন','error'); return; }
-  var p=date.split('-'), dateStr=p[2]+'/'+p[1]+'/'+p[0];
-  setMsg('noticePostMsg','প্রকাশ হচ্ছে…','info');
+  var tit=document.getElementById("ntcTit").value.trim(), dt=document.getElementById("ntcDt").value, dtl=document.getElementById("ntcDtl").value.trim();
+  if(!tit||!dt||!dtl){ msg("ntcMsg","সব তথ্য পূরণ করুন","er"); return; }
+  var dmy=isoToDMY(dt);
+  msg("ntcMsg","প্রকাশ হচ্ছে…","in");
   try{
-    var r=await callGAS({action:'postNotice',title:title,date:dateStr,details:details,postedBy:'Admin'});
-    if(r.success){ setMsg('noticePostMsg',r.message,'success'); document.getElementById('noticeTitleInput').value=''; document.getElementById('noticeDetailsInput').value=''; loadAdminNotices(); }
-    else setMsg('noticePostMsg',r.message,'error');
-  }catch(e){ setMsg('noticePostMsg','সংযোগ সমস্যা','error'); }
+    var r=await api({action:"postNotice",title:tit,date:dmy,details:dtl,postedBy:"Admin"});
+    if(r.success){ msg("ntcMsg",r.message,"ok"); document.getElementById("ntcTit").value=""; document.getElementById("ntcDtl").value=""; loadAdminNtc(); }
+    else msg("ntcMsg",r.message,"er");
+  }catch(e){ msg("ntcMsg","সংযোগ সমস্যা","er"); }
 }
-async function loadAdminNotices(){
-  document.getElementById('adminNoticeList').innerHTML='<div class="loader"><div class="spinner"></div></div>';
+async function loadAdminNtc(){
+  document.getElementById("ntcList").innerHTML='<div class="ldr"><div class="sp"></div></div>';
   try{
-    var r=await callGAS({action:'getNotices'});
-    if(!r.success||!r.data.length){ document.getElementById('adminNoticeList').innerHTML='<div class="msg msg-info">কোনো নোটিশ নেই</div>'; return; }
-    document.getElementById('adminNoticeList').innerHTML=r.data.map(function(n){ return '<div class="notice-item"><h3>'+n.title+'</h3><div class="notice-meta">📅 '+n.date+'</div><p>'+n.details+'</p></div>'; }).join('');
+    var r=await api({action:"getNotices"});
+    if(!r.success||!r.data.length){ document.getElementById("ntcList").innerHTML='<div class="msg msg-in">কোনো নোটিশ নেই</div>'; return; }
+    document.getElementById("ntcList").innerHTML=r.data.map(function(n){ return '<div class="ni"><h3>'+n.title+'</h3><div class="ni-meta">📅 '+n.date+'</div><p>'+n.details+'</p></div>'; }).join("");
   }catch(e){}
 }
 
-// ── INIT ──
-window.addEventListener('load',function(){ startClock(); loadHomeNotice(); });
+window.addEventListener("load",function(){ startClock(); loadHomeNtc(); });
 </script>
 </body>
-</html> 
+</html>
