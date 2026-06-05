@@ -6,7 +6,6 @@
 <title>উপস্থিতি সিস্টেম</title>
 <link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
 <style>
-/* ── RESET & BASE ── */
 *{box-sizing:border-box;margin:0;padding:0}
 :root{
   --primary:#0d47a1;--primary-light:#1565c0;--primary-dark:#002171;
@@ -16,110 +15,146 @@
   --radius:16px;--shadow:0 4px 24px rgba(13,71,161,.13);
 }
 html,body{height:100%;font-family:'Hind Siliguri',sans-serif;background:var(--bg);color:var(--text)}
-/* ── LAYOUT ── */
 #app{min-height:100vh;display:flex;flex-direction:column}
-.topbar{background:linear-gradient(135deg,var(--primary-dark),var(--primary));color:#fff;padding:14px 20px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100;box-shadow:0 2px 12px rgba(0,0,0,.2)}
-.topbar h1{font-size:1.1rem;font-weight:700;letter-spacing:.3px}
-.topbar .back-btn{background:rgba(255,255,255,.15);border:none;color:#fff;padding:6px 14px;border-radius:20px;cursor:pointer;font-family:inherit;font-size:.85rem;transition:.2s}
-.topbar .back-btn:hover{background:rgba(255,255,255,.25)}
-main{flex:1;padding:16px;max-width:540px;width:100%;margin:0 auto}
+
+/* ── TOPBAR ── */
+.topbar{background:linear-gradient(135deg,var(--primary-dark),var(--primary));color:#fff;padding:10px 16px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:200;box-shadow:0 2px 12px rgba(0,0,0,.2);gap:10px}
+.topbar-left{display:flex;flex-direction:column;min-width:0}
+.topbar h1{font-size:1rem;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+/* ── REALTIME CLOCK ── */
+#clockBox{font-size:.72rem;opacity:.85;letter-spacing:.2px;margin-top:1px;white-space:nowrap}
+.topbar-right{display:flex;gap:8px;align-items:center;flex-shrink:0}
+.back-btn{background:rgba(255,255,255,.18);border:none;color:#fff;padding:6px 13px;border-radius:20px;cursor:pointer;font-family:inherit;font-size:.82rem;transition:.2s;white-space:nowrap}
+.back-btn:hover{background:rgba(255,255,255,.28)}
+
+main{flex:1;padding:14px;max-width:540px;width:100%;margin:0 auto}
 
 /* ── CARDS ── */
-.card{background:var(--card);border-radius:var(--radius);padding:20px;box-shadow:var(--shadow);margin-bottom:16px}
-.card-title{font-size:1rem;font-weight:700;color:var(--primary-dark);margin-bottom:14px;display:flex;align-items:center;gap:8px}
-.card-title .icon{font-size:1.3rem}
+.card{background:var(--card);border-radius:var(--radius);padding:18px;box-shadow:var(--shadow);margin-bottom:14px}
+.card-title{font-size:.95rem;font-weight:700;color:var(--primary-dark);margin-bottom:12px;display:flex;align-items:center;gap:8px}
 
 /* ── FORMS ── */
-.field{margin-bottom:14px}
-label{display:block;font-size:.82rem;font-weight:600;color:var(--muted);margin-bottom:5px}
-input,textarea,select{width:100%;padding:12px 14px;border:1.5px solid #dde3f0;border-radius:10px;font-family:inherit;font-size:.95rem;color:var(--text);background:#f8faff;transition:.2s;outline:none}
+.field{margin-bottom:13px}
+label{display:block;font-size:.8rem;font-weight:600;color:var(--muted);margin-bottom:5px}
+input,textarea,select{width:100%;padding:11px 13px;border:1.5px solid #dde3f0;border-radius:10px;font-family:inherit;font-size:.93rem;color:var(--text);background:#f8faff;transition:.2s;outline:none}
 input:focus,textarea:focus{border-color:var(--primary);background:#fff;box-shadow:0 0 0 3px rgba(13,71,161,.1)}
-textarea{min-height:90px;resize:vertical}
+textarea{min-height:85px;resize:vertical}
 
 /* ── BUTTONS ── */
-.btn{display:block;width:100%;padding:13px;border:none;border-radius:12px;font-family:inherit;font-size:1rem;font-weight:700;cursor:pointer;transition:.2s;text-align:center;letter-spacing:.3px}
+.btn{display:block;width:100%;padding:12px;border:none;border-radius:12px;font-family:inherit;font-size:.95rem;font-weight:700;cursor:pointer;transition:.2s;text-align:center}
 .btn-primary{background:linear-gradient(135deg,var(--primary),var(--primary-light));color:#fff;box-shadow:0 4px 14px rgba(13,71,161,.3)}
-.btn-primary:hover{transform:translateY(-1px);box-shadow:0 6px 18px rgba(13,71,161,.35)}
-.btn-primary:active{transform:translateY(0)}
+.btn-primary:hover{transform:translateY(-1px)}
 .btn-accent{background:linear-gradient(135deg,var(--accent),var(--accent-light));color:#fff;box-shadow:0 4px 14px rgba(255,111,0,.3)}
 .btn-outline{background:transparent;border:2px solid var(--primary);color:var(--primary)}
-.btn-danger{background:linear-gradient(135deg,var(--danger),#e53935);color:#fff}
-.btn-sm{padding:8px 18px;font-size:.85rem;width:auto;display:inline-block}
+.btn-success{background:linear-gradient(135deg,var(--success),#388e3c);color:#fff}
 
-/* ── HOME SCREEN ── */
-.hero{background:linear-gradient(135deg,var(--primary-dark) 0%,var(--primary) 60%,#1976d2 100%);color:#fff;border-radius:var(--radius);padding:28px 20px;text-align:center;margin-bottom:20px;position:relative;overflow:hidden}
-.hero::before{content:"";position:absolute;top:-40px;right:-40px;width:160px;height:160px;background:rgba(255,255,255,.06);border-radius:50%}
-.hero h2{font-size:1.5rem;font-weight:700;margin-bottom:6px}
-.hero p{font-size:.88rem;opacity:.85}
-.menu-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:16px}
-.menu-card{background:var(--card);border-radius:var(--radius);padding:22px 14px;text-align:center;cursor:pointer;box-shadow:var(--shadow);transition:.22s;border:2px solid transparent}
-.menu-card:hover{border-color:var(--primary);transform:translateY(-2px)}
-.menu-card .mc-icon{font-size:2.2rem;margin-bottom:8px}
-.menu-card .mc-label{font-size:.88rem;font-weight:700;color:var(--primary-dark)}
-.menu-card-full{grid-column:1/-1}
+/* ── HOME ── */
+.hero{background:linear-gradient(135deg,var(--primary-dark) 0%,var(--primary) 60%,#1976d2 100%);color:#fff;border-radius:var(--radius);padding:24px 18px;text-align:center;margin-bottom:16px;position:relative;overflow:hidden}
+.hero::before{content:"";position:absolute;top:-40px;right:-40px;width:150px;height:150px;background:rgba(255,255,255,.06);border-radius:50%}
+.hero h2{font-size:1.4rem;font-weight:700;margin-bottom:5px}
+.hero p{font-size:.85rem;opacity:.85}
+.menu-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:14px}
+.menu-card{background:var(--card);border-radius:var(--radius);padding:20px 12px;text-align:center;cursor:pointer;box-shadow:var(--shadow);transition:.22s;border:2px solid transparent}
+.menu-card:hover,.menu-card:active{border-color:var(--primary);transform:translateY(-2px)}
+.menu-card .mc-icon{font-size:2rem;margin-bottom:7px}
+.menu-card .mc-label{font-size:.85rem;font-weight:700;color:var(--primary-dark)}
 
-/* ── STATUS BADGES ── */
-.badge{display:inline-block;padding:3px 12px;border-radius:20px;font-size:.78rem;font-weight:700}
+/* ── BADGES ── */
+.badge{display:inline-block;padding:3px 11px;border-radius:20px;font-size:.76rem;font-weight:700}
 .badge-present{background:#e8f5e9;color:var(--success)}
 .badge-late{background:#fff3e0;color:var(--warn)}
 .badge-absent{background:#ffebee;color:var(--danger)}
 
 /* ── CAMERA ── */
-#cameraView{width:100%;border-radius:14px;background:#000;display:block;max-height:300px;object-fit:cover}
-.camera-container{position:relative;margin-bottom:14px}
-.camera-overlay{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:180px;height:180px;border:3px solid rgba(255,255,255,.6);border-radius:50%;pointer-events:none}
-#capturedImg{width:100%;border-radius:14px;display:none;margin-bottom:14px;border:2px solid var(--primary)}
+#cameraView{width:100%;border-radius:14px;background:#000;display:block;max-height:280px;object-fit:cover}
+.camera-container{position:relative;margin-bottom:12px}
+.camera-overlay{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:170px;height:170px;border:3px solid rgba(255,255,255,.65);border-radius:50%;pointer-events:none}
+#capturedImg{width:100%;border-radius:14px;display:none;margin-bottom:12px;border:2px solid var(--primary)}
 
 /* ── NOTICE ── */
-.notice-item{border-left:4px solid var(--accent);padding:12px 14px;background:var(--card);border-radius:0 12px 12px 0;margin-bottom:12px;box-shadow:var(--shadow)}
-.notice-item h3{font-size:.95rem;font-weight:700;color:var(--primary-dark);margin-bottom:4px}
-.notice-item .notice-meta{font-size:.78rem;color:var(--muted);margin-bottom:6px}
-.notice-item p{font-size:.88rem;line-height:1.6}
+.notice-item{border-left:4px solid var(--accent);padding:11px 13px;background:var(--card);border-radius:0 12px 12px 0;margin-bottom:11px;box-shadow:var(--shadow)}
+.notice-item h3{font-size:.92rem;font-weight:700;color:var(--primary-dark);margin-bottom:3px}
+.notice-item .notice-meta{font-size:.75rem;color:var(--muted);margin-bottom:5px}
+.notice-item p{font-size:.86rem;line-height:1.6}
 
 /* ── TABLE ── */
-.table-wrap{overflow-x:auto;margin-top:6px}
-table{width:100%;border-collapse:collapse;font-size:.82rem}
-th{background:var(--primary);color:#fff;padding:9px 8px;text-align:left;font-weight:600}
-td{padding:8px;border-bottom:1px solid #eef0f8}
+.table-wrap{overflow-x:auto;margin-top:4px}
+table{width:100%;border-collapse:collapse;font-size:.79rem}
+th{background:var(--primary);color:#fff;padding:8px 7px;text-align:left;font-weight:600}
+td{padding:7px;border-bottom:1px solid #eef0f8;vertical-align:middle}
 tr:last-child td{border:none}
 tr:nth-child(even) td{background:#f5f7ff}
 
-/* ── STAT TILES ── */
-.stats-row{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:16px}
-.stat-tile{background:var(--card);border-radius:14px;padding:14px 10px;text-align:center;box-shadow:var(--shadow)}
-.stat-tile .st-num{font-size:1.8rem;font-weight:800;line-height:1}
-.stat-tile .st-label{font-size:.72rem;color:var(--muted);margin-top:4px;font-weight:600}
+/* ── STATS ── */
+.stats-row{display:grid;grid-template-columns:repeat(3,1fr);gap:9px;margin-bottom:14px}
+.stat-tile{background:var(--card);border-radius:14px;padding:13px 8px;text-align:center;box-shadow:var(--shadow)}
+.stat-tile .st-num{font-size:1.7rem;font-weight:800;line-height:1}
+.stat-tile .st-label{font-size:.7rem;color:var(--muted);margin-top:4px;font-weight:600}
 .st-present .st-num{color:var(--success)}
 .st-late .st-num{color:var(--warn)}
 .st-absent .st-num{color:var(--danger)}
 
 /* ── TABS ── */
-.tab-bar{display:flex;background:#eef0f8;border-radius:12px;padding:4px;margin-bottom:16px;gap:4px}
-.tab-btn{flex:1;padding:9px;border:none;background:transparent;font-family:inherit;font-size:.82rem;font-weight:600;color:var(--muted);border-radius:9px;cursor:pointer;transition:.2s}
+.tab-bar{display:flex;background:#eef0f8;border-radius:12px;padding:4px;margin-bottom:14px;gap:3px}
+.tab-btn{flex:1;padding:8px 4px;border:none;background:transparent;font-family:inherit;font-size:.79rem;font-weight:600;color:var(--muted);border-radius:9px;cursor:pointer;transition:.2s}
 .tab-btn.active{background:#fff;color:var(--primary-dark);box-shadow:0 2px 8px rgba(0,0,0,.1)}
 
 /* ── MESSAGES ── */
-.msg{padding:12px 16px;border-radius:10px;font-size:.88rem;font-weight:600;margin-bottom:12px;text-align:center}
+.msg{padding:10px 14px;border-radius:10px;font-size:.86rem;font-weight:600;margin-bottom:11px;text-align:center}
 .msg-success{background:#e8f5e9;color:var(--success)}
 .msg-error{background:#ffebee;color:var(--danger)}
 .msg-info{background:#e3f2fd;color:var(--primary)}
 
 /* ── LOADER ── */
-.loader{display:flex;justify-content:center;padding:30px}
-.spinner{width:36px;height:36px;border:4px solid #dde3f0;border-top-color:var(--primary);border-radius:50%;animation:spin .7s linear infinite}
+.loader{display:flex;justify-content:center;padding:28px}
+.spinner{width:34px;height:34px;border:4px solid #dde3f0;border-top-color:var(--primary);border-radius:50%;animation:spin .7s linear infinite}
 @keyframes spin{to{transform:rotate(360deg)}}
 
-/* ── SCREEN HIDE ── */
+/* ── SCREENS ── */
 .screen{display:none}.screen.active{display:block}
 
-/* ── SECTION HEADER ── */
-.section-hdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px}
-.section-hdr h2{font-size:1rem;font-weight:700;color:var(--primary-dark)}
-.divider{height:1px;background:#eef0f8;margin:14px 0}
-
 /* ── TOAST ── */
-#toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(80px);background:#1a1a2e;color:#fff;padding:11px 22px;border-radius:24px;font-size:.88rem;font-weight:600;z-index:999;transition:.3s;white-space:nowrap;pointer-events:none}
+#toast{position:fixed;bottom:22px;left:50%;transform:translateX(-50%) translateY(80px);background:#1a1a2e;color:#fff;padding:10px 20px;border-radius:24px;font-size:.86rem;font-weight:600;z-index:9999;transition:.3s;white-space:nowrap;pointer-events:none}
 #toast.show{transform:translateX(-50%) translateY(0)}
+
+/* ── SUCCESS POPUP (modal overlay) ── */
+#successPopup{
+  display:none;position:fixed;inset:0;background:rgba(0,0,0,.55);
+  z-index:5000;justify-content:center;align-items:center;padding:20px;
+}
+#successPopup.show{display:flex}
+.popup-box{background:#fff;border-radius:22px;padding:36px 24px;text-align:center;max-width:380px;width:100%;box-shadow:0 12px 48px rgba(0,0,0,.25);animation:popIn .3s cubic-bezier(.34,1.56,.64,1)}
+@keyframes popIn{from{transform:scale(.7);opacity:0}to{transform:scale(1);opacity:1}}
+.popup-emoji{font-size:4.5rem;margin-bottom:10px}
+.popup-title{font-size:1.5rem;font-weight:800;margin-bottom:8px}
+.popup-sub{font-size:.88rem;color:var(--muted);margin-bottom:18px;line-height:1.6}
+.popup-bar{height:5px;background:#eef0f8;border-radius:3px;margin-bottom:18px;overflow:hidden}
+.popup-bar-fill{height:100%;border-radius:3px;animation:barFill 3s linear forwards}
+@keyframes barFill{from{width:100%}to{width:0%}}
+
+/* ── ADMIN SECONDARY LINKS ── */
+#adminLinksScreen .links-intro{font-size:.88rem;color:var(--muted);margin-bottom:14px;line-height:1.6}
+.link-card{background:var(--card);border-radius:14px;padding:14px 16px;margin-bottom:10px;box-shadow:var(--shadow);display:flex;align-items:center;gap:14px;cursor:pointer;border:2px solid transparent;transition:.2s}
+.link-card:hover{border-color:var(--primary);transform:translateY(-1px)}
+.link-card .lc-icon{font-size:2rem;flex-shrink:0}
+.link-card .lc-info{flex:1;min-width:0}
+.link-card .lc-title{font-size:.9rem;font-weight:700;color:var(--primary-dark)}
+.link-card .lc-desc{font-size:.76rem;color:var(--muted);margin-top:2px}
+.link-card .lc-arrow{color:var(--primary);font-size:1.1rem;flex-shrink:0}
+
+/* ── DESKTOP IFRAME MODAL ── */
+#iframeModal{display:none;position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:8000;flex-direction:column}
+#iframeModal.show{display:flex}
+.iframe-topbar{background:var(--primary-dark);color:#fff;padding:10px 16px;display:flex;align-items:center;justify-content:space-between;flex-shrink:0}
+.iframe-topbar span{font-size:.9rem;font-weight:700;flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.iframe-close{background:rgba(255,255,255,.15);border:none;color:#fff;padding:6px 14px;border-radius:16px;cursor:pointer;font-family:inherit;font-size:.83rem}
+.iframe-wrap{flex:1;overflow:hidden;background:#fff}
+.iframe-wrap iframe{width:1280px;height:100%;border:none;transform-origin:top left}
+
+/* ── USER SUMMARY TABLE ── */
+.user-summary-row{display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:6px;padding:7px 0;border-bottom:1px solid #eef0f8;font-size:.79rem}
+.user-summary-row:last-child{border:none}
+.user-summary-hdr{font-weight:700;color:var(--primary-dark);background:#f0f4ff;border-radius:8px;padding:6px 4px;font-size:.76rem}
 </style>
 </head>
 <body>
@@ -127,8 +162,13 @@ tr:nth-child(even) td{background:#f5f7ff}
 
   <!-- TOPBAR -->
   <div class="topbar">
-    <h1 id="pageTitle">🏫 উপস্থিতি সিস্টেম</h1>
-    <button class="back-btn" id="backBtn" onclick="goHome()" style="display:none">← হোম</button>
+    <div class="topbar-left">
+      <h1 id="pageTitle">🏫 উপস্থিতি সিস্টেম</h1>
+      <div id="clockBox">লোড হচ্ছে…</div>
+    </div>
+    <div class="topbar-right">
+      <button class="back-btn" id="backBtn" onclick="goHome()" style="display:none">← হোম</button>
+    </div>
   </div>
 
   <main>
@@ -137,7 +177,7 @@ tr:nth-child(even) td{background:#f5f7ff}
     <div class="screen active" id="homeScreen">
       <div class="hero">
         <h2>স্বাগতম! 🎓</h2>
-        <p>আপনার উপস্থিতি নিবন্ধন করুন অথবা রিপোর্ট দেখুন</p>
+        <p>উপস্থিতি নিবন্ধন করুন অথবা রিপোর্ট দেখুন</p>
       </div>
       <div id="homeNoticeBox"></div>
       <div class="menu-grid">
@@ -153,17 +193,17 @@ tr:nth-child(even) td{background:#f5f7ff}
           <div class="mc-icon">📢</div>
           <div class="mc-label">নোটিশ বোর্ড</div>
         </div>
-        <div class="menu-card" onclick="showScreen('adminLoginScreen')">
+        <div class="menu-card" onclick="showScreen('adminLinksScreen')">
           <div class="mc-icon">🔐</div>
           <div class="mc-label">অ্যাডমিন</div>
         </div>
       </div>
     </div>
 
-    <!-- ══ USER LOGIN (Attendance) ══ -->
+    <!-- ══ USER LOGIN ══ -->
     <div class="screen" id="userLoginScreen">
       <div class="card">
-        <div class="card-title"><span class="icon">🪪</span> আইডি যাচাই</div>
+        <div class="card-title">🪪 আইডি যাচাই</div>
         <div class="field">
           <label>আপনার ব্যবহারকারী আইডি লিখুন</label>
           <input type="text" id="userIdInput" placeholder="যেমন: U001" autocomplete="off"/>
@@ -176,8 +216,8 @@ tr:nth-child(even) td{background:#f5f7ff}
     <!-- ══ CAMERA ══ -->
     <div class="screen" id="cameraScreen">
       <div class="card">
-        <div class="card-title"><span class="icon">📸</span> সেলফি তুলুন</div>
-        <div id="userInfoBadge" class="msg msg-info" style="margin-bottom:12px"></div>
+        <div class="card-title">📸 সেলফি তুলুন</div>
+        <div id="userInfoBadge" class="msg msg-info" style="margin-bottom:10px"></div>
         <div class="camera-container">
           <video id="cameraView" autoplay playsinline></video>
           <div class="camera-overlay"></div>
@@ -189,14 +229,14 @@ tr:nth-child(even) td{background:#f5f7ff}
           <button class="btn btn-primary" id="captureBtn" onclick="capturePhoto()">📷 ছবি তুলুন</button>
           <button class="btn btn-accent" id="submitBtn" onclick="submitAttendance()" style="display:none">✅ জমা দিন</button>
         </div>
-        <button class="btn btn-outline" style="margin-top:10px" onclick="retakePhoto()" id="retakeBtn" style="display:none">🔄 আবার তুলুন</button>
+        <button class="btn btn-outline" style="margin-top:10px;display:none" id="retakeBtn" onclick="retakePhoto()">🔄 আবার তুলুন</button>
       </div>
     </div>
 
     <!-- ══ MY REPORT ══ -->
     <div class="screen" id="myReportScreen">
       <div class="card">
-        <div class="card-title"><span class="icon">🔍</span> আমার রিপোর্ট</div>
+        <div class="card-title">🔍 আমার রিপোর্ট</div>
         <div class="field">
           <label>আপনার ব্যবহারকারী আইডি</label>
           <input type="text" id="reportUserIdInput" placeholder="যেমন: U001" autocomplete="off"/>
@@ -213,10 +253,19 @@ tr:nth-child(even) td{background:#f5f7ff}
       </div>
     </div>
 
+    <!-- ══ ADMIN SECONDARY LINKS ══ -->
+    <div class="screen" id="adminLinksScreen">
+      <div class="card">
+        <div class="card-title">🔐 অ্যাডমিন প্যানেল</div>
+        <p class="links-intro">নিচের যেকোনো বিকল্পটি বেছে নিন। লিংকগুলো ডেস্কটপ ভিউতে খুলবে।</p>
+        <div id="adminLinksList"></div>
+      </div>
+    </div>
+
     <!-- ══ ADMIN LOGIN ══ -->
     <div class="screen" id="adminLoginScreen">
       <div class="card">
-        <div class="card-title"><span class="icon">🔐</span> অ্যাডমিন লগইন</div>
+        <div class="card-title">🔐 অ্যাডমিন লগইন</div>
         <div class="field">
           <label>অ্যাডমিন আইডি</label>
           <input type="text" id="adminIdInput" placeholder="ADMIN" autocomplete="off"/>
@@ -234,39 +283,39 @@ tr:nth-child(even) td{background:#f5f7ff}
     <div class="screen" id="adminDashScreen">
       <div id="dashStats"></div>
       <div class="tab-bar">
-        <button class="tab-btn active" onclick="switchTab('daily')">দৈনিক</button>
-        <button class="tab-btn" onclick="switchTab('monthly')">মাসিক</button>
-        <button class="tab-btn" onclick="switchTab('notice')">নোটিশ</button>
+        <button class="tab-btn active" id="tab-btn-daily"   onclick="switchTab('daily')">দৈনিক</button>
+        <button class="tab-btn"        id="tab-btn-monthly" onclick="switchTab('monthly')">মাসিক</button>
+        <button class="tab-btn"        id="tab-btn-users"   onclick="switchTab('users')">সকল ইউজার</button>
+        <button class="tab-btn"        id="tab-btn-notice"  onclick="switchTab('notice')">নোটিশ</button>
       </div>
 
-      <!-- Daily tab -->
       <div id="tab-daily">
         <div class="card">
-          <div class="card-title"><span class="icon">📅</span> তারিখ নির্বাচন</div>
-          <div class="field">
-            <input type="date" id="dailyDateInput"/>
-          </div>
+          <div class="card-title">📅 তারিখ নির্বাচন</div>
+          <div class="field"><input type="date" id="dailyDateInput"/></div>
           <button class="btn btn-primary" onclick="loadDailyReport()">রিপোর্ট দেখুন</button>
         </div>
         <div id="dailyReportContent"></div>
       </div>
 
-      <!-- Monthly tab -->
       <div id="tab-monthly" style="display:none">
         <div class="card">
-          <div class="card-title"><span class="icon">📆</span> মাস নির্বাচন</div>
-          <div class="field">
-            <input type="month" id="monthlyInput"/>
-          </div>
+          <div class="card-title">📆 মাস নির্বাচন</div>
+          <div class="field"><input type="month" id="monthlyInput"/></div>
           <button class="btn btn-primary" onclick="loadMonthlyReport()">রিপোর্ট দেখুন</button>
         </div>
         <div id="monthlyReportContent"></div>
       </div>
 
-      <!-- Notice tab -->
+      <div id="tab-users" style="display:none">
+        <div id="usersReportContent">
+          <div class="loader"><div class="spinner"></div></div>
+        </div>
+      </div>
+
       <div id="tab-notice" style="display:none">
         <div class="card">
-          <div class="card-title"><span class="icon">📢</span> নতুন নোটিশ প্রকাশ</div>
+          <div class="card-title">📢 নতুন নোটিশ প্রকাশ</div>
           <div class="field">
             <label>শিরোনাম</label>
             <input type="text" id="noticeTitleInput" placeholder="নোটিশের শিরোনাম"/>
@@ -289,52 +338,139 @@ tr:nth-child(even) td{background:#f5f7ff}
   </main>
 </div>
 
+<!-- SUCCESS POPUP -->
+<div id="successPopup">
+  <div class="popup-box">
+    <div class="popup-emoji" id="popupEmoji"></div>
+    <div class="popup-title" id="popupTitle"></div>
+    <div class="popup-sub"   id="popupSub"></div>
+    <div class="popup-bar"><div class="popup-bar-fill" id="popupBar"></div></div>
+    <button class="btn btn-primary" onclick="closePopup()">হোমে ফিরুন</button>
+  </div>
+</div>
+
+<!-- DESKTOP IFRAME MODAL -->
+<div id="iframeModal">
+  <div class="iframe-topbar">
+    <span id="iframeTitle">লোড হচ্ছে…</span>
+    <button class="iframe-close" onclick="closeIframe()">✕ বন্ধ করুন</button>
+  </div>
+  <div class="iframe-wrap" id="iframeWrap">
+    <iframe id="desktopFrame" src="about:blank" sandbox="allow-same-origin allow-scripts allow-forms allow-popups"></iframe>
+  </div>
+</div>
+
 <!-- TOAST -->
 <div id="toast"></div>
 
 <script>
-// ═══════════════════════════════════════════════
-//  ⚙️ CONFIG — Paste your GAS Web App URL here
-// ═══════════════════════════════════════════════
-var GAS_URL = "https://script.google.com/macros/s/AKfycbz0HZCjIr-mP_ly7ie4pNY-ichUy8lNCn32ZnaTax-ZDST9nnLJkdP4UcTNF_KmjPl6UA/exec";
-// ═══════════════════════════════════════════════
+// ══════════════════════════════════════════════
+//  ⚙️ CONFIG — GAS Web App URL
+// ══════════════════════════════════════════════
+var GAS_URL = "https://script.google.com/macros/s/AKfycbwZXRpv5MXI72CdXGbOvP6A1cCqRg3Ix4d9-whL-eyZhEWRyPRNwGfhhnsqN0mSC3wLUA/exec";
 
-var currentUser = null;
-var capturedBlob = null;
-var mediaStream  = null;
-var isAdminLogged = false;
+// ── অ্যাডমিন সেকেন্ডারি লিংক (৫টি ডেমো — আসল লিংক পরে বসান) ──
+var ADMIN_LINKS = [
+  {
+    icon:"🔐",
+    title:"অ্যাডমিন ড্যাশবোর্ড লগইন",
+    desc:"উপস্থিতি রিপোর্ট ও নোটিশ পরিচালনা",
+    url:"#admin-login",  // এই সাইটের অ্যাডমিন লগইন
+    internal:true
+  },
+  {
+    icon:"📊",
+    title:"Google Spreadsheet",
+    desc:"সরাসরি স্প্রেডশিট ডেটা দেখুন ও সম্পাদনা করুন",
+    url:"https://docs.google.com/spreadsheets/d/YOUR_SHEET_ID/edit",
+    internal:false
+  },
+  {
+    icon:"⚙️",
+    title:"Google Apps Script Editor",
+    desc:"ব্যাকএন্ড কোড পরিচালনা ও ডিপ্লয়",
+    url:"https://script.google.com/home",
+    internal:false
+  },
+  {
+    icon:"📁",
+    title:"Google Drive ফটো ফোল্ডার",
+    desc:"সকল সেলফি ছবি এখানে সংরক্ষিত",
+    url:"https://drive.google.com/drive/folders/YOUR_FOLDER_ID",
+    internal:false
+  },
+  {
+    icon:"🌐",
+    title:"GitHub Pages সাইট",
+    desc:"লাইভ ওয়েবসাইট ও ডিপ্লয় ম্যানেজ করুন",
+    url:"https://github.com/YOUR_USERNAME/YOUR_REPO",
+    internal:false
+  }
+];
+// ══════════════════════════════════════════════
+
+var currentUser   = null;
+var capturedBlob  = null;
+var mediaStream   = null;
+var popupTimer    = null;
+
+// ── REALTIME CLOCK ──
+function startClock() {
+  function tick() {
+    var now  = new Date();
+    var h    = now.getHours();
+    var m    = now.getMinutes();
+    var s    = now.getSeconds();
+    var ampm = h >= 12 ? 'PM' : 'AM';
+    h = h % 12 || 12;
+    var pad  = n => String(n).padStart(2,'0');
+    var days = ['রবিবার','সোমবার','মঙ্গলবার','বুধবার','বৃহস্পতিবার','শুক্রবার','শনিবার'];
+    var months = ['জানুয়ারি','ফেব্রুয়ারি','মার্চ','এপ্রিল','মে','জুন','জুলাই','আগস্ট','সেপ্টেম্বর','অক্টোবর','নভেম্বর','ডিসেম্বর'];
+    var dateStr = days[now.getDay()]+', '+now.getDate()+' '+months[now.getMonth()]+' '+now.getFullYear();
+    var timeStr = pad(h)+':'+pad(m)+':'+pad(s)+' '+ampm;
+    document.getElementById('clockBox').textContent = timeStr + ' | ' + dateStr;
+  }
+  tick();
+  setInterval(tick, 1000);
+}
 
 // ── NAVIGATION ──
 function showScreen(id) {
   document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
   document.getElementById(id).classList.add('active');
-  document.getElementById('backBtn').style.display = (id === 'homeScreen') ? 'none' : 'block';
+  document.getElementById('backBtn').style.display = (id==='homeScreen')?'none':'block';
   var titles = {
     homeScreen:'🏫 উপস্থিতি সিস্টেম',
     userLoginScreen:'👤 আইডি যাচাই',
     cameraScreen:'📸 সেলফি তুলুন',
     myReportScreen:'📊 আমার রিপোর্ট',
     noticeScreen:'📢 নোটিশ বোর্ড',
+    adminLinksScreen:'🔐 অ্যাডমিন প্যানেল',
     adminLoginScreen:'🔐 অ্যাডমিন লগইন',
     adminDashScreen:'🛠️ অ্যাডমিন ড্যাশবোর্ড'
   };
-  document.getElementById('pageTitle').textContent = titles[id] || '🏫 উপস্থিতি সিস্টেম';
-  if (id === 'noticeScreen') loadNotices();
-  if (id === 'adminDashScreen') loadDashboard();
+  document.getElementById('pageTitle').textContent = titles[id]||'🏫 উপস্থিতি সিস্টেম';
+  if (id==='noticeScreen')    loadNotices();
+  if (id==='adminDashScreen') { loadDashboard(); setDefaultDates(); }
+  if (id==='adminLinksScreen') renderAdminLinks();
+  // clean success temp
+  var old = document.getElementById('successTemp');
+  if (old) old.remove();
 }
 
 function goHome() {
   stopCamera();
+  closePopupImmediate();
   showScreen('homeScreen');
   loadHomeNotice();
 }
 
-// ── API CALL ──
+// ── API ──
 async function callGAS(payload) {
-  var res = await fetch(GAS_URL, {
+  var res = await fetch(GAS_URL,{
     method:'POST', redirect:'follow',
     headers:{'Content-Type':'text/plain'},
-    body: JSON.stringify(payload)
+    body:JSON.stringify(payload)
   });
   return await res.json();
 }
@@ -344,22 +480,56 @@ function toast(msg) {
   var t = document.getElementById('toast');
   t.textContent = msg;
   t.classList.add('show');
-  setTimeout(() => t.classList.remove('show'), 3000);
+  setTimeout(()=>t.classList.remove('show'),3000);
+}
+function setMsg(id,msg,type){
+  document.getElementById(id).innerHTML = msg?'<div class="msg msg-'+type+'">'+msg+'</div>':'';
 }
 
-function setMsg(id, msg, type) {
-  var el = document.getElementById(id);
-  el.innerHTML = msg ? '<div class="msg msg-'+type+'">'+msg+'</div>' : '';
+// ── SUCCESS POPUP (একবার দেখাবে, 3 সেকেন্ড পর অটো ক্লোজ) ──
+function showSuccessPopup(r) {
+  var colorMap = {Present:getComputedStyle(document.documentElement).getPropertyValue('--success'),
+                  Late:getComputedStyle(document.documentElement).getPropertyValue('--warn'),
+                  Absent:getComputedStyle(document.documentElement).getPropertyValue('--danger')};
+  var emojiMap  = {Present:'🎉', Late:'⏰', Absent:'❌'};
+  var titleMap  = {Present:'সময়মতো উপস্থিত!', Late:'দেরিতে উপস্থিত', Absent:'অনুপস্থিত গণ্য'};
+
+  document.getElementById('popupEmoji').textContent   = emojiMap[r.status]  ||'✅';
+  document.getElementById('popupTitle').textContent   = titleMap[r.status]  ||r.status;
+  document.getElementById('popupTitle').style.color   = colorMap[r.status]  ||'#000';
+  document.getElementById('popupSub').innerHTML       = 'সময়: <strong>'+r.time+'</strong><br>'+r.message;
+  // bar color
+  var barEl = document.getElementById('popupBar');
+  barEl.style.background = colorMap[r.status]||'var(--primary)';
+  // force reflow so animation restarts
+  barEl.style.animation  = 'none';
+  barEl.offsetHeight;
+  barEl.style.animation  = '';
+
+  document.getElementById('successPopup').classList.add('show');
+  // auto close after 3s
+  if (popupTimer) clearTimeout(popupTimer);
+  popupTimer = setTimeout(()=>{ closePopupImmediate(); goHome(); }, 3000);
+}
+function closePopup() {
+  if (popupTimer) clearTimeout(popupTimer);
+  closePopupImmediate();
+  goHome();
+}
+function closePopupImmediate() {
+  document.getElementById('successPopup').classList.remove('show');
 }
 
-// ── HOME NOTICE PREVIEW ──
+// ── HOME NOTICE ──
 async function loadHomeNotice() {
   try {
     var r = await callGAS({action:'getNotices'});
     var box = document.getElementById('homeNoticeBox');
     if (r.success && r.data.length) {
       var n = r.data[0];
-      box.innerHTML = '<div class="notice-item"><h3>📢 '+n.title+'</h3><div class="notice-meta">'+n.date+'</div><p>'+n.details.substring(0,100)+(n.details.length>100?'…':'')+'</p></div>';
+      box.innerHTML='<div class="notice-item"><h3>📢 '+n.title+'</h3>'
+        +'<div class="notice-meta">'+n.date+'</div>'
+        +'<p>'+n.details.substring(0,100)+(n.details.length>100?'…':'')+'</p></div>';
     }
   } catch(e){}
 }
@@ -367,282 +537,328 @@ async function loadHomeNotice() {
 // ── USER VERIFY ──
 async function verifyUser() {
   var uid = document.getElementById('userIdInput').value.trim();
-  if (!uid) { setMsg('userLoginMsg','আইডি লিখুন','error'); return; }
+  if (!uid){setMsg('userLoginMsg','আইডি লিখুন','error');return;}
   setMsg('userLoginMsg','যাচাই হচ্ছে…','info');
   try {
-    var r = await callGAS({action:'verifyUser', userId: uid});
-    if (r.success) {
-      currentUser = r.user;
-      setMsg('userLoginMsg','','');
-      openCamera();
-    } else {
-      setMsg('userLoginMsg', r.message, 'error');
-    }
-  } catch(e) { setMsg('userLoginMsg','সংযোগ সমস্যা। আবার চেষ্টা করুন।','error'); }
+    var r = await callGAS({action:'verifyUser',userId:uid});
+    if (r.success){currentUser=r.user;setMsg('userLoginMsg','','');openCamera();}
+    else setMsg('userLoginMsg',r.message,'error');
+  } catch(e){setMsg('userLoginMsg','সংযোগ সমস্যা।','error');}
 }
 
 // ── CAMERA ──
 async function openCamera() {
   showScreen('cameraScreen');
-  document.getElementById('userInfoBadge').textContent =
-    '👤 ' + currentUser.name + ' | ' + currentUser.role + ' | ' + currentUser.area;
-  document.getElementById('capturedImg').style.display = 'none';
-  document.getElementById('cameraView').style.display  = 'block';
-  document.getElementById('captureBtn').style.display  = 'block';
-  document.getElementById('submitBtn').style.display   = 'none';
-  document.getElementById('retakeBtn').style.display   = 'none';
+  document.getElementById('userInfoBadge').textContent='👤 '+currentUser.name+' | '+currentUser.role+' | '+currentUser.area;
+  document.getElementById('capturedImg').style.display='none';
+  document.getElementById('cameraView').style.display='block';
+  document.getElementById('captureBtn').style.display='block';
+  document.getElementById('submitBtn').style.display='none';
+  document.getElementById('retakeBtn').style.display='none';
   setMsg('cameraMsg','','');
-  capturedBlob = null;
+  capturedBlob=null;
   try {
-    mediaStream = await navigator.mediaDevices.getUserMedia({video:{facingMode:'user'},audio:false});
-    document.getElementById('cameraView').srcObject = mediaStream;
-  } catch(e) {
-    setMsg('cameraMsg','ক্যামেরা খোলা যায়নি: '+e.message,'error');
-  }
+    mediaStream=await navigator.mediaDevices.getUserMedia({video:{facingMode:'user'},audio:false});
+    document.getElementById('cameraView').srcObject=mediaStream;
+  } catch(e){setMsg('cameraMsg','ক্যামেরা খোলা যায়নি: '+e.message,'error');}
 }
-
 function capturePhoto() {
-  var video  = document.getElementById('cameraView');
-  var canvas = document.getElementById('canvas');
-  canvas.width  = video.videoWidth  || 640;
-  canvas.height = video.videoHeight || 480;
-  canvas.getContext('2d').drawImage(video, 0, 0);
-  capturedBlob = canvas.toDataURL('image/jpeg', 0.7);
-  var img = document.getElementById('capturedImg');
-  img.src = capturedBlob;
-  img.style.display = 'block';
-  video.style.display = 'none';
-  document.getElementById('captureBtn').style.display = 'none';
-  document.getElementById('submitBtn').style.display  = 'block';
-  document.getElementById('retakeBtn').style.display  = 'block';
+  var v=document.getElementById('cameraView'),c=document.getElementById('canvas');
+  c.width=v.videoWidth||640;c.height=v.videoHeight||480;
+  c.getContext('2d').drawImage(v,0,0);
+  capturedBlob=c.toDataURL('image/jpeg',.7);
+  var img=document.getElementById('capturedImg');
+  img.src=capturedBlob;img.style.display='block';
+  v.style.display='none';
+  document.getElementById('captureBtn').style.display='none';
+  document.getElementById('submitBtn').style.display='block';
+  document.getElementById('retakeBtn').style.display='block';
   stopCamera();
 }
-
 function retakePhoto() {
-  capturedBlob = null;
-  document.getElementById('capturedImg').style.display = 'none';
-  document.getElementById('submitBtn').style.display   = 'none';
-  document.getElementById('retakeBtn').style.display   = 'none';
+  capturedBlob=null;
+  document.getElementById('capturedImg').style.display='none';
+  document.getElementById('submitBtn').style.display='none';
+  document.getElementById('retakeBtn').style.display='none';
   openCamera();
 }
-
 function stopCamera() {
-  if (mediaStream) { mediaStream.getTracks().forEach(t => t.stop()); mediaStream = null; }
+  if (mediaStream){mediaStream.getTracks().forEach(t=>t.stop());mediaStream=null;}
 }
-
 async function submitAttendance() {
-  if (!capturedBlob) { setMsg('cameraMsg','ছবি তুলুন','error'); return; }
+  if (!capturedBlob){setMsg('cameraMsg','ছবি তুলুন','error');return;}
   setMsg('cameraMsg','জমা হচ্ছে…','info');
-  document.getElementById('submitBtn').disabled = true;
+  document.getElementById('submitBtn').disabled=true;
   try {
-    var r = await callGAS({
+    var r=await callGAS({
       action:'markAttendance',
-      userId: currentUser.id,
-      name:   currentUser.name,
-      area:   currentUser.area,
-      photo:  capturedBlob
+      userId:currentUser.id, name:currentUser.name,
+      area:currentUser.area, photo:capturedBlob
     });
     if (r.success) {
-      toast('✅ ' + r.message);
       stopCamera();
-      showSuccessScreen(r);
+      // শুধু একবার পপআপ — তারপর অটো হোম
+      showSuccessPopup(r);
+      // ক্যামেরা স্ক্রিন রিসেট
+      document.getElementById('userIdInput').value='';
+      document.getElementById('submitBtn').disabled=false;
     } else {
-      setMsg('cameraMsg', r.message, 'error');
-      document.getElementById('submitBtn').disabled = false;
+      setMsg('cameraMsg',r.message,'error');
+      document.getElementById('submitBtn').disabled=false;
     }
-  } catch(e) {
+  } catch(e){
     setMsg('cameraMsg','সংযোগ সমস্যা।','error');
-    document.getElementById('submitBtn').disabled = false;
+    document.getElementById('submitBtn').disabled=false;
   }
-}
-
-function showSuccessScreen(r) {
-  var colorMap = {Present:'var(--success)', Late:'var(--warn)', Absent:'var(--danger)'};
-  var mainEl = document.querySelector('main');
-  var html = '<div class="card" style="text-align:center;padding:36px 20px">'
-    + '<div style="font-size:4rem;margin-bottom:12px">' + (r.status==='Present'?'🎉':r.status==='Late'?'⏰':'❌') + '</div>'
-    + '<h2 style="color:'+colorMap[r.status]+';margin-bottom:8px">' + (r.status==='Present'?'সময়মতো উপস্থিত!':r.status==='Late'?'দেরিতে উপস্থিত':'অনুপস্থিত গণ্য') + '</h2>'
-    + '<p style="color:var(--muted);margin-bottom:6px">সময়: ' + r.time + '</p>'
-    + '<p style="color:var(--muted);margin-bottom:20px">'+r.message+'</p>'
-    + '<button class="btn btn-primary" onclick="goHome()">হোমে ফিরুন</button>'
-    + '</div>';
-  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
-  document.getElementById('backBtn').style.display = 'block';
-  var tmp = document.createElement('div');
-  tmp.id = 'successTemp';
-  tmp.innerHTML = html;
-  mainEl.appendChild(tmp);
 }
 
 // ── MY REPORT ──
 async function loadMyReport() {
-  var uid = document.getElementById('reportUserIdInput').value.trim();
-  if (!uid) { toast('আইডি লিখুন'); return; }
-  document.getElementById('myReportContent').innerHTML = '<div class="loader"><div class="spinner"></div></div>';
+  var uid=document.getElementById('reportUserIdInput').value.trim();
+  if (!uid){toast('আইডি লিখুন');return;}
+  document.getElementById('myReportContent').innerHTML='<div class="loader"><div class="spinner"></div></div>';
   try {
-    var r = await callGAS({action:'getUserReport', userId: uid});
-    if (!r.success) { document.getElementById('myReportContent').innerHTML='<div class="msg msg-error">'+r.message+'</div>'; return; }
-    if (!r.data.length) { document.getElementById('myReportContent').innerHTML='<div class="msg msg-info">কোনো রেকর্ড নেই</div>'; return; }
-    var present=0,late=0,absent=0;
-    r.data.forEach(d=>{if(d.status==='Present')present++;else if(d.status==='Late')late++;else absent++;});
-    var html = '<div class="stats-row">'
-      +'<div class="stat-tile st-present"><div class="st-num">'+present+'</div><div class="st-label">উপস্থিত</div></div>'
-      +'<div class="stat-tile st-late"><div class="st-num">'+late+'</div><div class="st-label">দেরি</div></div>'
-      +'<div class="stat-tile st-absent"><div class="st-num">'+absent+'</div><div class="st-label">অনুপস্থিত</div></div>'
+    var r=await callGAS({action:'getUserReport',userId:uid});
+    if (!r.success){document.getElementById('myReportContent').innerHTML='<div class="msg msg-error">'+r.message+'</div>';return;}
+    if (!r.data.length){document.getElementById('myReportContent').innerHTML='<div class="msg msg-info">কোনো রেকর্ড নেই</div>';return;}
+    var p=0,l=0,a=0;
+    r.data.forEach(d=>{if(d.status==='Present')p++;else if(d.status==='Late')l++;else a++;});
+    var html='<div class="stats-row">'
+      +'<div class="stat-tile st-present"><div class="st-num">'+p+'</div><div class="st-label">উপস্থিত</div></div>'
+      +'<div class="stat-tile st-late"><div class="st-num">'+l+'</div><div class="st-label">দেরি</div></div>'
+      +'<div class="stat-tile st-absent"><div class="st-num">'+a+'</div><div class="st-label">অনুপস্থিত</div></div>'
       +'</div>';
-    html += '<div class="card"><div class="table-wrap"><table><thead><tr><th>তারিখ</th><th>সময়</th><th>অবস্থা</th></tr></thead><tbody>';
-    r.data.forEach(d => {
-      html += '<tr><td>'+d.date+'</td><td>'+d.time+'</td><td><span class="badge badge-'+d.status.toLowerCase()+'">'+
-        (d.status==='Present'?'উপস্থিত':d.status==='Late'?'দেরি':'অনুপস্থিত')+'</span></td></tr>';
+    html+='<div class="card"><div class="table-wrap"><table><thead><tr><th>তারিখ</th><th>সময়</th><th>অবস্থা</th></tr></thead><tbody>';
+    r.data.forEach(d=>{
+      html+='<tr><td>'+d.date+'</td><td>'+d.time+'</td><td><span class="badge badge-'+d.status.toLowerCase()+'">'+(d.status==='Present'?'উপস্থিত':d.status==='Late'?'দেরি':'অনুপস্থিত')+'</span></td></tr>';
     });
-    html += '</tbody></table></div></div>';
-    document.getElementById('myReportContent').innerHTML = html;
-  } catch(e) { document.getElementById('myReportContent').innerHTML='<div class="msg msg-error">সংযোগ সমস্যা</div>'; }
+    html+='</tbody></table></div></div>';
+    document.getElementById('myReportContent').innerHTML=html;
+  } catch(e){document.getElementById('myReportContent').innerHTML='<div class="msg msg-error">সংযোগ সমস্যা</div>';}
 }
 
 // ── NOTICES ──
 async function loadNotices() {
-  document.getElementById('noticeListContent').innerHTML = '<div class="loader"><div class="spinner"></div></div>';
+  document.getElementById('noticeListContent').innerHTML='<div class="loader"><div class="spinner"></div></div>';
   try {
-    var r = await callGAS({action:'getNotices'});
-    if (!r.success || !r.data.length) {
-      document.getElementById('noticeListContent').innerHTML = '<div class="msg msg-info">কোনো নোটিশ নেই</div>'; return;
-    }
-    var html = r.data.map(n =>
+    var r=await callGAS({action:'getNotices'});
+    if (!r.success||!r.data.length){document.getElementById('noticeListContent').innerHTML='<div class="msg msg-info">কোনো নোটিশ নেই</div>';return;}
+    document.getElementById('noticeListContent').innerHTML=r.data.map(n=>
       '<div class="notice-item"><h3>'+n.title+'</h3><div class="notice-meta">📅 '+n.date+' | '+n.by+'</div><p>'+n.details+'</p></div>'
     ).join('');
-    document.getElementById('noticeListContent').innerHTML = html;
-  } catch(e) { document.getElementById('noticeListContent').innerHTML='<div class="msg msg-error">লোড হয়নি</div>'; }
+  } catch(e){document.getElementById('noticeListContent').innerHTML='<div class="msg msg-error">লোড হয়নি</div>';}
 }
+
+// ── ADMIN SECONDARY LINKS ──
+function renderAdminLinks() {
+  var html = ADMIN_LINKS.map((lk,i) =>
+    '<div class="link-card" onclick="openAdminLink('+i+')">'
+    +'<div class="lc-icon">'+lk.icon+'</div>'
+    +'<div class="lc-info"><div class="lc-title">'+lk.title+'</div><div class="lc-desc">'+lk.desc+'</div></div>'
+    +'<div class="lc-arrow">›</div>'
+    +'</div>'
+  ).join('');
+  document.getElementById('adminLinksList').innerHTML = html;
+}
+function openAdminLink(idx) {
+  var lk = ADMIN_LINKS[idx];
+  if (lk.internal && lk.url === '#admin-login') {
+    showScreen('adminLoginScreen');
+    return;
+  }
+  // ডেস্কটপ ভিউতে iframe এ খোলো
+  openDesktopFrame(lk.url, lk.icon+' '+lk.title);
+}
+
+// ── DESKTOP IFRAME ──
+function openDesktopFrame(url, title) {
+  document.getElementById('iframeTitle').textContent = title;
+  var frame = document.getElementById('desktopFrame');
+  frame.src = url;
+  // scale iframe to fit mobile screen as desktop
+  scaleIframe();
+  document.getElementById('iframeModal').classList.add('show');
+}
+function scaleIframe() {
+  var wrap  = document.getElementById('iframeWrap');
+  var frame = document.getElementById('desktopFrame');
+  var desktopW = 1280;
+  var availW   = wrap.offsetWidth || window.innerWidth;
+  var scale    = availW / desktopW;
+  frame.style.transform = 'scale('+scale+')';
+  frame.style.width     = desktopW + 'px';
+  frame.style.height    = (wrap.offsetHeight / scale) + 'px';
+}
+function closeIframe() {
+  document.getElementById('iframeModal').classList.remove('show');
+  document.getElementById('desktopFrame').src='about:blank';
+}
+window.addEventListener('resize', ()=>{ if (document.getElementById('iframeModal').classList.contains('show')) scaleIframe(); });
 
 // ── ADMIN LOGIN ──
 async function adminLogin() {
-  var uid  = document.getElementById('adminIdInput').value.trim();
-  var pass = document.getElementById('adminPassInput').value.trim();
-  if (!uid||!pass) { setMsg('adminLoginMsg','সব তথ্য দিন','error'); return; }
+  var uid=document.getElementById('adminIdInput').value.trim();
+  var pass=document.getElementById('adminPassInput').value.trim();
+  if (!uid||!pass){setMsg('adminLoginMsg','সব তথ্য দিন','error');return;}
   setMsg('adminLoginMsg','যাচাই হচ্ছে…','info');
   try {
-    var r = await callGAS({action:'adminLogin', userId:uid, password:pass});
-    if (r.success) {
-      isAdminLogged = true;
-      setMsg('adminLoginMsg','','');
-      showScreen('adminDashScreen');
-      setDefaultDates();
-    } else { setMsg('adminLoginMsg', r.message, 'error'); }
-  } catch(e) { setMsg('adminLoginMsg','সংযোগ সমস্যা','error'); }
+    var r=await callGAS({action:'adminLogin',userId:uid,password:pass});
+    if (r.success){setMsg('adminLoginMsg','','');showScreen('adminDashScreen');}
+    else setMsg('adminLoginMsg',r.message,'error');
+  } catch(e){setMsg('adminLoginMsg','সংযোগ সমস্যা','error');}
 }
 
 function setDefaultDates() {
-  var today = new Date().toISOString().split('T')[0];
-  document.getElementById('dailyDateInput').value  = today;
-  document.getElementById('noticeDateInput').value = today;
-  var ym = today.substring(0,7);
-  document.getElementById('monthlyInput').value = ym;
+  var today=new Date().toISOString().split('T')[0];
+  document.getElementById('dailyDateInput').value=today;
+  document.getElementById('noticeDateInput').value=today;
+  document.getElementById('monthlyInput').value=today.substring(0,7);
 }
 
-// ── DASHBOARD ──
+// ── DASHBOARD STATS ──
 async function loadDashboard() {
   try {
-    var r = await callGAS({action:'getDashboard'});
+    var r=await callGAS({action:'getDashboard'});
     if (!r.success) return;
-    document.getElementById('dashStats').innerHTML =
+    document.getElementById('dashStats').innerHTML=
       '<div class="stats-row">'
       +'<div class="stat-tile st-present"><div class="st-num">'+r.present+'</div><div class="st-label">উপস্থিত</div></div>'
       +'<div class="stat-tile st-late"><div class="st-num">'+r.late+'</div><div class="st-label">দেরি</div></div>'
       +'<div class="stat-tile st-absent"><div class="st-num">'+r.absent+'</div><div class="st-label">অনুপস্থিত</div></div>'
       +'</div>'
-      +'<div class="msg msg-info" style="margin-bottom:12px">আজকের তারিখ: '+r.today+' | মোট ব্যবহারকারী: '+r.total+'</div>';
+      +'<div class="msg msg-info" style="margin-bottom:12px">আজ: '+r.today+' | মোট ইউজার: '+r.total+'</div>';
   } catch(e){}
 }
 
 // ── TABS ──
 function switchTab(tab) {
-  ['daily','monthly','notice'].forEach(t => {
-    document.getElementById('tab-'+t).style.display = (t===tab)?'block':'none';
+  ['daily','monthly','users','notice'].forEach(t=>{
+    document.getElementById('tab-'+t).style.display=(t===tab)?'block':'none';
+    document.getElementById('tab-btn-'+t).classList.toggle('active',t===tab);
   });
-  document.querySelectorAll('.tab-btn').forEach((b,i) => {
-    b.classList.toggle('active', ['daily','monthly','notice'][i] === tab);
-  });
-  if (tab === 'notice') loadAdminNotices();
+  if (tab==='notice') loadAdminNotices();
+  if (tab==='users')  loadUsersReport();
 }
 
 // ── DAILY REPORT ──
 async function loadDailyReport() {
-  var d = document.getElementById('dailyDateInput').value;
-  if (!d) { toast('তারিখ নির্বাচন করুন'); return; }
-  var parts = d.split('-');
-  var dateStr = parts[2]+'/'+parts[1]+'/'+parts[0];
-  document.getElementById('dailyReportContent').innerHTML = '<div class="loader"><div class="spinner"></div></div>';
+  var d=document.getElementById('dailyDateInput').value;
+  if (!d){toast('তারিখ নির্বাচন করুন');return;}
+  var p=d.split('-');
+  var dateStr=p[2]+'/'+p[1]+'/'+p[0];
+  document.getElementById('dailyReportContent').innerHTML='<div class="loader"><div class="spinner"></div></div>';
   try {
-    var r = await callGAS({action:'getReport', filter:'daily', date:dateStr});
-    renderReport('dailyReportContent', r);
-  } catch(e) { document.getElementById('dailyReportContent').innerHTML='<div class="msg msg-error">সংযোগ সমস্যা</div>'; }
+    var r=await callGAS({action:'getReport',filter:'daily',date:dateStr});
+    renderReport('dailyReportContent',r);
+  } catch(e){document.getElementById('dailyReportContent').innerHTML='<div class="msg msg-error">সংযোগ সমস্যা</div>';}
 }
 
 // ── MONTHLY REPORT ──
 async function loadMonthlyReport() {
-  var m = document.getElementById('monthlyInput').value;
-  if (!m) { toast('মাস নির্বাচন করুন'); return; }
-  var parts = m.split('-');
-  var monthStr = parts[1]+'/'+parts[0];
-  document.getElementById('monthlyReportContent').innerHTML = '<div class="loader"><div class="spinner"></div></div>';
+  var m=document.getElementById('monthlyInput').value;
+  if (!m){toast('মাস নির্বাচন করুন');return;}
+  var p=m.split('-');
+  var monthStr=p[1]+'/'+p[0];
+  document.getElementById('monthlyReportContent').innerHTML='<div class="loader"><div class="spinner"></div></div>';
   try {
-    var r = await callGAS({action:'getReport', filter:'monthly', month:monthStr});
-    renderReport('monthlyReportContent', r);
-  } catch(e) { document.getElementById('monthlyReportContent').innerHTML='<div class="msg msg-error">সংযোগ সমস্যা</div>'; }
+    var r=await callGAS({action:'getReport',filter:'monthly',month:monthStr});
+    renderReport('monthlyReportContent',r);
+  } catch(e){document.getElementById('monthlyReportContent').innerHTML='<div class="msg msg-error">সংযোগ সমস্যা</div>';}
 }
 
-function renderReport(elId, r) {
-  if (!r.success || !r.data.length) { document.getElementById(elId).innerHTML='<div class="msg msg-info">কোনো রেকর্ড নেই</div>'; return; }
-  var present=0,late=0,absent=0;
-  r.data.forEach(d=>{if(d.status==='Present')present++;else if(d.status==='Late')late++;else absent++;});
-  var html = '<div class="stats-row">'
-    +'<div class="stat-tile st-present"><div class="st-num">'+present+'</div><div class="st-label">উপস্থিত</div></div>'
-    +'<div class="stat-tile st-late"><div class="st-num">'+late+'</div><div class="st-label">দেরি</div></div>'
-    +'<div class="stat-tile st-absent"><div class="st-num">'+absent+'</div><div class="st-label">অনুপস্থিত</div></div>'
+function renderReport(elId,r) {
+  if (!r.success||!r.data.length){document.getElementById(elId).innerHTML='<div class="msg msg-info">কোনো রেকর্ড নেই</div>';return;}
+  var p=0,l=0,a=0;
+  r.data.forEach(d=>{if(d.status==='Present')p++;else if(d.status==='Late')l++;else a++;});
+  var html='<div class="stats-row">'
+    +'<div class="stat-tile st-present"><div class="st-num">'+p+'</div><div class="st-label">উপস্থিত</div></div>'
+    +'<div class="stat-tile st-late"><div class="st-num">'+l+'</div><div class="st-label">দেরি</div></div>'
+    +'<div class="stat-tile st-absent"><div class="st-num">'+a+'</div><div class="st-label">অনুপস্থিত</div></div>'
     +'</div>';
-  html += '<div class="card"><div class="table-wrap"><table><thead><tr><th>তারিখ</th><th>আইডি</th><th>নাম</th><th>সময়</th><th>অবস্থা</th></tr></thead><tbody>';
-  r.data.forEach(d => {
-    html += '<tr><td>'+d.date+'</td><td>'+d.userId+'</td><td>'+d.name+'</td><td>'+d.time+'</td><td><span class="badge badge-'+d.status.toLowerCase()+'">'+(d.status==='Present'?'উপস্থিত':d.status==='Late'?'দেরি':'অনুপস্থিত')+'</span></td></tr>';
+  html+='<div class="card"><div class="table-wrap"><table><thead><tr><th>তারিখ</th><th>আইডি</th><th>নাম</th><th>সময়</th><th>অবস্থা</th></tr></thead><tbody>';
+  r.data.forEach(d=>{
+    html+='<tr><td>'+d.date+'</td><td>'+d.userId+'</td><td>'+d.name+'</td><td>'+d.time+'</td>'
+      +'<td><span class="badge badge-'+d.status.toLowerCase()+'">'+(d.status==='Present'?'উপস্থিত':d.status==='Late'?'দেরি':'অনুপস্থিত')+'</span></td></tr>';
   });
-  html += '</tbody></table></div></div>';
-  document.getElementById(elId).innerHTML = html;
+  html+='</tbody></table></div></div>';
+  document.getElementById(elId).innerHTML=html;
 }
 
-// ── POST NOTICE ──
+// ── ALL USERS SUMMARY (সকল ইউজারের মোট উপস্থিতি সারসংক্ষেপ) ──
+async function loadUsersReport() {
+  document.getElementById('usersReportContent').innerHTML='<div class="loader"><div class="spinner"></div></div>';
+  try {
+    // সব attendance ডেটা আনো
+    var r=await callGAS({action:'getReport',filter:'all',date:'',month:''});
+    if (!r.success){document.getElementById('usersReportContent').innerHTML='<div class="msg msg-error">লোড হয়নি</div>';return;}
+
+    // ইউজার অনুযায়ী গ্রুপ করো
+    var users={};
+    r.data.forEach(d=>{
+      if (!users[d.userId]) users[d.userId]={name:d.name,area:d.area,present:0,late:0,absent:0,total:0};
+      users[d.userId].total++;
+      if (d.status==='Present') users[d.userId].present++;
+      else if (d.status==='Late') users[d.userId].late++;
+      else users[d.userId].absent++;
+    });
+
+    var keys=Object.keys(users);
+    if (!keys.length){document.getElementById('usersReportContent').innerHTML='<div class="msg msg-info">কোনো রেকর্ড নেই</div>';return;}
+
+    var html='<div class="card">'
+      +'<div class="card-title">👥 সকল ইউজারের সারসংক্ষেপ</div>'
+      +'<div class="table-wrap"><table>'
+      +'<thead><tr><th>নাম / আইডি</th><th style="color:#4caf50">✅</th><th style="color:#ff9800">⏰</th><th style="color:#f44336">❌</th><th>মোট</th></tr></thead><tbody>';
+    keys.forEach(uid=>{
+      var u=users[uid];
+      html+='<tr>'
+        +'<td><strong>'+u.name+'</strong><br><small style="color:var(--muted)">'+uid+' | '+u.area+'</small></td>'
+        +'<td style="text-align:center;color:var(--success);font-weight:700">'+u.present+'</td>'
+        +'<td style="text-align:center;color:var(--warn);font-weight:700">'+u.late+'</td>'
+        +'<td style="text-align:center;color:var(--danger);font-weight:700">'+u.absent+'</td>'
+        +'<td style="text-align:center;font-weight:700">'+u.total+'</td>'
+        +'</tr>';
+    });
+    html+='</tbody></table></div></div>';
+    document.getElementById('usersReportContent').innerHTML=html;
+  } catch(e){document.getElementById('usersReportContent').innerHTML='<div class="msg msg-error">সংযোগ সমস্যা</div>';}
+}
+
+// ── NOTICE (POST) ──
 async function postNotice() {
-  var title   = document.getElementById('noticeTitleInput').value.trim();
-  var date    = document.getElementById('noticeDateInput').value;
-  var details = document.getElementById('noticeDetailsInput').value.trim();
-  if (!title||!date||!details) { setMsg('noticePostMsg','সব তথ্য পূরণ করুন','error'); return; }
-  var parts = date.split('-');
-  var dateStr = parts[2]+'/'+parts[1]+'/'+parts[0];
+  var title=document.getElementById('noticeTitleInput').value.trim();
+  var date=document.getElementById('noticeDateInput').value;
+  var details=document.getElementById('noticeDetailsInput').value.trim();
+  if (!title||!date||!details){setMsg('noticePostMsg','সব তথ্য পূরণ করুন','error');return;}
+  var p=date.split('-');
+  var dateStr=p[2]+'/'+p[1]+'/'+p[0];
   setMsg('noticePostMsg','প্রকাশ হচ্ছে…','info');
   try {
-    var r = await callGAS({action:'postNotice', title:title, date:dateStr, details:details, postedBy:'Admin'});
-    if (r.success) {
-      setMsg('noticePostMsg', r.message, 'success');
-      document.getElementById('noticeTitleInput').value = '';
-      document.getElementById('noticeDetailsInput').value = '';
+    var r=await callGAS({action:'postNotice',title:title,date:dateStr,details:details,postedBy:'Admin'});
+    if (r.success){
+      setMsg('noticePostMsg',r.message,'success');
+      document.getElementById('noticeTitleInput').value='';
+      document.getElementById('noticeDetailsInput').value='';
       loadAdminNotices();
-    } else { setMsg('noticePostMsg', r.message, 'error'); }
-  } catch(e) { setMsg('noticePostMsg','সংযোগ সমস্যা','error'); }
+    } else setMsg('noticePostMsg',r.message,'error');
+  } catch(e){setMsg('noticePostMsg','সংযোগ সমস্যা','error');}
 }
-
 async function loadAdminNotices() {
-  document.getElementById('adminNoticeList').innerHTML = '<div class="loader"><div class="spinner"></div></div>';
+  document.getElementById('adminNoticeList').innerHTML='<div class="loader"><div class="spinner"></div></div>';
   try {
-    var r = await callGAS({action:'getNotices'});
-    if (!r.success || !r.data.length) { document.getElementById('adminNoticeList').innerHTML='<div class="msg msg-info">কোনো নোটিশ নেই</div>'; return; }
-    var html = r.data.map(n =>
+    var r=await callGAS({action:'getNotices'});
+    if (!r.success||!r.data.length){document.getElementById('adminNoticeList').innerHTML='<div class="msg msg-info">কোনো নোটিশ নেই</div>';return;}
+    document.getElementById('adminNoticeList').innerHTML=r.data.map(n=>
       '<div class="notice-item"><h3>'+n.title+'</h3><div class="notice-meta">📅 '+n.date+'</div><p>'+n.details+'</p></div>'
     ).join('');
-    document.getElementById('adminNoticeList').innerHTML = html;
   } catch(e){}
 }
 
 // ── INIT ──
-window.addEventListener('load', loadHomeNotice);
+window.addEventListener('load',()=>{
+  startClock();
+  loadHomeNotice();
+});
 </script>
 </body>
 </html>
