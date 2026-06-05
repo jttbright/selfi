@@ -72,17 +72,17 @@ tr:nth-child(even) td{background:#f5f7ff}
 .st-num{font-size:1.7rem;font-weight:800;line-height:1}
 .st-label{font-size:.7rem;color:var(--muted);margin-top:4px;font-weight:600}
 .st-present .st-num{color:var(--success)}
-.st-late    .st-num{color:var(--warn)}
-.st-absent  .st-num{color:var(--danger)}
+.st-late .st-num{color:var(--warn)}
+.st-absent .st-num{color:var(--danger)}
 .dash-meta{font-size:.8rem;color:var(--primary);background:#e3f2fd;border-radius:10px;padding:8px 13px;text-align:center;font-weight:600;margin-bottom:14px}
 .tab-bar{display:flex;background:#eef0f8;border-radius:12px;padding:4px;margin-bottom:14px;gap:3px}
 .tab-btn{flex:1;padding:8px 4px;border:none;background:transparent;font-family:inherit;font-size:.82rem;font-weight:600;color:var(--muted);border-radius:9px;cursor:pointer;transition:.2s}
 .tab-btn.active{background:#fff;color:var(--primary-dark);box-shadow:0 2px 8px rgba(0,0,0,.1)}
 .msg{padding:10px 14px;border-radius:10px;font-size:.86rem;font-weight:600;margin-bottom:11px;text-align:center;line-height:1.5}
 .msg-success{background:#e8f5e9;color:var(--success)}
-.msg-error  {background:#ffebee;color:var(--danger)}
-.msg-info   {background:#e3f2fd;color:var(--primary)}
-.msg-warn   {background:#fff3e0;color:var(--warn)}
+.msg-error{background:#ffebee;color:var(--danger)}
+.msg-info{background:#e3f2fd;color:var(--primary)}
+.msg-warn{background:#fff3e0;color:var(--warn)}
 .loader{display:flex;justify-content:center;padding:28px}
 .spinner{width:34px;height:34px;border:4px solid #dde3f0;border-top-color:var(--primary);border-radius:50%;animation:spin .7s linear infinite}
 @keyframes spin{to{transform:rotate(360deg)}}
@@ -129,6 +129,7 @@ tr:nth-child(even) td{background:#f5f7ff}
     </div>
   </div>
   <main>
+    <!-- HOME SCREEN -->
     <div class="screen active" id="homeScreen">
       <div class="hero"><h2>স্বাগতম! 🎓</h2><p>উপস্থিতি নিবন্ধন করুন অথবা রিপোর্ট দেখুন</p></div>
       <div id="homeNoticeBox"></div>
@@ -140,6 +141,7 @@ tr:nth-child(even) td{background:#f5f7ff}
       </div>
     </div>
 
+    <!-- USER LOGIN SCREEN -->
     <div class="screen" id="userLoginScreen">
       <div class="card">
         <div class="card-title">🪪 আইডি যাচাই</div>
@@ -156,6 +158,7 @@ tr:nth-child(even) td{background:#f5f7ff}
       </div>
     </div>
 
+    <!-- CAMERA SCREEN -->
     <div class="screen" id="cameraScreen">
       <div class="card">
         <div class="card-title">📸 সেলফি তুলুন</div>
@@ -169,12 +172,13 @@ tr:nth-child(even) td{background:#f5f7ff}
         <div id="msgCam"></div>
         <div style="display:flex;gap:10px">
           <button class="btn btn-primary" id="captureBtn" onclick="capturePhoto()">📷 ছবি তুলুন</button>
-          <button class="btn btn-accent"  id="submitBtn"  onclick="submitAttendance()" style="display:none">✅ জমা দিন</button>
+          <button class="btn btn-accent" id="submitBtn" onclick="submitAttendance()" style="display:none">✅ জমা দিন</button>
         </div>
         <button class="btn btn-outline" style="margin-top:10px;display:none" id="retakeBtn" onclick="retakePhoto()">🔄 আবার তুলুন</button>
       </div>
     </div>
 
+    <!-- MY REPORT SCREEN -->
     <div class="screen" id="myReportScreen">
       <div class="card">
         <div class="card-title">🔍 আমার রিপোর্ট</div>
@@ -191,10 +195,12 @@ tr:nth-child(even) td{background:#f5f7ff}
       <div id="myReportOut"></div>
     </div>
 
+    <!-- NOTICE SCREEN -->
     <div class="screen" id="noticeScreen">
       <div id="noticeOut"><div class="loader"><div class="spinner"></div></div></div>
     </div>
 
+    <!-- ADMIN LINKS SCREEN -->
     <div class="screen" id="adminLinksScreen">
       <div class="card">
         <div class="card-title">🔐 অ্যাডমিন প্যানেল</div>
@@ -203,6 +209,7 @@ tr:nth-child(even) td{background:#f5f7ff}
       </div>
     </div>
 
+    <!-- ADMIN LOGIN SCREEN -->
     <div class="screen" id="adminLoginScreen">
       <div class="card">
         <div class="card-title">🔐 অ্যাডমিন লগইন</div>
@@ -213,19 +220,20 @@ tr:nth-child(even) td{background:#f5f7ff}
       </div>
     </div>
 
+    <!-- ADMIN DASHBOARD SCREEN -->
     <div class="screen" id="adminDashScreen">
       <div style="margin-bottom:14px">
         <div class="stats-row">
           <div class="stat-tile st-present"><div class="st-num" id="dP">—</div><div class="st-label">উপস্থিত</div></div>
-          <div class="stat-tile st-late">   <div class="st-num" id="dL">—</div><div class="st-label">দেরি</div></div>
-          <div class="stat-tile st-absent"> <div class="st-num" id="dA">—</div><div class="st-label">অনুপস্থিত</div></div>
+          <div class="stat-tile st-late"><div class="st-num" id="dL">—</div><div class="st-label">দেরি</div></div>
+          <div class="stat-tile st-absent"><div class="st-num" id="dA">—</div><div class="st-label">অনুপস্থিত</div></div>
         </div>
         <div class="dash-meta" id="dashMeta">লোড হচ্ছে…</div>
       </div>
       <div class="tab-bar">
-        <button class="tab-btn active" id="tb-daily"   onclick="switchTab('daily')">📅 দৈনিক</button>
-        <button class="tab-btn"        id="tb-monthly" onclick="switchTab('monthly')">📆 মাসিক</button>
-        <button class="tab-btn"        id="tb-notice"  onclick="switchTab('notice')">📢 নোটিশ</button>
+        <button class="tab-btn active" id="tb-daily" onclick="switchTab('daily')">📅 দৈনিক</button>
+        <button class="tab-btn" id="tb-monthly" onclick="switchTab('monthly')">📆 মাসিক</button>
+        <button class="tab-btn" id="tb-notice" onclick="switchTab('notice')">📢 নোটিশ</button>
       </div>
       <div id="tab-daily">
         <div class="card">
@@ -258,16 +266,18 @@ tr:nth-child(even) td{background:#f5f7ff}
   </main>
 </div>
 
+<!-- SUCCESS POPUP -->
 <div id="successPopup">
   <div class="popup-box">
     <div class="popup-emoji" id="popEmoji"></div>
     <div class="popup-title" id="popTitle"></div>
-    <div class="popup-sub"   id="popSub"></div>
+    <div class="popup-sub" id="popSub"></div>
     <div class="popup-bar"><div class="popup-bar-fill" id="popBar"></div></div>
     <button class="btn btn-primary" onclick="closePopup()">হোমে ফিরুন</button>
   </div>
 </div>
 
+<!-- PHOTO LIGHTBOX -->
 <div id="lightbox" onclick="closeLightbox()">
   <button id="lightbox-close" onclick="closeLightbox()">✕</button>
   <img id="lbImg" src="" alt="photo"/>
@@ -277,14 +287,14 @@ tr:nth-child(even) td{background:#f5f7ff}
 
 <script>
 // ============================================
-//  CONFIGURATION
+//  CONFIGURATION - CHANGE THIS URL
 // ============================================
-var GAS_URL = "https://script.google.com/macros/s/AKfycbyBAFPiByJMFzmp-DkQeUWBWr76go4YKuwywhIEBp6ScwuV1N_3rWkiMhEEyzJaac0H-w/exec";
+var GAS_URL = "https://script.google.com/macros/s/AKfycbzxeFJhK79RjcnpTzQTOiSaL4sV0FMgyWEuOFuGTuHyHCvNXICxL_9nxGx-jNzcW-sUmQ/exec";
 
 var ADMIN_LINKS = [
-  { icon:"🔐", title:"অ্যাডমিন ড্যাশবোর্ড লগইন",  desc:"উপস্থিতি রিপোর্ট ও নোটিশ পরিচালনা", url:"#admin-login", internal:true },
-  { icon:"📊", title:"Google Spreadsheet", desc:"সরাসরি স্প্রেডশিট দেখুন", url:"https://docs.google.com/spreadsheets/d/1uYn8RQHht7rYzAzHXOujz9kjJrO81Yu9ix4y__MQSnc/edit?gid=726872723#gid=726872723" },
-  { icon:"📁", title:"Drive ফটো ফোল্ডার", desc:"সকল সেলফি ছবি এখানে", url:"https://drive.google.com/drive/folders/1EwZUUekl71msrM28IcYZVfykE_C1wYNK" }
+  { icon:"🔐", title:"অ্যাডমিন ড্যাশবোর্ড", desc:"উপস্থিতি রিপোর্ট ও নোটিশ", url:"#admin-login", internal:true },
+  { icon:"📊", title:"Google Spreadsheet", desc:"সরাসরি স্প্রেডশিট দেখুন", url:"https://docs.google.com/spreadsheets/d/YOUR_SHEET_ID/edit", internal:false },
+  { icon:"📁", title:"Drive ফটো ফোল্ডার", desc:"সকল সেলফি ছবি এখানে", url:"https://drive.google.com/drive/folders/YOUR_FOLDER_ID", internal:false }
 ];
 
 // ============================================
@@ -311,14 +321,6 @@ function formatDateForAPI(dateStr) {
   var parts = dateStr.split('-');
   if (parts.length !== 3) return dateStr;
   return parts[2] + '/' + parts[1] + '/' + parts[0];
-}
-
-function todayMMDDYYYY() {
-  var now = new Date();
-  var dd = String(now.getDate()).padStart(2, '0');
-  var mm = String(now.getMonth() + 1).padStart(2, '0');
-  var yyyy = now.getFullYear();
-  return dd + '/' + mm + '/' + yyyy;
 }
 
 function todayInputFmt() {
@@ -446,26 +448,17 @@ function goHome() {
 //  API CALL
 // ============================================
 async function callGAS(payload) {
-  for (var attempt = 0; attempt < 2; attempt++) {
-    var ctrl = new AbortController();
-    var tid = setTimeout(function() { ctrl.abort(); }, 28000);
-    try {
-      var res = await fetch(GAS_URL, {
-        method: 'POST',
-        redirect: 'follow',
-        headers: { 'Content-Type': 'text/plain' },
-        body: JSON.stringify(payload),
-        signal: ctrl.signal
-      });
-      clearTimeout(tid);
-      var txt = await res.text();
-      return JSON.parse(txt);
-    } catch(e) {
-      clearTimeout(tid);
-      if (attempt === 1) {
-        return { success: false, message: e.name === 'AbortError' ? 'সময়সীমা পার' : 'সংযোগ সমস্যা: ' + e.message };
-      }
-    }
+  try {
+    var res = await fetch(GAS_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload)
+    });
+    var txt = await res.text();
+    return JSON.parse(txt);
+  } catch(e) {
+    console.error("API Error:", e);
+    return { success: false, message: e.message };
   }
 }
 
@@ -489,7 +482,7 @@ function setMsg(id, msg, type) {
 // ============================================
 function showPopup(r) {
   var em = { Present: '🎉', Late: '⏰', Absent: '❌' };
-  var tm = { Present: 'সময়মতো উপস্থিত!', Late: 'দেরিতে উপস্থিত', Absent: 'অনুপস্থিত গণ্য' };
+  var tm = { Present: 'উপস্থিত!', Late: 'দেরিতে উপস্থিত', Absent: 'অনুপস্থিত' };
   
   document.getElementById('popEmoji').textContent = em[r.status] || '✅';
   document.getElementById('popTitle').textContent = tm[r.status] || r.status;
@@ -628,7 +621,7 @@ async function submitAttendance() {
     return;
   }
   
-  setMsg('msgCam', 'জমা হচ্ছে… একটু অপেক্ষা করুন', 'info');
+  setMsg('msgCam', 'জমা হচ্ছে…', 'info');
   document.getElementById('submitBtn').disabled = true;
   
   var r = await callGAS({
@@ -646,7 +639,7 @@ async function submitAttendance() {
     showPopup(r);
     document.getElementById('userIdInput').value = '';
   } else {
-    setMsg('msgCam', (r && r.message) || 'সংযোগ সমস্যা, আবার চেষ্টা করুন', 'error');
+    setMsg('msgCam', (r && r.message) || 'সংযোগ সমস্যা', 'error');
   }
 }
 
@@ -663,16 +656,22 @@ async function loadMyReport() {
   document.getElementById('myReportOut').innerHTML = '<div class="loader"><div class="spinner"></div></div>';
   var r = await callGAS({ action: 'getUserReport', userId: uid });
   
-  if (!r || !r.success || !r.data || !r.data.length) {
+  if (!r || !r.success) {
+    document.getElementById('myReportOut').innerHTML = '<div class="msg msg-error">ডেটা লোড করতে ব্যর্থ</div>';
+    return;
+  }
+  
+  if (!r.data || r.data.length === 0) {
     document.getElementById('myReportOut').innerHTML = '<div class="msg msg-info">কোনো রেকর্ড নেই</div>';
     return;
   }
   
   var p = 0, l = 0, a = 0;
   r.data.forEach(function(d) {
-    if (d.status === 'Present') p++;
-    else if (d.status === 'Late') l++;
-    else if (d.status === 'Absent') a++;
+    var st = String(d.status || '').trim();
+    if (st === 'Present') p++;
+    else if (st === 'Late') l++;
+    else if (st === 'Absent') a++;
   });
   
   var html = '<div class="stats-row">' +
@@ -682,7 +681,8 @@ async function loadMyReport() {
     '</div>';
   
   if (l > 0) {
-    html += '<div class="msg msg-warn">⚠️ সতর্কতা: ' + l + ' বার দেরি করেছেন। পরবর্তী দেরিতে আপনি অনুপস্থিত গণ্য হবেন!</div>';
+    var remaining = (l % 2 === 0) ? "পরবর্তী Late এ Absent হবে" : "আরো ১ বার Late এ Absent হবে";
+    html += '<div class="msg msg-warn">⚠️ সতর্কতা: ' + l + ' বার দেরি করেছেন। ' + remaining + '</div>';
   }
   
   html += '<div class="card"><div class="table-wrap"><table><thead><tr>' +
@@ -696,8 +696,8 @@ async function loadMyReport() {
       '<img class="photo-thumb" src="' + d.photo + '" onclick="openLightbox(\'' + d.photo + '\')" loading="lazy"/>' : '—';
     
     html += '<tr>' +
-      '<td>' + d.date + '</td>' +
-      '<td>' + (d.time || '—') + '</td>' +
+      '<td style="white-space:nowrap">' + d.date + '</td>' +
+      '<td style="white-space:nowrap">' + (d.time || '—') + '</td>' +
       '<td><span class="badge badge-' + statusClass + '">' + statusText + '</span></td>' +
       '<td>' + photoCell + '</td>' +
       '</tr>';
@@ -777,23 +777,7 @@ async function initAdminDash() {
   document.getElementById('inpMonth').value = thisMonthInputFmt();
   document.getElementById('inpNDate').value = todayInputFmt();
   
-  var today = todayMMDDYYYY();
-  var r = await callGAS({ action: 'getReport', filter: 'daily', date: today });
-  
-  if (r && r.success && r.data) {
-    var p = 0, l = 0, a = 0;
-    r.data.forEach(function(d) {
-      var s = String(d.status).trim();
-      if (s === 'Present') p++;
-      else if (s === 'Late') l++;
-      else if (s === 'Absent') a++;
-    });
-    document.getElementById('dP').textContent = p;
-    document.getElementById('dL').textContent = l;
-    document.getElementById('dA').textContent = a;
-    document.getElementById('dashMeta').textContent = 'আজ: ' + today + ' | মোট: ' + (p + l + a) + ' জন';
-  }
-  
+  // Load today's report
   await loadDailyReport();
 }
 
@@ -809,9 +793,31 @@ async function loadDailyReport() {
   var v = document.getElementById('inpDailyDate').value;
   if (!v) { toast('তারিখ নির্বাচন করুন'); return; }
   
-  var sheetDate = formatDateForAPI(v);
+  var parts = v.split('-');
+  var sheetDate = parts[2] + '/' + parts[1] + '/' + parts[0];
+  
   document.getElementById('dailyOut').innerHTML = '<div class="loader"><div class="spinner"></div></div>';
   var r = await callGAS({ action: 'getReport', filter: 'daily', date: sheetDate });
+  
+  if (r && r.success && r.data) {
+    var p = 0, l = 0, a = 0;
+    r.data.forEach(function(d) {
+      var st = String(d.status || '').trim();
+      if (st === 'Present') p++;
+      else if (st === 'Late') l++;
+      else if (st === 'Absent') a++;
+    });
+    document.getElementById('dP').textContent = p;
+    document.getElementById('dL').textContent = l;
+    document.getElementById('dA').textContent = a;
+    document.getElementById('dashMeta').textContent = sheetDate + ' — দৈনিক | মোট: ' + (p + l + a) + ' জন';
+  } else {
+    document.getElementById('dP').textContent = '0';
+    document.getElementById('dL').textContent = '0';
+    document.getElementById('dA').textContent = '0';
+    document.getElementById('dashMeta').textContent = sheetDate + ' — কোনো রেকর্ড নেই';
+  }
+  
   renderAdminReport('dailyOut', r);
 }
 
@@ -821,53 +827,71 @@ async function loadMonthlyReport() {
   
   var parts = v.split('-');
   var sheetMonth = parts[1] + '/' + parts[0];
+  
   document.getElementById('monthlyOut').innerHTML = '<div class="loader"><div class="spinner"></div></div>';
   var r = await callGAS({ action: 'getReport', filter: 'monthly', month: sheetMonth });
   renderAdminReport('monthlyOut', r);
 }
 
 function renderAdminReport(elId, r) {
-  if (!r || !r.success || !r.data || !r.data.length) {
-    document.getElementById(elId).innerHTML = '<div class="msg msg-info">' +
-      ((r && !r.success && r.message) ? r.message : 'এই সময়ের কোনো রেকর্ড নেই') + '</div>';
+  if (!r || !r.success) {
+    document.getElementById(elId).innerHTML = '<div class="msg msg-error">ডেটা পাওয়া যায়নি</div>';
     return;
   }
   
+  if (!r.data || r.data.length === 0) {
+    document.getElementById(elId).innerHTML = '<div class="msg msg-info">এই সময়ের কোনো রেকর্ড নেই</div>';
+    return;
+  }
+  
+  // Group by user
   var users = {};
   r.data.forEach(function(d) {
     var st = String(d.status || '').trim();
     if (!users[d.userId]) {
-      users[d.userId] = { name: d.name, area: d.area, p: 0, l: 0, a: 0 };
+      users[d.userId] = { 
+        name: d.name || d.userId, 
+        area: d.area || '—', 
+        p: 0, l: 0, a: 0
+      };
     }
     if (st === 'Present') users[d.userId].p++;
     else if (st === 'Late') users[d.userId].l++;
     else if (st === 'Absent') users[d.userId].a++;
   });
   
+  // User summary table
   var html = '<div class="card"><div class="card-title">👥 ইউজারভিত্তিক সারসংক্ষেপ</div>' +
     '<div class="table-wrap"><table><thead><tr>' +
     '<th>নাম</th><th style="text-align:center">আইডি</th>' +
-    '<th style="text-align:center;color:#a5d6a7">✅</th>' +
-    '<th style="text-align:center;color:#ffe082">⏰</th>' +
-    '<th style="text-align:center;color:#ef9a9a">❌</th></tr></thead><tbody>';
+    '<th style="text-align:center;color:#4caf50">✅ উপস্থিত</th>' +
+    '<th style="text-align:center;color:#ff9800">⏰ দেরি</th>' +
+    '<th style="text-align:center;color:#f44336">❌ অনুপস্থিত</th>' +
+    '</tr></thead><tbody>';
   
-  Object.keys(users).forEach(function(uid) {
+  for (var uid in users) {
     var u = users[uid];
     html += '<tr>' +
       '<td><strong>' + u.name + '</strong><br><small style="color:var(--muted)">' + u.area + '</small></td>' +
       '<td style="text-align:center;font-weight:700;color:var(--primary)">' + uid + '</td>' +
-      '<td style="text-align:center;color:var(--success);font-weight:700">' + u.p + '</td>' +
-      '<td style="text-align:center;color:var(--warn);font-weight:700">' + u.l + '</td>' +
-      '<td style="text-align:center;color:var(--danger);font-weight:700">' + u.a + '</td>' +
+      '<td style="text-align:center;color:#4caf50;font-weight:700">' + u.p + '</td>' +
+      '<td style="text-align:center;color:#ff9800;font-weight:700">' + u.l + '</td>' +
+      '<td style="text-align:center;color:#f44336;font-weight:700">' + u.a + '</td>' +
       '</tr>';
-  });
+  }
   
-  html += '</tbody></table></div></div>' +
-    '<div class="card"><div class="card-title">📋 বিস্তারিত রেকর্ড</div>' +
+  html += '</tbody></table></div></div>';
+  
+  // Detailed records
+  html += '<div class="card"><div class="card-title">📋 বিস্তারিত রেকর্ড</div>' +
     '<div class="table-wrap"><table><thead><tr>' +
-    '<th>তারিখ</th><th>আইডি</th><th>নাম</th><th>সময়</th><th>অবস্থা</th><th>ছবি</th></tr></thead><tbody>';
+    '<th>তারিখ</th><th>আইডি</th><th>নাম</th><th>সময়</th><th>অবস্থা</th><th>ছবি</th>' +
+    '</tr></thead><tbody>';
   
-  r.data.forEach(function(d) {
+  // Sort by date (newest first)
+  var sorted = [...r.data].sort(function(a, b) { return b.date.localeCompare(a.date); });
+  
+  sorted.forEach(function(d) {
     var st = String(d.status || '').trim();
     var statusText = st === 'Present' ? 'উপস্থিত' : (st === 'Late' ? 'দেরি' : 'অনুপস্থিত');
     var statusClass = st === 'Present' ? 'present' : (st === 'Late' ? 'late' : 'absent');
@@ -877,8 +901,8 @@ function renderAdminReport(elId, r) {
     html += '<tr>' +
       '<td style="white-space:nowrap">' + d.date + '</td>' +
       '<td style="font-weight:700;color:var(--primary)">' + d.userId + '</td>' +
-      '<td>' + d.name + '</td>' +
-      '<td style="white-space:nowrap">' + d.time + '</td>' +
+      '<td>' + (d.name || d.userId) + '</td>' +
+      '<td style="white-space:nowrap">' + (d.time || '—') + '</td>' +
       '<td><span class="badge badge-' + statusClass + '">' + statusText + '</span></td>' +
       '<td>' + photoCell + '</td>' +
       '</tr>';
@@ -914,11 +938,14 @@ async function postNotice() {
     return;
   }
   
+  var parts = d.split('-');
+  var sheetDate = parts[2] + '/' + parts[1] + '/' + parts[0];
+  
   setMsg('msgNoticePost', 'প্রকাশ হচ্ছে…', 'info');
   var r = await callGAS({
     action: 'postNotice',
     title: t,
-    date: formatDateForAPI(d),
+    date: sheetDate,
     details: det,
     postedBy: 'Admin'
   });
